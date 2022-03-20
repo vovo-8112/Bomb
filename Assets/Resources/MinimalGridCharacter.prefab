@@ -406,6 +406,7 @@ MonoBehaviour:
   AbilityPermitted: 1
   BlockingMovementStates: 
   BlockingConditionStates: 
+  m_PhotonView: {fileID: 3270975976620157058}
   InitialWeapon: {fileID: 506580380526986187, guid: 0e7e48dfefd946e4da0f223c43dc16fd,
     type: 3}
   CanPickupWeapons: 1

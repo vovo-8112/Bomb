@@ -60,9 +60,6 @@ namespace MoreMountains.TopDownEngine
 
         protected Vector3Int _cellPosition;
 
-        [SerializeField]
-        private PhotonView m_PhotonView;
-
         
         /// <summary>
         /// On init we grab our pool and initialize our stuff

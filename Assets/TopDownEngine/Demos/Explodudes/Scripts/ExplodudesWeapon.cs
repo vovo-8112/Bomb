@@ -63,11 +63,6 @@ namespace MoreMountains.TopDownEngine
         [SerializeField]
         private PhotonView m_PhotonView;
 
-        private bool CheekIsMe()
-        {
-            return m_PhotonView.IsMine;
-        }
-
         /// <summary>
         /// On init we grab our pool and initialize our stuff
         /// </summary>
@@ -84,8 +79,7 @@ namespace MoreMountains.TopDownEngine
         /// </summary>
         public override void ShootRequest()
         {
-            // we don't call base on purpose
-            if (CheekIsMe())
+            if (!m_PhotonView.IsMine)
             {
                 return;
             }

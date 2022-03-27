@@ -14,9 +14,6 @@ namespace GameManager
         private Button m_LeaveRoomButton;
 
         [SerializeField]
-        private Transform m_SpawnPos;
-
-        [SerializeField]
         private List<Transform> m_ListSpawnPosition;
 
         [SerializeField]

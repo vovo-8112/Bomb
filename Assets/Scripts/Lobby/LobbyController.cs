@@ -1,6 +1,8 @@
+using AnimationEvent;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class LobbyController : MonoBehaviourPunCallbacks
@@ -14,24 +16,41 @@ public class LobbyController : MonoBehaviourPunCallbacks
     [SerializeField]
     private TMP_Text m_Text;
 
+    [SerializeField]
+    private EventSystem m_EventSystem;
+
+    [SerializeField]
+    private WaitPanelAnim m_LoadingPanel;
+
+    [SerializeField]
+    private GameObject m_LobbyPanel;
+
     private void Start()
     {
+        m_EventSystem.enabled = false;
         PhotonNetworkSetup();
         SubscribeButton();
     }
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Conect");
-        m_Text.SetText("Conect");
+        m_LobbyPanel.SetActive(true);
+        m_LoadingPanel.StartAnim();
+        m_EventSystem.enabled = true;
+        Log("Conect");
     }
 
     public override void OnJoinedRoom()
     {
-        Debug.Log("JoinRoom");
+        Log("JoinRoom");
         PhotonNetwork.LoadLevel("GameScene");
-        m_Text.SetText("JoinRoom");
+    }
 
+    private void Log(string message)
+    {
+        Debug.Log(message);
+        m_Text.text += "\n";
+        m_Text.text = message;
     }
 
     private void SubscribeButton()

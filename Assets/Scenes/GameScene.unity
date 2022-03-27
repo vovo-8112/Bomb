@@ -98,7 +98,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: efe4bae84ceb393499054d08f386ac96,
+  m_LightingDataAsset: {fileID: 112000000, guid: 25467aac35837424fb8828133dd6c718,
     type: 2}
   m_LightingSettings: {fileID: 1704619255}
 --- !u!196 &5
@@ -3674,7 +3674,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &253826986
 Transform:
@@ -10270,7 +10270,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 0.668
@@ -18965,6 +18965,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TeleporterOrange
       objectReference: {fileID: 0}
+    - target: {fileID: 1355922146597228, guid: 1a17e961b3f40734bac3ee5dff0918c5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4904918515349212, guid: 1a17e961b3f40734bac3ee5dff0918c5, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -19024,7 +19028,7 @@ LightingSettings:
   m_Name: Settings.lighting
   serializedVersion: 3
   m_GIWorkflowMode: 1
-  m_EnableBakedLightmaps: 0
+  m_EnableBakedLightmaps: 1
   m_EnableRealtimeLightmaps: 1
   m_RealtimeEnvironmentLighting: 1
   m_BounceScale: 1
@@ -22591,7 +22595,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1182068805014700, guid: 9edcf7e494cf3e640b18cb7495fb179a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1272036331211942, guid: 9edcf7e494cf3e640b18cb7495fb179a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1752794641914168, guid: 9edcf7e494cf3e640b18cb7495fb179a, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -22660,6 +22672,16 @@ PrefabInstance:
       propertyPath: orthographic size
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 81268022212437738, guid: 9edcf7e494cf3e640b18cb7495fb179a,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114096636326014474, guid: 9edcf7e494cf3e640b18cb7495fb179a,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 114145471383794862, guid: 9edcf7e494cf3e640b18cb7495fb179a,
         type: 3}
       propertyPath: m_Enabled
@@ -22675,6 +22697,11 @@ PrefabInstance:
       propertyPath: RotatingIndicatorThreshold
       value: 0.001
       objectReference: {fileID: 0}
+    - target: {fileID: 114991275479998036, guid: 9edcf7e494cf3e640b18cb7495fb179a,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 224429692818469760, guid: 9edcf7e494cf3e640b18cb7495fb179a,
         type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -22688,6 +22715,11 @@ PrefabInstance:
     - target: {fileID: 759855279148308545, guid: 9edcf7e494cf3e640b18cb7495fb179a,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842644193255156245, guid: 9edcf7e494cf3e640b18cb7495fb179a,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -23581,6 +23613,10 @@ PrefabInstance:
     - target: {fileID: 1184413117235024, guid: a7c1ac56499800843b63b812c13bc2ef, type: 3}
       propertyPath: m_Name
       value: TeleporterBlue
+      objectReference: {fileID: 0}
+    - target: {fileID: 1184413117235024, guid: a7c1ac56499800843b63b812c13bc2ef, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4524711736892986, guid: a7c1ac56499800843b63b812c13bc2ef, type: 3}
       propertyPath: m_RootOrder

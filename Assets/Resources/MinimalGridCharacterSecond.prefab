@@ -220,7 +220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CharacterDimension: 0
   CharacterType: 0
-  PlayerID: Player2
+  PlayerID: Player1
   CharacterAnimator: {fileID: 0}
   UseDefaultMecanim: 1
   RunAnimatorSanityChecks: 0
@@ -442,7 +442,7 @@ MonoBehaviour:
   InitialHealth: 100
   MaximumHealth: 100
   ImmuneToDamage: 0
-  ImmuneToKnockback: 0
+  ImmuneToKnockback: 1
   DamageMMFeedbacks: {fileID: 0}
   FeedbackIsProportionalToDamage: 0
   DestroyOnDeath: 1

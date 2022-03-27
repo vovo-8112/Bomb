@@ -442,7 +442,7 @@ MonoBehaviour:
   InitialHealth: 100
   MaximumHealth: 100
   ImmuneToDamage: 0
-  ImmuneToKnockback: 0
+  ImmuneToKnockback: 1
   DamageMMFeedbacks: {fileID: 0}
   FeedbackIsProportionalToDamage: 0
   DestroyOnDeath: 1

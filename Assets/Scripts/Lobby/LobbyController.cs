@@ -1,5 +1,6 @@
 using AnimationEvent;
 using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -61,7 +62,7 @@ public class LobbyController : MonoBehaviourPunCallbacks
 
     private void CreateRoom()
     {
-        PhotonNetwork.CreateRoom(null);
+        PhotonNetwork.CreateRoom(null,new RoomOptions{MaxPlayers = 2,CleanupCacheOnLeave = false});
     }
 
     private void JoinGame()

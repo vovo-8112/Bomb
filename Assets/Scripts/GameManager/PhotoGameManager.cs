@@ -23,6 +23,11 @@ namespace GameManager
 
         private void Start()
         {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                SetUpMap();
+            }
+
             m_LeaveRoomButton.onClick.AddListener(OnLeftRoom);
 
             if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
@@ -34,6 +39,19 @@ namespace GameManager
             {
                 var player = PhotonNetwork.Instantiate("MinimalGridCharacterSecond", m_ListSpawnPosition[1].position, Quaternion.identity);
                 m_Characters.Add(player.GetComponent<Character>());
+            }
+        }
+
+        private void SetUpMap()
+        {
+            for (int i = 0; i < m_ExplodudesCrates.Count; i++)
+            {
+                var random = Random.Range(0, 3);
+
+                if (random == 0)
+                {
+                    m_ExplodudesCrates[i].DisableObject();
+                }
             }
         }
 

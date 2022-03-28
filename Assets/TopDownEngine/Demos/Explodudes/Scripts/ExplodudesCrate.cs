@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace MoreMountains.TopDownEngine
 {
@@ -13,13 +13,26 @@ namespace MoreMountains.TopDownEngine
         protected const float MaxHeight = 1.1f;
         protected Vector3 _newScale = Vector3.one;
 
+        public bool IsEnable = true;
+
+        public void DisableObject()
+        {
+            gameObject.SetActive(false);
+            IsEnable = false;
+        }
+
+        private void OnDisable()
+        {
+            IsEnable = false;
+        }
+
         /// <summary>
         /// On Start we randomize our y scale for aesthetic considerations only
         /// </summary>
         protected virtual void Start()
         {
             _newScale.y = Random.Range(MinHeight, MaxHeight);
-            this.transform.localScale = _newScale;
+            transform.localScale = _newScale;
         }
     }
 }

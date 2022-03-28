@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace GameManager
 {
-    public class LevelManager : MonoBehaviourPunCallbacks
+    public class PhotoGameManager : MonoBehaviourPunCallbacks
     {
         [SerializeField]
         private Button m_LeaveRoomButton;

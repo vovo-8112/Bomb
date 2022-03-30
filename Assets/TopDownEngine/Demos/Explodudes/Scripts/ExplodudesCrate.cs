@@ -15,10 +15,10 @@ namespace MoreMountains.TopDownEngine
 
         public bool IsEnable = true;
 
-        public void DisableObject()
+        public void SetActive(bool active)
         {
-            gameObject.SetActive(false);
-            IsEnable = false;
+            gameObject.SetActive(active);
+            IsEnable = active;
         }
 
         private void OnDisable()

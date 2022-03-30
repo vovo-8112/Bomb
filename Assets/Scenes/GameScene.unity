@@ -569,7 +569,7 @@ GameObject:
   m_Component:
   - component: {fileID: 41321596}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6888,7 +6888,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GridOrigin: {fileID: 41321596}
   GridUnitSize: 1
-  DrawDebugGrid: 1
+  DrawDebugGrid: 0
   DebugDrawMode: 1
   DebugGridSize: 30
   CellBorderColor: {r: 0, g: 0, b: 0, a: 0.3254902}
@@ -12222,137 +12222,7 @@ MonoBehaviour:
   m_ListSpawnPosition:
   - {fileID: 1618121292}
   - {fileID: 240625367}
-  m_ExplodudesCrates:
-  - {fileID: 119570321}
-  - {fileID: 978993808}
-  - {fileID: 1660043262}
-  - {fileID: 403414473}
-  - {fileID: 2085018199}
-  - {fileID: 506176891}
-  - {fileID: 1793977079}
-  - {fileID: 382991601}
-  - {fileID: 1101946598}
-  - {fileID: 85640612}
-  - {fileID: 644900804}
-  - {fileID: 176498961}
-  - {fileID: 1660449465}
-  - {fileID: 1675179087}
-  - {fileID: 1580508332}
-  - {fileID: 1391713137}
-  - {fileID: 567193113}
-  - {fileID: 1875561082}
-  - {fileID: 1923058726}
-  - {fileID: 425176368}
-  - {fileID: 1135158114}
-  - {fileID: 2134619103}
-  - {fileID: 576454293}
-  - {fileID: 938654707}
-  - {fileID: 244932733}
-  - {fileID: 511699755}
-  - {fileID: 2111636767}
-  - {fileID: 1554923588}
-  - {fileID: 348028937}
-  - {fileID: 1768017613}
-  - {fileID: 415931748}
-  - {fileID: 1469499464}
-  - {fileID: 196653089}
-  - {fileID: 26841699}
-  - {fileID: 1899410032}
-  - {fileID: 1764182203}
-  - {fileID: 1569774643}
-  - {fileID: 700245687}
-  - {fileID: 228660983}
-  - {fileID: 1874495507}
-  - {fileID: 297969421}
-  - {fileID: 1821859312}
-  - {fileID: 41909429}
-  - {fileID: 1106525950}
-  - {fileID: 1178513033}
-  - {fileID: 1240666802}
-  - {fileID: 1839982315}
-  - {fileID: 1614423998}
-  - {fileID: 1887869305}
-  - {fileID: 525866259}
-  - {fileID: 158941311}
-  - {fileID: 1379782275}
-  - {fileID: 1383107123}
-  - {fileID: 1721983607}
-  - {fileID: 1179548869}
-  - {fileID: 1057670112}
-  - {fileID: 1772596719}
-  - {fileID: 1967493230}
-  - {fileID: 872011919}
-  - {fileID: 135414330}
-  - {fileID: 864085549}
-  - {fileID: 1542676586}
-  - {fileID: 453822247}
-  - {fileID: 1356322926}
-  - {fileID: 1689635695}
-  - {fileID: 1825738665}
-  - {fileID: 610414367}
-  - {fileID: 1455218562}
-  - {fileID: 1322359643}
-  - {fileID: 214660091}
-  - {fileID: 1276977242}
-  - {fileID: 168235037}
-  - {fileID: 763794586}
-  - {fileID: 1387904420}
-  - {fileID: 112093109}
-  - {fileID: 1224868509}
-  - {fileID: 1869756823}
-  - {fileID: 226337643}
-  - {fileID: 1307043411}
-  - {fileID: 1646513307}
-  - {fileID: 662284884}
-  - {fileID: 1370035560}
-  - {fileID: 980481521}
-  - {fileID: 1850708729}
-  - {fileID: 627734425}
-  - {fileID: 594600367}
-  - {fileID: 1048594995}
-  - {fileID: 206978732}
-  - {fileID: 1925010135}
-  - {fileID: 1734640519}
-  - {fileID: 2140383077}
-  - {fileID: 535302763}
-  - {fileID: 183954380}
-  - {fileID: 1070717632}
-  - {fileID: 1744972045}
-  - {fileID: 503848434}
-  - {fileID: 113418936}
-  - {fileID: 37333179}
-  - {fileID: 118906748}
-  - {fileID: 2068903966}
-  - {fileID: 1494912730}
-  - {fileID: 1969331442}
-  - {fileID: 1852201951}
-  - {fileID: 1806439497}
-  - {fileID: 715655494}
-  - {fileID: 1928222638}
-  - {fileID: 173119202}
-  - {fileID: 944616289}
-  - {fileID: 1405388501}
-  - {fileID: 1772775709}
-  - {fileID: 772140641}
-  - {fileID: 1774014067}
-  - {fileID: 1567421639}
-  - {fileID: 2140282129}
-  - {fileID: 1678349216}
-  - {fileID: 848383241}
-  - {fileID: 1216664172}
-  - {fileID: 146143394}
-  - {fileID: 1889687260}
-  - {fileID: 1774483203}
-  - {fileID: 691440654}
-  - {fileID: 1380271528}
-  - {fileID: 662452159}
-  - {fileID: 1550921500}
-  - {fileID: 1692191021}
-  - {fileID: 1149520531}
-  - {fileID: 913342344}
-  - {fileID: 249030376}
-  - {fileID: 842353478}
-  m_MapController: {fileID: 1340135749}
+  m_MapController: {fileID: 0}
 --- !u!1001 &1178513031
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13245,7 +13115,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1228050627}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.6, z: 0}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 119570320}

@@ -79,7 +79,11 @@ namespace MoreMountains.Tools
                 return null;
             }
 
-            GameObject newGameObject = (GameObject)PhotonNetwork.Instantiate(GameObjectToPool.name, _waitingPool.transform.position, Quaternion.identity);
+            var position = _waitingPool.transform.position;
+
+            GameObject newGameObject = (GameObject)PhotonNetwork.Instantiate(GameObjectToPool.name,
+                new Vector3(position.x, position.y + 0.5f, position.z), Quaternion.identity);
+
             newGameObject.transform.SetParent(transform.parent.parent);
 
             newGameObject.gameObject.SetActive(false);

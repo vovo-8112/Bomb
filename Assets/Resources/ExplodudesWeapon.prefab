@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8907286948910061081}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.1397874, y: 0.7128973, z: -1.4302549}
+  m_LocalPosition: {x: -2.1397874, y: 2, z: -1.4302549}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -104,7 +104,6 @@ MonoBehaviour:
   MaximumAmountOfBombsAtOnce: 2
   BombDelayBeforeExplosion: 3
   RemainingBombs: 0
-  m_PhotonView: {fileID: 2146241200459343112}
 --- !u!114 &838585239
 MonoBehaviour:
   m_ObjectHideFlags: 0

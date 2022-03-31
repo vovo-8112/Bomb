@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1399145012827632}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.52000046, z: 0}
+  m_LocalPosition: {x: 0, y: -0.005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4319614708212260}
@@ -54,6 +54,8 @@ GameObject:
   - component: {fileID: 114871673569860628}
   - component: {fileID: 114654745524214770}
   - component: {fileID: 114704504716019314}
+  - component: {fileID: 15810989370312513}
+  - component: {fileID: 2049116604361500233}
   m_Layer: 10
   m_Name: MinimalCharacter2DGrid
   m_TagString: Player
@@ -92,13 +94,12 @@ MonoBehaviour:
   CharacterDimension: 0
   CharacterType: 0
   PlayerID: Player1
-  DirectionOnSpawn: 0
   CharacterAnimator: {fileID: 0}
   UseDefaultMecanim: 1
-  PerformAnimatorSanityChecks: 1
+  RunAnimatorSanityChecks: 0
+  DisableAnimatorLogs: 1
   CharacterModel: {fileID: 1997364199477008}
   SendStateChangeEvents: 1
-  SendStateUpdateEvents: 1
   AdditionalAbilityNodes: []
   CharacterBrain: {fileID: 0}
   OptimizeForMobile: 1
@@ -175,6 +176,7 @@ MonoBehaviour:
   Gravity: -30
   GravityActive: 1
   CrouchedRaycastLengthMultiplier: 1
+  PerformCardinalObstacleRaycastDetection: 0
   Speed: {x: 0, y: 0, z: 0}
   Velocity: {x: 0, y: 0, z: 0}
   VelocityLastFrame: {x: 0, y: 0, z: 0}
@@ -411,8 +413,10 @@ MonoBehaviour:
   Invulnerable: 0
   InitialHealth: 100
   MaximumHealth: 100
+  ImmuneToDamage: 0
   ImmuneToKnockback: 0
   DamageMMFeedbacks: {fileID: 0}
+  FeedbackIsProportionalToDamage: 0
   DestroyOnDeath: 1
   DelayBeforeDestruction: 0
   PointsWhenDestroyed: 0
@@ -426,6 +430,11 @@ MonoBehaviour:
   LayerOnDeath:
     _layerIndex: 0
   DeathMMFeedbacks: {fileID: 0}
+  ResetColorOnRevive: 1
+  ColorMaterialPropertyName: _Color
+  UseMaterialPropertyBlocks: 0
+  MasterHealth: {fileID: 0}
+  DisableAnimatorLogs: 1
 --- !u!114 &114654745524214770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -446,7 +455,9 @@ MonoBehaviour:
   AbilityPermitted: 1
   BlockingMovementStates: 
   BlockingConditionStates: 
-  InitialWeapon: {fileID: 0}
+  m_PhotonView: {fileID: 2049116604361500233}
+  InitialWeapon: {fileID: 506580380526986187, guid: 0e7e48dfefd946e4da0f223c43dc16fd,
+    type: 3}
   CanPickupWeapons: 1
   WeaponUseFeedback: {fileID: 0}
   WeaponAttachment: {fileID: 4539632890920534}
@@ -456,6 +467,7 @@ MonoBehaviour:
   AutoIK: 1
   ContinuousPress: 0
   GettingHitInterruptsAttack: 0
+  UseSecondaryAxisThresholdToShoot: 0
   BufferInput: 0
   NewInputExtendsBuffer: 0
   MaximumBufferDuration: 0.25
@@ -484,10 +496,50 @@ MonoBehaviour:
   MainInventoryName: KoalaMainInventory
   WeaponInventoryName: KoalaWeaponInventory
   HotbarInventoryName: 
+  InventoryTransform: {fileID: 0}
   WeaponRotationMode: 0
   AutoPickItems: []
   AutoEquipWeaponOnStart: {fileID: 0}
   CharacterHandleWeapon: {fileID: 0}
+--- !u!114 &15810989370312513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1790328835693532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
+--- !u!114 &2049116604361500233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1790328835693532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 15810989370312513}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1997364199477008
 GameObject:
   m_ObjectHideFlags: 0
@@ -534,6 +586,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:

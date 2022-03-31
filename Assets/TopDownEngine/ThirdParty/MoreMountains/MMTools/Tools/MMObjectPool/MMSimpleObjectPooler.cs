@@ -82,7 +82,7 @@ namespace MoreMountains.Tools
             var position = _waitingPool.transform.position;
 
             GameObject newGameObject = (GameObject)PhotonNetwork.Instantiate(GameObjectToPool.name,
-                new Vector3(position.x, position.y + 0.5f, position.z), Quaternion.identity);
+                position, Quaternion.identity);
 
             newGameObject.transform.SetParent(transform.parent.parent);
 

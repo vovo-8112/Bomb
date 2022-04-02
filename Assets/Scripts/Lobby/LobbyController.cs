@@ -41,7 +41,7 @@ public class LobbyController : MonoBehaviourPunCallbacks
         Log("Conect");
     }
 
-    public override void OnJoinedRoom()
+    public async override void OnJoinedRoom()
     {
         Log("JoinRoom");
         PhotonNetwork.LoadLevel("GameScene");
@@ -62,7 +62,11 @@ public class LobbyController : MonoBehaviourPunCallbacks
 
     private void CreateRoom()
     {
-        PhotonNetwork.CreateRoom(null,new RoomOptions{MaxPlayers = 2,CleanupCacheOnLeave = false});
+        PhotonNetwork.CreateRoom(null, new RoomOptions
+        {
+            MaxPlayers = 2,
+            CleanupCacheOnLeave = false
+        });
     }
 
     private void JoinGame()

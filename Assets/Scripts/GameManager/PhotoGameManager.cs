@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Reflection;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -46,12 +45,6 @@ namespace GameManager
         {
             Debug.LogFormat("Player{0} entered room", newPlayer.NickName);
             AddPlayer(newPlayer);
-
-            if (PhotonNetwork.IsMasterClient)
-            {
-                m_MapController.SendSyncDate(newPlayer);
-            }
-
         }
 
         public override void OnPlayerLeftRoom(Player player)

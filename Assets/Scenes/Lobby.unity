@@ -2274,6 +2274,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animation: {fileID: 3534394952487215387}
+  m_Image: {fileID: 3534394952487215389}
+  m_Text: {fileID: 3534394953240171350}
 --- !u!222 &3534394952487215386
 CanvasRenderer:
   m_ObjectHideFlags: 0

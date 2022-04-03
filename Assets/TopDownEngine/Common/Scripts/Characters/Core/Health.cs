@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
 using MoreMountains.Feedbacks;
-using Photon.Pun;
 
 namespace MoreMountains.TopDownEngine
 {
@@ -622,7 +621,6 @@ namespace MoreMountains.TopDownEngine
                 if (DestroyOnDeath)
                 {
                     gameObject.SetActive(false);
-                    PhotonNetwork.Destroy(gameObject);
                 }
             }
             else

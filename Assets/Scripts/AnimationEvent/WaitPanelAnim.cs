@@ -1,4 +1,8 @@
+using System;
+using DG.Tweening;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace AnimationEvent
 {
@@ -6,6 +10,18 @@ namespace AnimationEvent
     {
         [SerializeField]
         private Animation m_Animation;
+
+        [SerializeField]
+        private Image m_Image;
+
+        [SerializeField]
+        private TMP_Text m_Text;
+
+        public void SetUp()
+        {
+            m_Image.DOFade(1, 0.1f);
+            m_Text.DOFade(1, 0.1f);
+        }
 
         public void StartAnim()
         {

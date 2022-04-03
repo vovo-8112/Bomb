@@ -1,3 +1,4 @@
+using Lobby;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;

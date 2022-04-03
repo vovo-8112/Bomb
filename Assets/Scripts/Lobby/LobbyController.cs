@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using AnimationEvent;
 using Extential;
@@ -38,7 +37,6 @@ namespace Lobby
         private Transform m_Content;
 
         private List<RoomInfo> m_Rooms = new List<RoomInfo>();
-        private bool IsLoadScene;
 
         private const string GameScene = "GameScene";
 
@@ -79,28 +77,7 @@ namespace Lobby
 
         public override void OnJoinedRoom()
         {
-            StartCoroutine(nameof(MoveCoroutine));
             PhotonNetwork.LoadLevel(GameScene);
-        }
-
-        private IEnumerator MoveCoroutine()
-        {
-            IsLoadScene = true;
-
-            if (IsLoadScene)
-            {
-                m_LoadingPanel.gameObject.SetActive(true);
-                m_LoadingPanel.SetUp();
-            }
-
-            var levelLoading = PhotonNetwork.LevelLoadingProgress;
-
-            while (!levelLoading.Equals(1))
-            {
-                yield return null;
-            }
-
-            IsLoadScene = false;
         }
 
         private void Start()

@@ -2952,7 +2952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaf7ee8a7635f594485c9cb836eab53f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tmpInputField: {fileID: 0}
+  _tmpInputField: {fileID: 788412238}
   m_CreateRoom: {fileID: 3534394952584515992}
   m_JoinRandomRoom: {fileID: 3534394953316065994}
   m_EventSystem: {fileID: 433679910}

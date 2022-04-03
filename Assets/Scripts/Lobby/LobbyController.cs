@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using AnimationEvent;
 using Extential;
@@ -8,7 +7,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class LobbyController : MonoBehaviourPunCallbacks
 {
@@ -58,14 +56,7 @@ public class LobbyController : MonoBehaviourPunCallbacks
 
     public void JoinRoom(string nameRoom)
     {
-        try
-        {
-            PhotonNetwork.JoinRoom(nameRoom);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
+        PhotonNetwork.JoinRoom(nameRoom);
     }
 
     public override void OnConnectedToMaster()
@@ -117,15 +108,12 @@ public class LobbyController : MonoBehaviourPunCallbacks
 
     private void JoinGame()
     {
-        try
-        {
-            PhotonNetwork.JoinRandomRoom();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            CreateRoom();
-        }
+        PhotonNetwork.JoinRandomRoom();
+    }
+
+    public override void OnJoinRandomFailed(short returnCode, string message)
+    {
+        CreateRoom();
     }
 
     private static void PhotonNetworkSetup()

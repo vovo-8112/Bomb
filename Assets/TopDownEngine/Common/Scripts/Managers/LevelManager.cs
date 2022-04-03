@@ -227,21 +227,9 @@ namespace MoreMountains.TopDownEngine
             //     return;
             // }
             //
-            // if (PlayerPrefabs == null)
-            // {
-            //     return;
-            // }
-
-            // player instantiation
-            if (PhotonNetwork.PlayerList.Length == 1)
+            if (PlayerPrefabs == null)
             {
-                var newPlayer = PhotonNetwork.Instantiate(PlayerPrefabs[0].name, InitialSpawnPoint.transform.position, Quaternion.identity);
-                Players.Add(newPlayer.GetComponent<Character>());
-            }
-            else
-            {
-                var newPlayer = PhotonNetwork.Instantiate(PlayerPrefabs[1].name, SecondInitialSpawnPoint.transform.position, Quaternion.identity);
-                Players.Add(newPlayer.GetComponent<Character>());
+                return;
             }
         }
 

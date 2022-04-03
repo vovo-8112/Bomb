@@ -29,6 +29,8 @@ public class LobbyController : MonoBehaviourPunCallbacks
     private void Start()
     {
         m_EventSystem.enabled = false;
+        m_LoadingPanel.gameObject.SetActive(true);
+        m_LobbyPanel.gameObject.SetActive(false);
         PhotonNetworkSetup();
         SubscribeButton();
     }
@@ -50,8 +52,8 @@ public class LobbyController : MonoBehaviourPunCallbacks
     private void Log(string message)
     {
         Debug.Log(message);
-        m_Text.text += "\n";
-        m_Text.text = message;
+        // m_Text.text += "\n";
+        // m_Text.text = message;
     }
 
     private void SubscribeButton()

@@ -24,6 +24,11 @@ public class RoomPanel : MonoBehaviour
         m_Button.onClick.AddListener(JoinRoom);
     }
 
+    public void SetUpInfo(string text)
+    {
+        m_RoomName.SetText(text);
+    }
+
     private void JoinRoom()
     {
         m_LobbyController.JoinRoom(m_NameRoom);

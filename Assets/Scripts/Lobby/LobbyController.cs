@@ -49,6 +49,16 @@ namespace Lobby
                 var prefab = Instantiate(m_RoomsPanelPrefab, m_Content);
                 prefab.SetUp(roomInfo, this);
             }
+
+            if (m_Rooms.Count != 0)
+            {
+                return;
+            }
+
+            {
+                var prefab = Instantiate(m_RoomsPanelPrefab, m_Content);
+                prefab.SetUpInfo("No room visible");
+            }
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)

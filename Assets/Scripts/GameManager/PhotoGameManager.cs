@@ -45,6 +45,11 @@ namespace GameManager
         {
             Debug.LogFormat("Player{0} entered room", newPlayer.NickName);
             AddPlayer(newPlayer);
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                m_MapController.SendSyncDate(newPlayer);
+            }
         }
 
         public override void OnPlayerLeftRoom(Player player)

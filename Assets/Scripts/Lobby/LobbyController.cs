@@ -57,7 +57,7 @@ namespace Lobby
 
             {
                 var prefab = Instantiate(m_RoomsPanelPrefab, m_Content);
-                prefab.SetUpInfo("No room visible");
+                prefab.SetUpInfo(LobbyConstants.NoRoom);
             }
         }
 

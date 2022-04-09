@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using MoreMountains.TopDownEngine;
 using Photon.Pun;
@@ -8,10 +7,15 @@ using UnityEngine;
 
 namespace GameManager
 {
-    public class MapController : MonoBehaviour,IOnEventCallback
+    public class MapController : MonoBehaviour, IOnEventCallback
     {
         [SerializeField]
-        private List<ExplodudesCrate> m_ExplodudesCrates;
+        private ExplodudesCrate[] m_ExplodudesCrates;
+
+        private void Awake()
+        {
+            PhotonPeer.RegisterType(typeof(MapDate), 244, MapDate.Serialize, MapDate.DeSerialize);
+        }
 
         public void SendSyncDate(Player player)
         {
@@ -27,11 +31,14 @@ namespace GameManager
                 Reliability = true
             };
 
-            date.CratesDate = new BitArray(m_ExplodudesCrates.Count);
+            date.CratesDate = new BitArray(m_ExplodudesCrates.Length);
 
-            for (int i = 0; i < m_ExplodudesCrates.Count; i++)
+            for (int i = 0; i < m_ExplodudesCrates.Length; i++)
             {
-                date.CratesDate.Set(i, m_ExplodudesCrates[i].IsEnable);
+                for (int j = 0; j < m_ExplodudesCrates.Length; j++)
+                {
+                    date.CratesDate.Set(i + j * m_ExplodudesCrates.Length, m_ExplodudesCrates[i].IsEnable);
+                }
             }
 
             PhotonNetwork.RaiseEvent(43, date, options, sendOptions);
@@ -50,10 +57,14 @@ namespace GameManager
 
         private async void OnSendDateRecursive(MapDate eventData)
         {
-            for (int i = 0; i < m_ExplodudesCrates.Count; i++)
+            
+            for (int i = 0; i < m_ExplodudesCrates.Length; i++)
             {
-                var active = eventData.CratesDate.Get(i);
-                m_ExplodudesCrates[i].SetActive(active);
+                for (int j = 0; j < m_ExplodudesCrates.Length; j++)
+                {
+                    var active = eventData.CratesDate.Get(i + j * m_ExplodudesCrates.Length);
+                    m_ExplodudesCrates[i].SetActive(active);
+                }
             }
         }
 
@@ -65,7 +76,7 @@ namespace GameManager
 
         private void SetUpMap()
         {
-            for (int i = 0; i < m_ExplodudesCrates.Count; i++)
+            for (int i = 0; i < m_ExplodudesCrates.Length; i++)
             {
                 var random = Random.Range(0, 3);
 

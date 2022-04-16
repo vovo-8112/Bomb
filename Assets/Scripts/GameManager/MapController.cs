@@ -19,8 +19,8 @@ namespace GameManager
         
         private void Start()
         {
-            if (PhotonNetwork.IsMasterClient)
-               SetUpMap();
+           // if (PhotonNetwork.IsMasterClient)
+              // SetUpMap();
         }
 
         public void SendSyncDate(Player player)

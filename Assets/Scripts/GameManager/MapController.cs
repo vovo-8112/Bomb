@@ -16,6 +16,12 @@ namespace GameManager
         {
             PhotonPeer.RegisterType(typeof(MapDate), 244, MapDate.Serialize, MapDate.DeSerialize);
         }
+        
+        private void Start()
+        {
+            if (PhotonNetwork.IsMasterClient)
+               SetUpMap();
+        }
 
         public void SendSyncDate(Player player)
         {
@@ -68,11 +74,7 @@ namespace GameManager
             }
         }
 
-        private void Start()
-        {
-            if (PhotonNetwork.IsMasterClient)
-                SetUpMap();
-        }
+
 
         private void SetUpMap()
         {

@@ -16,6 +16,9 @@ namespace Lobby
         private TMP_InputField _tmpInputField;
 
         [SerializeField]
+        private Button m_Battle;
+
+        [SerializeField]
         private Button m_CreateRoom;
 
         [SerializeField]
@@ -40,6 +43,31 @@ namespace Lobby
 
         private const string GameScene = "GameScene";
 
+        private void Start()
+        {
+            m_EventSystem.enabled = false;
+            m_LoadingPanel.gameObject.SetActive(true);
+            m_LobbyPanel.gameObject.SetActive(false);
+            PhotonNetworkSetup();
+            SubscribeButton();
+        }
+
+        private void SubscribeButton()
+        {
+            LoadWaitPanel();
+            m_CreateRoom.onClick.AddListener(CreateRoom);
+            m_JoinRandomRoom.onClick.AddListener(JoinGame);
+            m_Battle.onClick.AddListener(JoinGame);
+        }
+
+        private void LoadWaitPanel()
+        {
+            m_EventSystem.enabled = false;
+            m_LoadingPanel.SetUp();
+            m_LoadingPanel.gameObject.SetActive(true);
+            m_LobbyPanel.gameObject.SetActive(false);
+        }
+
         private void UpdateRooms()
         {
             m_Content.transform.Clear();
@@ -61,6 +89,38 @@ namespace Lobby
             }
         }
 
+        private void AnimComplete()
+        {
+            m_LoadingPanel.StartAnim();
+            m_EventSystem.enabled = true;
+        }
+
+        private void CreateRoom()
+        {
+            LoadWaitPanel();
+            string nameRoom = _tmpInputField.text.Length == 0 ? _tmpInputField.text : PhotonNetwork.NickName;
+
+            PhotonNetwork.CreateRoom(nameRoom, new RoomOptions
+            {
+                IsVisible = true,
+                MaxPlayers = 2,
+            });
+        }
+
+        private void JoinGame()
+        {
+            LoadWaitPanel();
+            PhotonNetwork.JoinRandomRoom();
+        }
+
+        private static void PhotonNetworkSetup()
+        {
+            PhotonNetwork.NickName = "Player" + Random.Range(1, 500);
+            PhotonNetwork.AutomaticallySyncScene = true;
+            PhotonNetwork.GameVersion = "1.0.0";
+            PhotonNetwork.ConnectUsingSettings();
+        }
+
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
             m_Rooms = roomList;
@@ -79,58 +139,14 @@ namespace Lobby
             PhotonNetwork.JoinLobby();
         }
 
-        private void AnimComplete()
-        {
-            m_LoadingPanel.StartAnim();
-            m_EventSystem.enabled = true;
-        }
-
         public override void OnJoinedRoom()
         {
             PhotonNetwork.LoadLevel(GameScene);
         }
 
-        private void Start()
-        {
-            m_EventSystem.enabled = false;
-            m_LoadingPanel.gameObject.SetActive(true);
-            m_LobbyPanel.gameObject.SetActive(false);
-            PhotonNetworkSetup();
-            SubscribeButton();
-        }
-
-        private void SubscribeButton()
-        {
-            m_CreateRoom.onClick.AddListener(CreateRoom);
-            m_JoinRandomRoom.onClick.AddListener(JoinGame);
-        }
-
-        private void CreateRoom()
-        {
-            string nameRoom = _tmpInputField.text.Length == 0 ? _tmpInputField.text : PhotonNetwork.NickName;
-
-            PhotonNetwork.CreateRoom(nameRoom, new RoomOptions
-            {
-                IsVisible = true
-            });
-        }
-
-        private void JoinGame()
-        {
-            PhotonNetwork.JoinRandomRoom();
-        }
-
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
             CreateRoom();
-        }
-
-        private static void PhotonNetworkSetup()
-        {
-            PhotonNetwork.NickName = "Player" + Random.Range(1, 500);
-            PhotonNetwork.AutomaticallySyncScene = true;
-            PhotonNetwork.GameVersion = "1.0.0";
-            PhotonNetwork.ConnectUsingSettings();
         }
     }
 }

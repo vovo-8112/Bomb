@@ -2,7 +2,7 @@
 
 namespace Extential
 {
-    public static class TransformEx
+    public static class ransformEx
     {
         public static Transform Clear(this Transform transform)
         {

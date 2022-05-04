@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MoreMountains.Tools;
-using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -373,10 +372,12 @@ namespace MoreMountains.TopDownEngine
         /// </summary>
         public virtual void PlayerDead(Character playerCharacter)
         {
-            if (Players.Count < 2)
-            {
-                StartCoroutine(PlayerDeadCo());
-            }
+            StartCoroutine(PlayerDeadCo());
+        }
+
+        public virtual void PlayerWin(Character playerCharacter)
+        {
+            StartCoroutine(PlayerWinCo());
         }
 
         /// <summary>
@@ -388,6 +389,13 @@ namespace MoreMountains.TopDownEngine
             yield return new WaitForSeconds(DelayBeforeDeathScreen);
 
             GUIManager.Instance.SetDeathScreen(true);
+        }
+
+        protected virtual IEnumerator PlayerWinCo()
+        {
+            yield return new WaitForSeconds(DelayBeforeDeathScreen);
+
+            GUIManager.Instance.SetWinScreen(true);
         }
 
         /// <summary>
@@ -553,6 +561,9 @@ namespace MoreMountains.TopDownEngine
                     break;
                 case TopDownEngineEventTypes.RespawnStarted:
                     Respawn();
+                    break;
+                case TopDownEngineEventTypes.LevelComplete:
+                    PlayerWin(engineEvent.OriginCharacter);
                     break;
             }
         }

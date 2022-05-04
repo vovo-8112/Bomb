@@ -100,7 +100,7 @@ MonoBehaviour:
   Interruptable: 0
   Flipped: 0
   GridSpawnMethod: 3
-  BombOffset: {x: 0, y: 0, z: 0}
+  BombOffset: {x: 0, y: 0.2, z: 0}
   MaximumAmountOfBombsAtOnce: 2
   BombDelayBeforeExplosion: 3
   RemainingBombs: 0

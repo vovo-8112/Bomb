@@ -1,7 +1,8 @@
-using UnityEngine;
 using System.Collections;
-using MoreMountains.Tools;
 using MoreMountains.Feedbacks;
+using MoreMountains.Tools;
+using Photon.Pun;
+using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
@@ -32,7 +33,7 @@ namespace MoreMountains.TopDownEngine
 
         [Header("Health")]
         [MMInformation("Add this component to an object and it'll have health, will be able to get damaged and potentially die.",
-            MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
+            MMInformationAttribute.InformationType.Info, false)]
 
         /// the initial amount of health of the object
         [Tooltip("the initial amount of health of the object")]
@@ -45,7 +46,7 @@ namespace MoreMountains.TopDownEngine
         [Header("Damage")]
         [MMInformation(
             "Here you can specify an effect and a sound FX to instantiate when the object gets damaged, and also how long the object should flicker when hit (only works for sprites).",
-            MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
+            MMInformationAttribute.InformationType.Info, false)]
 
         /// whether or not this Health object can be damaged 
         [Tooltip("whether or not this Health object can be damaged")]
@@ -67,7 +68,7 @@ namespace MoreMountains.TopDownEngine
         [Header("Death")]
         [MMInformation(
             "Here you can set an effect to instantiate when the object dies, a force to apply to it (topdown controller required), how many points to add to the game score, and where the character should respawn (for non-player characters only).",
-            MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
+            MMInformationAttribute.InformationType.Info, false)]
 
         /// whether or not this object should get destroyed on death
         [Tooltip("whether or not this object should get destroyed on death")]
@@ -142,6 +143,10 @@ namespace MoreMountains.TopDownEngine
         /// if this is true, animator logs for the associated animator will be turned off to avoid potential spam
         [Tooltip("if this is true, animator logs for the associated animator will be turned off to avoid potential spam")]
         public bool DisableAnimatorLogs = true;
+
+        [Tooltip("PhotonView")]
+        [SerializeField]
+        private PhotonView _photonView;
 
         public int LastDamage { get; set; }
         public Vector3 LastDamageDirection { get; set; }
@@ -428,7 +433,14 @@ namespace MoreMountains.TopDownEngine
 
                 if (_character.CharacterType == Character.CharacterTypes.Player)
                 {
-                    TopDownEngineEvent.Trigger(TopDownEngineEventTypes.PlayerDeath, _character);
+                    if (_photonView.IsMine)
+                    {
+                        TopDownEngineEvent.Trigger(TopDownEngineEventTypes.PlayerDeath, _character);
+                    }
+                    else
+                    {
+                        TopDownEngineEvent.Trigger(TopDownEngineEventTypes.LevelComplete, _character);
+                    }
                 }
             }
 

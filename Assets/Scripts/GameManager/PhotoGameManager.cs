@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -23,7 +22,6 @@ namespace GameManager
 
         private void Start()
         {
-            PhotonPeer.RegisterType(typeof(MapDate), 243, MapDate.Serialize, MapDate.DeSerialize);
             m_LeaveRoomButton.onClick.AddListener(OnLeftRoom);
 
             SpawnPlayers();
@@ -45,6 +43,11 @@ namespace GameManager
         {
             Debug.LogFormat("Player{0} entered room", newPlayer.NickName);
             AddPlayer(newPlayer);
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                m_MapController.SendSyncDate(newPlayer);
+            }
         }
 
         public override void OnPlayerLeftRoom(Player player)

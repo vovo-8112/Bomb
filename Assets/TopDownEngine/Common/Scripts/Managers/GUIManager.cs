@@ -33,6 +33,8 @@ namespace MoreMountains.TopDownEngine
 		/// the death screen
 		[Tooltip("the death screen")]
 		public GameObject DeathScreen;
+		[Tooltip("the win screen")]
+		public GameObject WinScreen;
 		/// The mobile buttons
 		[Tooltip("The mobile buttons")]
 		public CanvasGroup Buttons;
@@ -197,6 +199,15 @@ namespace MoreMountains.TopDownEngine
                 DeathScreen.SetActive(state);
                 EventSystem.current.sendNavigationEvents = state;
             }
+        }
+        
+        public virtual void SetWinScreen(bool state)
+        {
+	        if (WinScreen != null)
+	        {
+		        WinScreen.SetActive(state);
+		        EventSystem.current.sendNavigationEvents = state;
+	        }
         }
 
         /// <summary>

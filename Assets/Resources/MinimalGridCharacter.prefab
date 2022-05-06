@@ -460,6 +460,7 @@ MonoBehaviour:
   UseMaterialPropertyBlocks: 0
   MasterHealth: {fileID: 0}
   DisableAnimatorLogs: 1
+  _photonView: {fileID: 3270975976620157058}
 --- !u!114 &114710286730267884
 MonoBehaviour:
   m_ObjectHideFlags: 0

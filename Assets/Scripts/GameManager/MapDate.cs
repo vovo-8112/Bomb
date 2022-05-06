@@ -11,7 +11,7 @@ namespace GameManager
         public static byte[] Serialize(object obj)
         {
             MapDate date = (MapDate)obj;
-            byte[] dateInByte = new byte[Mathf.CeilToInt(date.CratesDate.Count / 8f)];
+            byte[] dateInByte = new byte[Mathf.CeilToInt(129 / 8f)];
             date.CratesDate.CopyTo(dateInByte, 0);
             return dateInByte;
         }

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using AnimationEvent;
 using Extential;
@@ -15,6 +14,9 @@ namespace Lobby
     {
         [SerializeField]
         private TMP_InputField _tmpInputField;
+
+        [SerializeField]
+        private Button m_Battle;
 
         [SerializeField]
         private Button m_CreateRoom;
@@ -38,9 +40,33 @@ namespace Lobby
         private Transform m_Content;
 
         private List<RoomInfo> m_Rooms = new List<RoomInfo>();
-        private bool IsLoadScene;
 
         private const string GameScene = "GameScene";
+
+        private void Start()
+        {
+            m_EventSystem.enabled = false;
+            m_LoadingPanel.gameObject.SetActive(true);
+            m_LobbyPanel.gameObject.SetActive(false);
+            PhotonNetworkSetup();
+            SubscribeButton();
+        }
+
+        private void SubscribeButton()
+        {
+            LoadWaitPanel();
+            m_CreateRoom.onClick.AddListener(CreateRoom);
+            m_JoinRandomRoom.onClick.AddListener(JoinGame);
+            m_Battle.onClick.AddListener(JoinGame);
+        }
+
+        private void LoadWaitPanel()
+        {
+            m_EventSystem.enabled = false;
+            m_LoadingPanel.SetUp();
+            m_LoadingPanel.gameObject.SetActive(true);
+            m_LobbyPanel.gameObject.SetActive(false);
+        }
 
         private void UpdateRooms()
         {
@@ -51,6 +77,48 @@ namespace Lobby
                 var prefab = Instantiate(m_RoomsPanelPrefab, m_Content);
                 prefab.SetUp(roomInfo, this);
             }
+
+            if (m_Rooms.Count != 0)
+            {
+                return;
+            }
+
+            {
+                var prefab = Instantiate(m_RoomsPanelPrefab, m_Content);
+                prefab.SetUpInfo(LobbyConstants.NoRoom);
+            }
+        }
+
+        private void AnimComplete()
+        {
+            m_LoadingPanel.StartAnim();
+            m_EventSystem.enabled = true;
+        }
+
+        private void CreateRoom()
+        {
+            LoadWaitPanel();
+            string nameRoom = _tmpInputField.text.Length == 0 ? _tmpInputField.text : PhotonNetwork.NickName;
+
+            PhotonNetwork.CreateRoom(nameRoom, new RoomOptions
+            {
+                IsVisible = true,
+                MaxPlayers = 2,
+            });
+        }
+
+        private void JoinGame()
+        {
+            LoadWaitPanel();
+            PhotonNetwork.JoinRandomRoom();
+        }
+
+        private static void PhotonNetworkSetup()
+        {
+            PhotonNetwork.NickName = "Player" + Random.Range(1, 500);
+            PhotonNetwork.AutomaticallySyncScene = true;
+            PhotonNetwork.GameVersion = "1.0.0";
+            PhotonNetwork.ConnectUsingSettings();
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -71,79 +139,14 @@ namespace Lobby
             PhotonNetwork.JoinLobby();
         }
 
-        private void AnimComplete()
-        {
-            m_LoadingPanel.StartAnim();
-            m_EventSystem.enabled = true;
-        }
-
         public override void OnJoinedRoom()
         {
-            StartCoroutine(nameof(MoveCoroutine));
             PhotonNetwork.LoadLevel(GameScene);
-        }
-
-        private IEnumerator MoveCoroutine()
-        {
-            IsLoadScene = true;
-
-            if (IsLoadScene)
-            {
-                m_LoadingPanel.gameObject.SetActive(true);
-                m_LoadingPanel.SetUp();
-            }
-
-            var levelLoading = PhotonNetwork.LevelLoadingProgress;
-
-            while (!levelLoading.Equals(1))
-            {
-                yield return null;
-            }
-
-            IsLoadScene = false;
-        }
-
-        private void Start()
-        {
-            m_EventSystem.enabled = false;
-            m_LoadingPanel.gameObject.SetActive(true);
-            m_LobbyPanel.gameObject.SetActive(false);
-            PhotonNetworkSetup();
-            SubscribeButton();
-        }
-
-        private void SubscribeButton()
-        {
-            m_CreateRoom.onClick.AddListener(CreateRoom);
-            m_JoinRandomRoom.onClick.AddListener(JoinGame);
-        }
-
-        private void CreateRoom()
-        {
-            string nameRoom = _tmpInputField.text.Length == 0 ? _tmpInputField.text : PhotonNetwork.NickName;
-
-            PhotonNetwork.CreateRoom(nameRoom, new RoomOptions
-            {
-                IsVisible = true
-            });
-        }
-
-        private void JoinGame()
-        {
-            PhotonNetwork.JoinRandomRoom();
         }
 
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
             CreateRoom();
-        }
-
-        private static void PhotonNetworkSetup()
-        {
-            PhotonNetwork.NickName = "Player" + Random.Range(1, 500);
-            PhotonNetwork.AutomaticallySyncScene = true;
-            PhotonNetwork.GameVersion = "1.0.0";
-            PhotonNetwork.ConnectUsingSettings();
         }
     }
 }

@@ -16,11 +16,21 @@ namespace GameManager
         {
             PhotonPeer.RegisterType(typeof(MapDate), 244, MapDate.Serialize, MapDate.DeSerialize);
         }
-        
+
+        private void OnEnable()
+        {
+            PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
+        }
+
+        private void OnDisable()
+        {
+            PhotonNetwork.NetworkingClient.EventReceived -= OnEvent;
+        }
+
         private void Start()
         {
-           // if (PhotonNetwork.IsMasterClient)
-              // SetUpMap();
+            if (PhotonNetwork.IsMasterClient)
+                SetUpMap();
         }
 
         public void SendSyncDate(Player player)
@@ -41,10 +51,7 @@ namespace GameManager
 
             for (int i = 0; i < m_ExplodudesCrates.Length; i++)
             {
-                for (int j = 0; j < m_ExplodudesCrates.Length; j++)
-                {
-                    date.CratesDate.Set(i + j * m_ExplodudesCrates.Length, m_ExplodudesCrates[i].IsEnable);
-                }
+                date.CratesDate.Set(i, m_ExplodudesCrates[i].IsEnable);
             }
 
             PhotonNetwork.RaiseEvent(43, date, options, sendOptions);
@@ -63,18 +70,12 @@ namespace GameManager
 
         private async void OnSendDateRecursive(MapDate eventData)
         {
-            
             for (int i = 0; i < m_ExplodudesCrates.Length; i++)
             {
-                for (int j = 0; j < m_ExplodudesCrates.Length; j++)
-                {
-                    var active = eventData.CratesDate.Get(i + j * m_ExplodudesCrates.Length);
-                    m_ExplodudesCrates[i].SetActive(active);
-                }
+                var active = eventData.CratesDate.Get(i);
+                m_ExplodudesCrates[i].SetActive(active);
             }
         }
-
-
 
         private void SetUpMap()
         {

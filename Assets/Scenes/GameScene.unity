@@ -1255,8 +1255,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 2119669220565625342, guid: 37b89bab534cb8b4ab0b77e955e2b68c, type: 3}
     - {fileID: 2119669220565625343, guid: 37b89bab534cb8b4ab0b77e955e2b68c, type: 3}
+    - {fileID: 2119669220565625342, guid: 37b89bab534cb8b4ab0b77e955e2b68c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 37b89bab534cb8b4ab0b77e955e2b68c, type: 3}
 --- !u!1001 &86175142
 PrefabInstance:
@@ -7527,7 +7527,7 @@ PrefabInstance:
     - target: {fileID: 2119669220565625287, guid: 37b89bab534cb8b4ab0b77e955e2b68c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5
+      value: -4.96
       objectReference: {fileID: 0}
     - target: {fileID: 2119669220565625287, guid: 37b89bab534cb8b4ab0b77e955e2b68c,
         type: 3}
@@ -17907,9 +17907,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PatchToTarget: []
   Target: {fileID: 472125401}
-  SolidLayer:
+  LayerMaskCantMove:
     serializedVersion: 2
     m_Bits: 25165824
+  CanBeDestroy:
+    serializedVersion: 2
+    m_Bits: 8388608
+  m_CharacterGridMovement: {fileID: 1275748075}
+--- !u!114 &1275748075 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2119669220565625280, guid: 37b89bab534cb8b4ab0b77e955e2b68c,
+    type: 3}
+  m_PrefabInstance: {fileID: 84936138}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275748072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff62ccf14df8cde499c8895a73ca8374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1277655125 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 567624900524704557, guid: f25b317c1dce3a74cb71f3744fa3097b,

@@ -21,7 +21,6 @@ public class AiBomber : MonoBehaviour
         var pathToTarget = new List<Vector2>();
         var transformPosition = transform.position;
         Vector2 startPos = new Vector2(Mathf.Round(transformPosition.x), Mathf.Round(transformPosition.z));
-        var targetTransform = Target.transform.position;
         Vector2 targetPos = new Vector2(Mathf.Round(target.x), Mathf.Round(target.y));
 
         if (startPos == targetPos)
@@ -35,16 +34,21 @@ public class AiBomber : MonoBehaviour
 
         while (WaitingNodes.Count > 0)
         {
-            Node nodeToCheck = WaitingNodes.Where(x => x.F == WaitingNodes.Min(y => y.F)).FirstOrDefault();
+            Node nodeToCheck = WaitingNodes.Where(x => x.Sum == WaitingNodes.Min(y => y.Sum)).FirstOrDefault();
 
             if (nodeToCheck.Position == targetPos)
             {
                 return CalculatePatchFromNode(nodeToCheck);
             }
 
-            var col = Physics.OverlapSphere(new Vector3(nodeToCheck.Position.x, 0.5f, nodeToCheck.Position.y), 0, SolidLayer);
+            var ray = new Ray(new Vector3(nodeToCheck.Position.x, 1f, nodeToCheck.Position.y), Vector3.down);
+            var raycast = Physics.Raycast(ray, out var hit, 1f, SolidLayer);
+            Debug.DrawRay(ray.origin, ray.direction);
 
-            bool walkable = col.Length == 0;
+            // var col = Physics.OverlapCapsule(new Vector3(nodeToCheck.Position.x, 0f, nodeToCheck.Position.y),
+            //     new Vector3(nodeToCheck.Position.x, 0.6f, nodeToCheck.Position.y), 0.1f, SolidLayer);
+
+            bool walkable = !raycast;
 
             if (!walkable)
             {
@@ -96,13 +100,13 @@ public class AiBomber : MonoBehaviour
     {
         List<Node> nodesNeighbour = new List<Node>();
 
-        nodesNeighbour.Add(new Node(new Vector2(startNode.Position.x - 1, startNode.Position.y), startNode.TargetPosition, startNode, startNode.G));
+        nodesNeighbour.Add(new Node(new Vector2(startNode.Position.x - 1, startNode.Position.y), startNode.TargetPosition, startNode, startNode.Startposnode));
 
-        nodesNeighbour.Add(new Node(new Vector2(startNode.Position.x + 1, startNode.Position.y), startNode.TargetPosition, startNode, startNode.G));
+        nodesNeighbour.Add(new Node(new Vector2(startNode.Position.x + 1, startNode.Position.y), startNode.TargetPosition, startNode, startNode.Startposnode));
 
-        nodesNeighbour.Add(new Node(new Vector2(startNode.Position.x, startNode.Position.y - 1), startNode.TargetPosition, startNode, startNode.G));
+        nodesNeighbour.Add(new Node(new Vector2(startNode.Position.x, startNode.Position.y - 1), startNode.TargetPosition, startNode, startNode.Startposnode));
 
-        nodesNeighbour.Add(new Node(new Vector2(startNode.Position.x, startNode.Position.y + 1), startNode.TargetPosition, startNode, startNode.G));
+        nodesNeighbour.Add(new Node(new Vector2(startNode.Position.x, startNode.Position.y + 1), startNode.TargetPosition, startNode, startNode.Startposnode));
 
         return nodesNeighbour;
     }

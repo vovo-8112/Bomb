@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using MoreMountains.Tools;
-using Photon.Pun;
 using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
@@ -60,7 +59,6 @@ namespace MoreMountains.TopDownEngine
 
         protected Vector3Int _cellPosition;
 
-        
         /// <summary>
         /// On init we grab our pool and initialize our stuff
         /// </summary>
@@ -77,7 +75,7 @@ namespace MoreMountains.TopDownEngine
         /// </summary>
         public override void ShootRequest()
         {
-            if (!m_PhotonView.IsMine)
+            if (!m_PhotonView.IsMine && m_PhotonView == null)
             {
                 return;
             }

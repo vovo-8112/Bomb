@@ -1,8 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MoreMountains.TopDownEngine;
 using UnityEngine;
+
+public enum Ai
+{
+    Default,
+    GoTarget,
+    CanSpawnBomb,
+    MoveSavePos,
+    NoBomb,
+    WaitDestroyBomb,
+}
 
 public class AiBomber : MonoBehaviour
 {
@@ -23,6 +35,14 @@ public class AiBomber : MonoBehaviour
     [SerializeField]
     private CharacterGridMovement m_CharacterGridMovement;
 
+    [SerializeField]
+    private CharacterHandleWeapon m_CharacterHandleWeapon;
+
+    private Ai State;
+    private Vector2 PosSpawnBomb;
+    private List<Vector2> ListAnSavePos;
+    private Vector2 PosSavePos = new Vector2(int.MinValue, int.MinValue);
+
     private void Start()
     {
         StartCoroutine(TestCoroutine());
@@ -32,16 +52,11 @@ public class AiBomber : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.6f);
 
             PatchToTarget = GetPathMove(new Vector2(Target.transform.position.x, Target.transform.position.z));
 
-            if (PatchToTarget.Count == 0)
-            {
-                //TODO calculate best step move AndSpawnBomb
-                var random = Random.Range(0, CanMovePoints.Count);
-                PatchToTarget = GetPathMove(CanMovePoints[random].Position);
-            }
+            DestroyBlocksLogic();
 
             var transformPosition = transform.position;
 
@@ -56,9 +71,120 @@ public class AiBomber : MonoBehaviour
                 }
             }
 
-            var move = new Vector2(PatchToTarget[PatchToTarget.Count - 1].x - startPos.x, PatchToTarget[PatchToTarget.Count - 1].y - startPos.y);
-            MoveBot(move);
+            if (PatchToTarget.Count != 0)
+            {
+                var move = new Vector2(PatchToTarget[PatchToTarget.Count - 1].x - startPos.x, PatchToTarget[PatchToTarget.Count - 1].y - startPos.y);
+                MoveBot(move);
+            }
         }
+    }
+
+    private void DestroyBlocksLogic()
+    {
+        var transformPosition = transform.position;
+
+        Vector2 startPos = new Vector2(Mathf.Round(transformPosition.x), Mathf.Round(transformPosition.z));
+
+        if (PatchToTarget.Count == 0 && State != Ai.MoveSavePos)
+        {
+            var path = GetPathMove(CalculateBestTarget().Position);
+            PatchToTarget = path;
+
+            if (PatchToTarget.Count == 0)
+            {
+                State = Ai.CanSpawnBomb;
+            }
+        }
+
+        if (PatchToTarget.Count == 0 && State == Ai.CanSpawnBomb && State != Ai.MoveSavePos)
+        {
+            SpawnBomb();
+            State = Ai.MoveSavePos;
+        }
+        else if (State == Ai.MoveSavePos)
+        {
+            MoveSavePos();
+        }
+    }
+
+    private void MoveSavePos()
+    {
+        foreach (var node in CanMovePoints)
+        {
+            foreach (var vector2 in ListAnSavePos)
+            {
+                if (node.Position != vector2)
+                {
+                    PosSavePos = node.Position;
+                    break;
+                }
+            }
+        }
+
+        var savePos = new Vector2(PosSavePos.x, PosSavePos.y);
+        PatchToTarget = GetPathMove(savePos);
+    }
+
+    private async void SpawnBomb()
+    {
+        m_CharacterHandleWeapon.ShootStart();
+        var transformPosition = transform.position;
+
+        Vector2 startPos = new Vector2(Mathf.Round(transformPosition.x), Mathf.Round(transformPosition.z));
+
+        PosSpawnBomb = startPos;
+        ListAnSavePos = new List<Vector2>();
+
+        for (int i = 1; i < 5; i++)
+        {
+            ListAnSavePos.Add(new Vector2(PosSpawnBomb.x + i, PosSpawnBomb.y));
+        }
+
+        for (int i = 1; i < 5; i++)
+        {
+            ListAnSavePos.Add(new Vector2(PosSpawnBomb.x, PosSpawnBomb.y + i));
+        }
+
+        for (int i = 1; i < 5; i++)
+        {
+            ListAnSavePos.Add(new Vector2(PosSpawnBomb.x - i, PosSpawnBomb.y));
+        }
+
+        for (int i = 1; i < 5; i++)
+        {
+            ListAnSavePos.Add(new Vector2(PosSpawnBomb.x, PosSpawnBomb.y - i));
+        }
+
+        await Task.Delay(10000);
+        State = Ai.Default;
+        PosSavePos = new Vector2(int.MinValue, int.MinValue);
+    }
+
+    private Node CalculateBestTarget()
+    {
+        var nodeStart = CanMovePoints[0];
+
+        var bestMove = new Dictionary<Node, int>();
+
+        foreach (Node node in CanMovePoints)
+        {
+            var nodes = GetNeighbourNodeCanBeDestroy(node);
+
+            bestMove.Add(node, nodes.Count());
+        }
+
+        int valueDestroyBlocks = 0;
+
+        foreach (var keyValuePair in bestMove)
+        {
+            if (keyValuePair.Value > valueDestroyBlocks)
+            {
+                valueDestroyBlocks = keyValuePair.Value;
+                nodeStart = keyValuePair.Key;
+            }
+        }
+
+        return nodeStart;
     }
 
     private void MoveBot(Vector2 directory)
@@ -184,6 +310,21 @@ public class AiBomber : MonoBehaviour
         AddNode(new Vector2(startNode.Position.x, startNode.Position.y - 1), startNode, nodesNeighbour);
 
         AddNode(new Vector2(startNode.Position.x, startNode.Position.y + 1), startNode, nodesNeighbour);
+
+        return nodesNeighbour;
+    }
+
+    private IEnumerable<Node> GetNeighbourNodeCanBeDestroy(Node startNode)
+    {
+        var nodesNeighbour = new List<Node>();
+
+        AddNodeIfCanBeDestroy(new Vector2(startNode.Position.x - 1, startNode.Position.y), startNode, nodesNeighbour);
+
+        AddNodeIfCanBeDestroy(new Vector2(startNode.Position.x + 1, startNode.Position.y), startNode, nodesNeighbour);
+
+        AddNodeIfCanBeDestroy(new Vector2(startNode.Position.x, startNode.Position.y - 1), startNode, nodesNeighbour);
+
+        AddNodeIfCanBeDestroy(new Vector2(startNode.Position.x, startNode.Position.y + 1), startNode, nodesNeighbour);
 
         return nodesNeighbour;
     }

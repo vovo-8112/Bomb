@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 129668257}
   - component: {fileID: 129668259}
   - component: {fileID: 129668258}
-  m_Layer: 8
+  m_Layer: 24
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4829,7 +4829,7 @@ GameObject:
   - component: {fileID: 1424210564}
   - component: {fileID: 191484756204486875}
   - component: {fileID: 790049479}
-  m_Layer: 8
+  m_Layer: 24
   m_Name: BombModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5379,7 +5379,7 @@ GameObject:
   - component: {fileID: 6612960976567670291}
   - component: {fileID: 3602927186660995193}
   - component: {fileID: 2022392919002386618}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10204,7 +10204,7 @@ GameObject:
   - component: {fileID: 1316115882144226172}
   - component: {fileID: 1636627649637237038}
   - component: {fileID: 1925661660140721155}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: SubSparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15096,7 +15096,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1068368290522235150}
   - component: {fileID: 963558870166918157}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15190,7 +15190,7 @@ GameObject:
   - component: {fileID: 9193486539243233966}
   - component: {fileID: 870253623629273074}
   - component: {fileID: 411482950412716890}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: SparksSideBlack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20064,7 +20064,7 @@ GameObject:
   - component: {fileID: 336142346421668986}
   - component: {fileID: 6619002426162132970}
   - component: {fileID: 8040579386875329549}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: PhysicsParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24890,7 +24890,7 @@ GameObject:
   - component: {fileID: 6766493151797142645}
   - component: {fileID: 7215085629183605239}
   - component: {fileID: 7588323056465164813}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: DirectedExplosionEast
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29784,7 +29784,7 @@ GameObject:
   - component: {fileID: 4521448810257938993}
   - component: {fileID: 44063753393092714}
   - component: {fileID: 3343564341321909354}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: Ripple
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34659,7 +34659,7 @@ GameObject:
   - component: {fileID: 1769523890547504820}
   - component: {fileID: 2392010797215430375}
   - component: {fileID: 7379853241165121539}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: SideParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39592,7 +39592,7 @@ GameObject:
   - component: {fileID: 5568498990063932900}
   - component: {fileID: 7951733540183925744}
   - component: {fileID: 2650935916083850147}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: SparksSide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44466,7 +44466,7 @@ GameObject:
   - component: {fileID: 8647865277550452444}
   - component: {fileID: 1969298201601384502}
   - component: {fileID: 3510968962445012446}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49340,7 +49340,7 @@ GameObject:
   - component: {fileID: 2968076142773323597}
   - component: {fileID: 4697025733370110561}
   - component: {fileID: 7977158219743385366}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: DirectedExplosionSouth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54234,7 +54234,7 @@ GameObject:
   - component: {fileID: 6176701279719368160}
   - component: {fileID: 6131967247711765647}
   - component: {fileID: 3744160221554360025}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: DirectedExplosionNorth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59127,7 +59127,7 @@ GameObject:
   - component: {fileID: 8083007992444053467}
   - component: {fileID: 2650802720539912283}
   - component: {fileID: 807380543718990161}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: SubSparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64019,7 +64019,7 @@ GameObject:
   - component: {fileID: 4345023094646296156}
   - component: {fileID: 2179189803545547030}
   - component: {fileID: 4797374175031637061}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: ExplodudesBombExplosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68911,7 +68911,7 @@ GameObject:
   - component: {fileID: 8035515135518931010}
   - component: {fileID: 2991669508899447488}
   - component: {fileID: 3112360840235191805}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: Twirl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73810,7 +73810,7 @@ GameObject:
   - component: {fileID: 2414005995903448446}
   - component: {fileID: 7139889421427011240}
   - component: {fileID: 4452897916208211937}
-  m_Layer: 13
+  m_Layer: 24
   m_Name: DeathFeedbacks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74597,7 +74597,7 @@ GameObject:
   - component: {fileID: 2808695073145564042}
   - component: {fileID: 2426693563848751277}
   - component: {fileID: 2164912749606363036}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: SubSparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79490,7 +79490,7 @@ GameObject:
   - component: {fileID: 6103381804612217049}
   - component: {fileID: 1585003165498054864}
   - component: {fileID: 9192242212750155804}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: DirectedExplosionWest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84384,7 +84384,7 @@ GameObject:
   - component: {fileID: 5524773033464413313}
   - component: {fileID: 4963943239240202708}
   - component: {fileID: 7483686382753510611}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: ForwardParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89209,7 +89209,7 @@ GameObject:
   - component: {fileID: 4856605646768607879}
   - component: {fileID: 5068908732309546584}
   - component: {fileID: 3905501819412596189}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: SubSparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94105,7 +94105,7 @@ GameObject:
   - component: {fileID: 8551075752333040339}
   - component: {fileID: 2512392962009614988}
   - component: {fileID: 4757752306808780751}
-  m_Layer: 8
+  m_Layer: 24
   m_Name: ExplodudesBomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94247,6 +94247,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: a4fd97fc3c4e02f46a2625670783c489, type: 2}
+    - target: {fileID: -6276608770679095193, guid: 0f79ce428d503024191003a42b10041e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 24
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 0f79ce428d503024191003a42b10041e,
         type: 3}
       propertyPath: m_RootOrder
@@ -94330,7 +94335,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: 0f79ce428d503024191003a42b10041e,
         type: 3}
       propertyPath: m_Layer
-      value: 8
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 262106836416695341, guid: 0f79ce428d503024191003a42b10041e,
         type: 3}
@@ -94346,6 +94351,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361964072794240434, guid: 0f79ce428d503024191003a42b10041e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 24
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f79ce428d503024191003a42b10041e, type: 3}

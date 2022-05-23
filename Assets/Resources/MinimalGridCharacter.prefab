@@ -158,7 +158,7 @@ MonoBehaviour:
   VelocityTransferMethod: 2
   ObstaclesLayerMask:
     serializedVersion: 2
-    m_Bits: 1057536
+    m_Bits: 26223360
   GroundedRaycastLength: 5
   MinimumGroundedDistance: 0.2
   ImpactFalloff: 5

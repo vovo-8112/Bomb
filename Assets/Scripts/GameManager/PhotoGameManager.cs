@@ -16,9 +16,14 @@ namespace GameManager
         private List<Transform> m_ListSpawnPosition;
 
         [SerializeField]
+        private GameObject m_LoadingPanel;
+
+        [SerializeField]
         private MapController m_MapController;
 
         private List<Player> m_Characters = new List<Player>();
+        private object invoke;
+        private GameObject player;
 
         private void Start()
         {
@@ -27,21 +32,32 @@ namespace GameManager
             SpawnPlayers();
         }
 
+        private void SpawnBot()
+        {
+            m_LoadingPanel.SetActive(false);
+
+            var bot = PhotonNetwork.Instantiate("AiMinimalGridCharacter", m_ListSpawnPosition[1].position, Quaternion.identity).GetComponent<AiBomber>();
+            bot.Target = player;
+        }
+
         private void SpawnPlayers()
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
             {
-                PhotonNetwork.Instantiate("MinimalGridCharacter", m_ListSpawnPosition[0].position, Quaternion.identity);
+                player = PhotonNetwork.Instantiate("MinimalGridCharacter", m_ListSpawnPosition[0].position, Quaternion.identity);
+                Invoke(nameof(SpawnBot), 6f);
+                m_LoadingPanel.SetActive(true);
             }
             else
             {
                 PhotonNetwork.Instantiate("MinimalGridCharacterSecond", m_ListSpawnPosition[1].position, Quaternion.identity);
+                m_LoadingPanel.SetActive(false);
+                CancelInvoke(nameof(SpawnBot));
             }
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
-            Debug.LogFormat("Player{0} entered room", newPlayer.NickName);
             AddPlayer(newPlayer);
 
             if (PhotonNetwork.IsMasterClient)

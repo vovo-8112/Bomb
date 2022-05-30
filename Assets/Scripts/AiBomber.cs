@@ -21,8 +21,7 @@ public class AiBomber : MonoBehaviour
     private readonly List<Node> CanMovePoints = new List<Node>();
     private readonly List<Node> WaitingNode = new List<Node>();
 
-    [SerializeField]
-    private GameObject Target;
+    public GameObject Target;
 
     [SerializeField]
     private LayerMask LayerMaskCantMove;

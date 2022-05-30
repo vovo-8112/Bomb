@@ -17,7 +17,7 @@ public class AiBomber : MonoBehaviour
 {
     public List<Vector2> AllBoard = new List<Vector2>();
 
-    public List<Vector2> PatchToTarget;
+    public List<Vector2> PatchToTarget = new List<Vector2>();
     private readonly List<Node> CanMovePoints = new List<Node>();
     private readonly List<Node> WaitingNode = new List<Node>();
 
@@ -46,6 +46,7 @@ public class AiBomber : MonoBehaviour
     private Vector2 PosSavePos = new Vector2(int.MinValue, int.MinValue);
 
     private List<Vector2> ExplodudesBombs;
+    private Vector2 movePosForDestroyPlayer;
 
     private void Awake()
     {
@@ -107,7 +108,9 @@ public class AiBomber : MonoBehaviour
         {
             yield return new WaitForSeconds(0.2f);
 
-            PatchToTarget = GetPathMove(new Vector2(Target.transform.position.x, Target.transform.position.z));
+            var movePos = new Vector2(Target.transform.position.x, Target.transform.position.z);
+
+            PatchToTarget = GetPathMove(movePos);
 
             DestroyBlocksLogic();
 
@@ -134,10 +137,31 @@ public class AiBomber : MonoBehaviour
 
     private void DestroyBlocksLogic()
     {
+        var movePos = new Vector2(Target.transform.position.x, Target.transform.position.z);
+        Vector2 targetPos = new Vector2(Mathf.Round(movePos.x), Mathf.Round(movePos.y));
+        Vector2 currentPos = new Vector2(Mathf.Round(transform.position.x), Mathf.Round(transform.position.z));
+
         if (State == Ai.MoveSavePos)
         {
             MoveSavePos();
             return;
+        }
+
+        if (PatchToTarget.Count != 0)
+        {
+            if (movePosForDestroyPlayer == currentPos)
+            {
+                SpawnBomb();
+                return;
+            }
+
+            movePosForDestroyPlayer = MovePosForDestroyPlayer(targetPos);
+
+            if (movePosForDestroyPlayer != new Vector2(int.MinValue, int.MinValue))
+            {
+                var path = GetPathMove(movePosForDestroyPlayer);
+                PatchToTarget = path;
+            }
         }
 
         if (PatchToTarget.Count == 0 && State != Ai.MoveSavePos)
@@ -152,13 +176,42 @@ public class AiBomber : MonoBehaviour
         }
     }
 
+    private Vector2 MovePosForDestroyPlayer(Vector2 targetPos)
+    {
+        if (PatchToTarget.Count == 0)
+            return new Vector2(int.MinValue, int.MinValue);
+
+        for (int i = PatchToTarget.Count - 1; i > 0; i--)
+        {
+            var vector2 = PatchToTarget[i];
+
+            var listSpawn = AiHelper.AddRangeSpawnBomb(vector2);
+
+            foreach (var variable in listSpawn)
+            {
+                if (variable == targetPos)
+                {
+                    return vector2;
+                }
+            }
+        }
+
+        return new Vector2(int.MinValue, int.MinValue);
+    }
+
     private void MoveSavePos()
     {
         var transformPosition = transform.position;
 
         Vector2 startPos = new Vector2(Mathf.Round(transformPosition.x), Mathf.Round(transformPosition.z));
 
-        ListAnSavePos.Add(startPos);
+        foreach (var vector2 in ExplodudesBombs)
+        {
+            if (startPos == vector2)
+            {
+                
+            }
+        }
 
         if (PosSavePos == new Vector2(int.MinValue, int.MinValue))
         {

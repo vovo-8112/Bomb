@@ -18,6 +18,9 @@ namespace GameManager
         [SerializeField]
         private MapController m_MapController;
 
+        [SerializeField]
+        private GameObject LoadingPanel;
+
         private List<Player> m_Characters = new List<Player>();
 
         private void Start()
@@ -36,6 +39,7 @@ namespace GameManager
             else
             {
                 PhotonNetwork.Instantiate("MinimalGridCharacterSecond", m_ListSpawnPosition[1].position, Quaternion.identity);
+                LoadingPanel.SetActive(false);
             }
         }
 
@@ -47,6 +51,11 @@ namespace GameManager
             if (PhotonNetwork.IsMasterClient)
             {
                 m_MapController.SendSyncDate(newPlayer);
+            }
+            
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+            {
+                LoadingPanel.SetActive(false);
             }
         }
 

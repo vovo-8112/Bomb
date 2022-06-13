@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4586608631069042}
-  - component: {fileID: 3837260165963242328}
+  - component: {fileID: 1468506962904800430}
   m_Layer: 10
   m_Name: Model
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   m_Father: {fileID: 4161469876269846}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3837260165963242328
+--- !u!114 &1468506962904800430
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -68,8 +68,8 @@ GameObject:
   - component: {fileID: 114510539804127886}
   - component: {fileID: 114072752581488692}
   - component: {fileID: 114710286730267884}
-  - component: {fileID: 3270975976620157058}
   - component: {fileID: 4272955916491148982}
+  - component: {fileID: 1002168423446280718}
   m_Layer: 10
   m_Name: MinimalGridCharacterSecond
   m_TagString: Player
@@ -158,7 +158,7 @@ MonoBehaviour:
   VelocityTransferMethod: 2
   ObstaclesLayerMask:
     serializedVersion: 2
-    m_Bits: 1057536
+    m_Bits: 26223360
   GroundedRaycastLength: 5
   MinimumGroundedDistance: 0.2
   ImpactFalloff: 5
@@ -309,7 +309,7 @@ MonoBehaviour:
   RotationSpeedResetSpeed: 2
   ForcedRotation: 0
   ForcedRotationDirection: {x: 0, y: 0, z: 0}
-  _photonView: {fileID: 3270975976620157058}
+  _photonView: {fileID: 1002168423446280718}
 --- !u!114 &114974738558557600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -403,7 +403,7 @@ MonoBehaviour:
   AbilityPermitted: 1
   BlockingMovementStates: 
   BlockingConditionStates: 
-  m_PhotonView: {fileID: 3270975976620157058}
+  m_PhotonView: {fileID: 1002168423446280718}
   InitialWeapon: {fileID: 506580380526986187, guid: 0e7e48dfefd946e4da0f223c43dc16fd,
     type: 3}
   CanPickupWeapons: 1
@@ -460,7 +460,7 @@ MonoBehaviour:
   UseMaterialPropertyBlocks: 0
   MasterHealth: {fileID: 0}
   DisableAnimatorLogs: 1
-  _photonView: {fileID: 3270975976620157058}
+  _photonView: {fileID: 0}
 --- !u!114 &114710286730267884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -489,30 +489,6 @@ MonoBehaviour:
   AutoPickItems: []
   AutoEquipWeaponOnStart: {fileID: 0}
   CharacterHandleWeapon: {fileID: 0}
---- !u!114 &3270975976620157058
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1167761570092420}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 1
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents:
-  - {fileID: 4272955916491148982}
-  - {fileID: 3837260165963242328}
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!114 &4272955916491148982
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -529,6 +505,30 @@ MonoBehaviour:
   m_SynchronizeRotation: 0
   m_SynchronizeScale: 0
   m_UseLocal: 0
+--- !u!114 &1002168423446280718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1167761570092420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 4272955916491148982}
+  - {fileID: 1468506962904800430}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1749803945586204
 GameObject:
   m_ObjectHideFlags: 0
@@ -670,7 +670,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e2db29bf7bb2e714daadd56ba3086c56, type: 2}
+  - {fileID: 2100000, guid: f4954b63f6f6a774ebcab7ad39d97058, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -716,7 +716,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1839541656858402}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4586608631069042}

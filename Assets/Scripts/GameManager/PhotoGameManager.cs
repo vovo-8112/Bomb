@@ -24,6 +24,7 @@ namespace GameManager
         private List<Player> m_Characters = new List<Player>();
         private object invoke;
         private GameObject player;
+        private AiBomber bot;
 
         private void Start()
         {
@@ -36,7 +37,7 @@ namespace GameManager
         {
             m_LoadingPanel.SetActive(false);
 
-            var bot = PhotonNetwork.Instantiate("AiMinimalGridCharacter", m_ListSpawnPosition[1].position, Quaternion.identity).GetComponent<AiBomber>();
+            bot = PhotonNetwork.Instantiate("AiMinimalGridCharacter", m_ListSpawnPosition[1].position, Quaternion.identity).GetComponent<AiBomber>();
             bot.Target = player;
         }
 
@@ -53,6 +54,11 @@ namespace GameManager
                 PhotonNetwork.Instantiate("MinimalGridCharacterSecond", m_ListSpawnPosition[1].position, Quaternion.identity);
                 m_LoadingPanel.SetActive(false);
                 CancelInvoke(nameof(SpawnBot));
+
+                if (bot != null)
+                {
+                    Destroy(bot.gameObject);
+                }
             }
         }
 
@@ -63,6 +69,17 @@ namespace GameManager
             if (PhotonNetwork.IsMasterClient)
             {
                 m_MapController.SendSyncDate(newPlayer);
+            }
+
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+            {
+                m_LoadingPanel.SetActive(false);
+                CancelInvoke(nameof(SpawnBot));
+
+                if (bot != null)
+                {
+                    Destroy(bot.gameObject);
+                }
             }
         }
 

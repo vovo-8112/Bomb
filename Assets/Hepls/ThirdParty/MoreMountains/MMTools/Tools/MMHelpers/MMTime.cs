@@ -3,22 +3,10 @@ using System.Collections;
 using System;
 
 namespace MoreMountains.Tools
-{	
-	/// <summary>
-	/// Time helpers
-	/// </summary>
+{
 
 	public class MMTime : MonoBehaviour 
 	{
-        /// <summary>
-        /// Turns a float (expressed in seconds) into a string displaying hours, minutes, seconds and hundredths optionnally
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="displayHours"></param>
-        /// <param name="displayMinutes"></param>
-        /// <param name="displaySeconds"></param>
-        /// <param name="displayHundredths"></param>
-        /// <returns></returns>
         public static string FloatToTimeString(float t, bool displayHours = false, bool displayMinutes = true, bool displaySeconds = true, bool displayMilliseconds = false)
         {
             int intTime = (int)t;
@@ -54,12 +42,6 @@ namespace MoreMountains.Tools
             return null;
 
         }
-
-        /// <summary>
-        /// Takes a hh:mm:ss:SSS string and turns it into a float value expressed in seconds
-        /// </summary>
-        /// <returns>a number of seconds.</returns>
-        /// <param name="timeInStringNotation">Time in string notation to decode.</param>
         public static float TimeStringToFloat(string timeInStringNotation)
 	    {
 			if (timeInStringNotation.Length!=12)

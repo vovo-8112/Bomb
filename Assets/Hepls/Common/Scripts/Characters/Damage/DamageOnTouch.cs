@@ -7,78 +7,54 @@ using MoreMountains.Feedbacks;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// Add this component to an object and it will cause damage to objects that collide with it. 
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/Damage/DamageOnTouch")]
     public class DamageOnTouch : MonoBehaviour
     {
-        /// the possible ways to add knockback : noKnockback, which won't do nothing, set force, or add force
         public enum KnockbackStyles { NoKnockback, AddForce }
-        /// the possible knockback directions
         public enum KnockbackDirections { BasedOnOwnerPosition, BasedOnSpeed }
 
         [Header("Targets")]
 
         [MMInformation("This component will make your object cause damage to objects that collide with it. Here you can define what layers will be affected by the damage (for a standard enemy, choose Player), how much damage to give, and how much force should be applied to the object that gets the damage on hit. You can also specify how long the post-hit invincibility should last (in seconds).", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
-        // the layers that will be damaged by this object
         [Tooltip("the layers that will be damaged by this object")]
         public LayerMask TargetLayerMask;
 
         [Header("Damage Caused")]
-
-        /// The amount of health to remove from the player's health
         [Tooltip("The amount of health to remove from the player's health")]
         public int DamageCaused = 10;
-        /// the type of knockback to apply when causing damage
         [Tooltip("the type of knockback to apply when causing damage")]
         public KnockbackStyles DamageCausedKnockbackType = KnockbackStyles.AddForce;
-        /// The direction to apply the knockback 
         [Tooltip("The direction to apply the knockback ")]
         public KnockbackDirections DamageCausedKnockbackDirection;
-        /// The force to apply to the object that gets damaged
         [Tooltip("The force to apply to the object that gets damaged")]
         public Vector3 DamageCausedKnockbackForce = new Vector3(10, 10, 0);
-        /// The duration of the invincibility frames after the hit (in seconds)
         [Tooltip("The duration of the invincibility frames after the hit (in seconds)")]
         public float InvincibilityDuration = 0.5f;
 
         [Header("Damage Taken")]
 
         [MMInformation("After having applied the damage to whatever it collided with, you can have this object hurt itself. A bullet will explode after hitting a wall for example. Here you can define how much damage it'll take every time it hits something, or only when hitting something that's damageable, or non damageable. Note that this object will need a Health component too for this to be useful.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
-        /// The amount of damage taken every time, whether what we collide with is damageable or not
         [Tooltip("The amount of damage taken every time, whether what we collide with is damageable or not")]
         public int DamageTakenEveryTime = 0;
-        /// The amount of damage taken when colliding with a damageable object
         [Tooltip("The amount of damage taken when colliding with a damageable object")]
         public int DamageTakenDamageable = 0;
-        /// The amount of damage taken when colliding with something that is not damageable
         [Tooltip("The amount of damage taken when colliding with something that is not damageable")]
         public int DamageTakenNonDamageable = 0;
-        /// the type of knockback to apply when taking damage
         [Tooltip("the type of knockback to apply when taking damage")]
         public KnockbackStyles DamageTakenKnockbackType = KnockbackStyles.NoKnockback;
-        /// The force to apply to the object that gets damaged
         [Tooltip("The force to apply to the object that gets damaged")]
         public Vector3 DamageTakenKnockbackForce = Vector3.zero;
-        /// The duration of the invincibility frames after the hit (in seconds)
         [Tooltip("The duration of the invincibility frames after the hit (in seconds)")]
         public float DamageTakenInvincibilityDuration = 0.5f;
 
         [Header("Feedbacks")]
-        /// the feedback to play when hitting a Damageable
         [Tooltip("the feedback to play when hitting a Damageable")]
         public MMFeedbacks HitDamageableFeedback;
-        /// the feedback to play when hitting a non Damageable
         [Tooltip("the feedback to play when hitting a non Damageable")]
         public MMFeedbacks HitNonDamageableFeedback;
-
-        /// the owner of the DamageOnTouch zone
         [MMReadOnly]
         [Tooltip("the owner of the DamageOnTouch zone")]
         public GameObject Owner;
-
-        // storage		
         protected Vector3 _lastPosition, _lastDamagePosition, _velocity, _knockbackForce, _damageDirection;
         protected float _startTime = 0f;
         protected Health _colliderHealth;
@@ -98,10 +74,6 @@ namespace MoreMountains.TopDownEngine
         protected Transform _gizmoTransform;
         protected bool _twoD = false;
         protected bool _initializedFeedbacks = false;
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
         protected virtual void Awake()
         {
             InitializeIgnoreList();
@@ -150,28 +122,16 @@ namespace MoreMountains.TopDownEngine
         {
             _gizmoOffset = newOffset;
         }
-
-        /// <summary>
-        /// OnEnable we set the start time to the current timestamp
-        /// </summary>
         protected virtual void OnEnable()
         {
             _startTime = Time.time;
             _lastPosition = this.transform.position;
             _lastDamagePosition = this.transform.position;
         }
-
-        /// <summary>
-        /// During last update, we store the position and velocity of the object
-        /// </summary>
         protected virtual void Update()
         {
             ComputeVelocity();
         }
-
-        /// <summary>
-        /// Initializes the _ignoredGameObjects list if needed
-        /// </summary>
         protected virtual void InitializeIgnoreList()
         {
             if (_ignoredGameObjects == null)
@@ -179,21 +139,11 @@ namespace MoreMountains.TopDownEngine
                 _ignoredGameObjects = new List<GameObject>();
             }
         }
-
-        /// <summary>
-        /// Adds the gameobject set in parameters to the ignore list
-        /// </summary>
-        /// <param name="newIgnoredGameObject">New ignored game object.</param>
         public virtual void IgnoreGameObject(GameObject newIgnoredGameObject)
         {
             InitializeIgnoreList();
             _ignoredGameObjects.Add(newIgnoredGameObject);
         }
-
-        /// <summary>
-        /// Removes the object set in parameters from the ignore list
-        /// </summary>
-        /// <param name="ignoredGameObject">Ignored game object.</param>
         public virtual void StopIgnoringObject(GameObject ignoredGameObject)
         {
             if (_ignoredGameObjects != null)
@@ -201,19 +151,11 @@ namespace MoreMountains.TopDownEngine
                 _ignoredGameObjects.Remove(ignoredGameObject);    
             }
         }
-
-        /// <summary>
-        /// Clears the ignore list.
-        /// </summary>
         public virtual void ClearIgnoreList()
         {
             InitializeIgnoreList();
             _ignoredGameObjects.Clear();
         }
-
-        /// <summary>
-        /// Computes the velocity based on the object's last position
-        /// </summary>
         protected virtual void ComputeVelocity()
         {
             if (Time.deltaTime != 0f)
@@ -229,75 +171,42 @@ namespace MoreMountains.TopDownEngine
                 _lastPosition = this.transform.position;
             }            
         }
-
-        /// <summary>
-        /// When a collision with the player is triggered, we give damage to the player and knock it back
-        /// </summary>
-        /// <param name="collider">what's colliding with the object.</param>
         public virtual void OnTriggerStay2D(Collider2D collider)
         {
             Colliding(collider.gameObject);
         }
-
-        /// <summary>
-        /// On trigger enter 2D, we call our colliding endpoint
-        /// </summary>
-        /// <param name="collider"></param>S
         public virtual void OnTriggerEnter2D(Collider2D collider)
         {
             Colliding(collider.gameObject);
         }
-
-        /// <summary>
-        /// On trigger stay, we call our colliding endpoint
-        /// </summary>
-        /// <param name="collider"></param>
         public virtual void OnTriggerStay(Collider collider)
         {
             Colliding(collider.gameObject);
         }
-
-        /// <summary>
-        /// On trigger enter, we call our colliding endpoint
-        /// </summary>
-        /// <param name="collider"></param>
         public virtual void OnTriggerEnter(Collider collider)
         {
             Colliding(collider.gameObject);
         }
-
-        /// <summary>
-        /// When colliding, we apply damage
-        /// </summary>
-        /// <param name="collider"></param>
         protected virtual void Colliding(GameObject collider)
         {
             if (!this.isActiveAndEnabled)
             {
                 return;
             }
-
-            // if the object we're colliding with is part of our ignore list, we do nothing and exit
             if (_ignoredGameObjects.Contains(collider))
             {
                 return;
             }
-
-            // if what we're colliding with isn't part of the target layers, we do nothing and exit
             if (!MMLayers.LayerInLayerMask(collider.layer, TargetLayerMask))
             {
 
                 return;
             }
-
-            // if we're on our first frame, we don't apply damage
             if (Time.time == 0f)
             {
                 return;
             }
             _colliderHealth = collider.gameObject.MMGetComponentNoAlloc<Health>();
-
-            // if what we're colliding with is damageable
             if (_colliderHealth != null)
             {
                 if (_colliderHealth.CurrentHealth > 0)
@@ -305,21 +214,13 @@ namespace MoreMountains.TopDownEngine
                     OnCollideWithDamageable(_colliderHealth);
                 }
             }
-
-            // if what we're colliding with can't be damaged
             else
             {
                 OnCollideWithNonDamageable();
             }
         }
-
-        /// <summary>
-        /// Describes what happens when colliding with a damageable object
-        /// </summary>
-        /// <param name="health">Health.</param>
         protected virtual void OnCollideWithDamageable(Health health)
         {
-            // if what we're colliding with is a TopDownController, we apply a knockback force
             _colliderTopDownController = health.gameObject.MMGetComponentNoAlloc<TopDownController>();
             _colliderRigidBody = health.gameObject.MMGetComponentNoAlloc<Rigidbody>();
 
@@ -327,7 +228,7 @@ namespace MoreMountains.TopDownEngine
             {
                 _knockbackForce = DamageCausedKnockbackForce;
 
-                if (_twoD) // if we're in 2D
+                if (_twoD)
                 {
                     if (DamageCausedKnockbackDirection == KnockbackDirections.BasedOnSpeed)
                     {
@@ -341,7 +242,7 @@ namespace MoreMountains.TopDownEngine
                         _knockbackForce = Vector3.RotateTowards(DamageCausedKnockbackForce, relativePosition.normalized, 10f, 0f);
                     }    
                 }
-                else // if we're in 3D
+                else
                 {
                     if (DamageCausedKnockbackDirection == KnockbackDirections.BasedOnSpeed)
                     {
@@ -365,18 +266,12 @@ namespace MoreMountains.TopDownEngine
             }
 
             HitDamageableFeedback?.PlayFeedbacks(this.transform.position);
-            
-            // we apply the damage to the thing we've collided with
             _colliderHealth.Damage(DamageCaused, gameObject, InvincibilityDuration, InvincibilityDuration, _damageDirection);
             if (DamageTakenEveryTime + DamageTakenDamageable > 0)
             {
                 SelfDamage(DamageTakenEveryTime + DamageTakenDamageable);
             }
         }
-
-        /// <summary>
-        /// Describes what happens when colliding with a non damageable object
-        /// </summary>
         protected virtual void OnCollideWithNonDamageable()
         {
             if (DamageTakenEveryTime + DamageTakenNonDamageable > 0)
@@ -386,11 +281,6 @@ namespace MoreMountains.TopDownEngine
 
             HitNonDamageableFeedback?.PlayFeedbacks(this.transform.position);
         }
-
-        /// <summary>
-        /// Applies damage to itself
-        /// </summary>
-        /// <param name="damage">Damage.</param>
         protected virtual void SelfDamage(int damage)
         {
             if (_health != null)
@@ -398,8 +288,6 @@ namespace MoreMountains.TopDownEngine
                 _damageDirection = Vector3.up;
                 _health.Damage(damage, gameObject, 0f, DamageTakenInvincibilityDuration, _damageDirection);
             }
-
-            // if what we're colliding with is a TopDownController, we apply a knockback force
             if (_topDownController != null)
             {
                 Vector2 totalVelocity = _colliderTopDownController.Speed + _velocity;
@@ -411,10 +299,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// draws a cube or sphere around the damage area
-        /// </summary>
         protected virtual void OnDrawGizmos()
         {
             Gizmos.color = _gizmosColor;

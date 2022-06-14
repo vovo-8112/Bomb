@@ -5,10 +5,7 @@ using System;
 using System.Reflection;
 
 namespace MoreMountains.Tools
-{	
-	/// <summary>
-	/// Various helpers
-	/// </summary>
+{
 
 	public static class MMHelpers 
 	{

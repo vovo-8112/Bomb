@@ -4,14 +4,8 @@ using System.Collections.Generic;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Color helpers
-    /// </summary>
     public static class MMColors
     {
-        // via https://gist.github.com/LotteMakesStuff/f7ce43f11e545a151b95b5e87f76304c
-        // NOTE: The follwing color names come from the CSS3 specification, Section 4.3 Extended Color Keywords
-        // http://www.w3.org/TR/css3-color/#svg-color
 
         public static readonly Color ReunoYellow = new Color32(255, 196, 0, 255);
         public static readonly Color BestRed = new Color32(255, 24, 0, 255);
@@ -309,14 +303,6 @@ namespace MoreMountains.Tools
             }
             return White;
         }
-
-        /// <summary>
-        /// Returns a random color between the two min/max specified
-        /// </summary>
-        /// <param name="color"></param>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
         public static Color MMRandomColor(this Color color, Color min, Color max)
         {
             Color c = new Color()
@@ -329,15 +315,6 @@ namespace MoreMountains.Tools
 
             return c;
         }
-
-
-        /// <summary>
-        /// Tint : Uses HSV color conversions, keeps the original values, multiplies alpha
-        /// Multiply : The whole color, including alpha, is multiplied over the original 
-        /// Replace : completely replaces the original with the target color
-        /// ReplaceKeepAlpha : color is replaced but the original alpha channel is ignored
-        /// Add : target color gets added (including its alpha)
-        /// </summary>
         public enum ColoringMode { Tint, Multiply, Replace, ReplaceKeepAlpha, Add }
 
         public static Color MMColorize(this Color originalColor, Color targetColor, ColoringMode coloringMode, float lerpAmount = 1.0f)

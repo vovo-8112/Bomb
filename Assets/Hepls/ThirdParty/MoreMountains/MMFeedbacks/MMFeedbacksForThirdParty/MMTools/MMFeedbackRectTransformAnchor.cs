@@ -3,54 +3,41 @@ using UnityEngine;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// This feedback lets you control the min and max anchors of a RectTransform over time. That's the normalized position in the parent RectTransform that the lower left and upper right corners are anchored to.
-    /// </summary>
     [AddComponentMenu("")]
     [FeedbackHelp("This feedback lets you control the min and max anchors of a RectTransform over time. That's the normalized position in the parent RectTransform that the lower left and upper right corners are anchored to.")]
     [FeedbackPath("UI/RectTransform Anchor")]
     public class MMFeedbackRectTransformAnchor : MMFeedbackBase
     {
-        /// sets the inspector color for this feedback
 #if UNITY_EDITOR
         public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.UIColor; } }
 #endif
 
         [Header("Target")]
-        /// the target RectTransform to control
         [Tooltip("the target RectTransform to control")]
         public RectTransform TargetRectTransform;
 
         [Header("Anchor Min")]
-        /// whether or not to modify the min anchor
         [Tooltip("whether or not to modify the min anchor")]
         public bool ModifyAnchorMin = true;
-        /// the curve to animate the min anchor on
         [Tooltip("the curve to animate the min anchor on")]
         [MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime)]
         public MMTweenType AnchorMinCurve = new MMTweenType(new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1)));
-        /// the value to remap the min anchor curve's 0 on
         [Tooltip("the value to remap the min anchor curve's 0 on")]
         [MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime)]
         public Vector2 AnchorMinRemapZero = Vector2.zero;
-        /// the value to remap the min anchor curve's 1 on
         [Tooltip("the value to remap the min anchor curve's 1 on")]
         [MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime, (int)MMFeedbackBase.Modes.Instant)]
         public Vector2 AnchorMinRemapOne = Vector2.one;
         
         [Header("Anchor Max")]
-        /// whether or not to modify the max anchor
         [Tooltip("whether or not to modify the max anchor")]
         public bool ModifyAnchorMax = true;
-        /// the curve to animate the max anchor on
         [Tooltip("the curve to animate the max anchor on")]
         [MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime)]
         public MMTweenType AnchorMaxCurve = new MMTweenType(new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1)));
-        /// the value to remap the max anchor curve's 0 on
         [Tooltip("the value to remap the max anchor curve's 0 on")]
         [MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime)]
         public Vector2 AnchorMaxRemapZero = Vector2.zero;
-        /// the value to remap the max anchor curve's 1 on
         [Tooltip("the value to remap the max anchor curve's 1 on")]
         [MMFEnumCondition("Mode", (int)MMFeedbackBase.Modes.OverTime, (int)MMFeedbackBase.Modes.Instant)]
         public Vector2 AnchorMaxRemapOne = Vector2.one;

@@ -5,9 +5,6 @@ using UnityEngine.Audio;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// This feedback will let you transition to a target AudioMixer Snapshot over a specified time
-    /// </summary>
     [AddComponentMenu("")]
     [FeedbackHelp("This feedback will let you transition to a target AudioMixer Snapshot over a specified time")]
     [FeedbackPath("Audio/AudioMixer Snapshot Transition")]
@@ -18,21 +15,12 @@ namespace MoreMountains.Feedbacks
         #endif
         
         [Header("AudioMixer Snapshot")]
-        /// the target audio mixer snapshot we want to transition to 
         [Tooltip("the target audio mixer snapshot we want to transition to")]
         public AudioMixerSnapshot TargetSnapshot;
-        /// the audio mixer snapshot we want to transition from, optional, only needed if you plan to play this feedback in reverse 
         [Tooltip("the audio mixer snapshot we want to transition from, optional, only needed if you plan to play this feedback in reverse")]
         public AudioMixerSnapshot OriginalSnapshot;
-        /// the duration, in seconds, over which to transition to the selected snapshot
         [Tooltip("the duration, in seconds, over which to transition to the selected snapshot")]
         public float TransitionDuration = 1f;
-        
-        /// <summary>
-        /// On play we transition to the selected snapshot
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             if (!Active)

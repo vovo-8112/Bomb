@@ -7,26 +7,11 @@ namespace MoreMountains.Tools
 {
     public class MMGridGenerator
     {
-        /// <summary>
-        /// Prepares the grid array for use in the generate methods
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
         public static int[,] PrepareGrid(ref int width, ref int height)
         {
             int[,] grid = new int[width, height];
             return grid;
         }
-        
-        /// <summary>
-        /// Carves or adds to the grid
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
         public static bool SetGridCoordinate(int[,] grid, int x, int y, int value)
         {
             if (
@@ -44,14 +29,6 @@ namespace MoreMountains.Tools
                 return false;
             }
         }
-
-        /// <summary>
-        /// Converts a tilemap's contents into a grid
-        /// </summary>
-        /// <param name="tilemap"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
         public static int[,] TilemapToGrid(Tilemap tilemap, int width, int height)
         {
             if(tilemap == null)
@@ -76,13 +53,6 @@ namespace MoreMountains.Tools
             }
             return grid;
         }
-
-        /// <summary>
-        /// Outputs the contents of a grid
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
         public static void DebugGrid(int[,] grid, int width, int height)
         {
             string output = "";
@@ -101,15 +71,6 @@ namespace MoreMountains.Tools
             }
             Debug.Log(output);
         }
-        
-        /// <summary>
-        /// Returns the int value at the specified coordinate on a grid
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="errorValue"></param>
-        /// <returns></returns>
         public static int GetValueAtGridCoordinate(int[,] grid, int x, int y, int errorValue)
         {
             if (
@@ -126,12 +87,6 @@ namespace MoreMountains.Tools
                 return errorValue;
             }
         }
-
-        /// <summary>
-        /// Inverts the contents of a grid (1 becomes 0, 0 becomes 1)
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <returns></returns>
         public static int[,] InvertGrid(int[,] grid)
         {
             for (int i = 0; i <= grid.GetUpperBound(0); i++)
@@ -144,12 +99,6 @@ namespace MoreMountains.Tools
 
             return grid;
         }
-        
-        /// <summary>
-        /// Smoothens a grid to get rid of spikes / isolated points
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <returns></returns>
         public static int[,] SmoothenGrid(int[,] grid) 
         {
             int width = grid.GetUpperBound(0);
@@ -173,14 +122,6 @@ namespace MoreMountains.Tools
             }
             return grid;
         }
-        
-        
-        /// <summary>
-        /// Carves "safe spots" with 0s into the specfied grid
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <param name="layer"></param>
-        /// <returns></returns>
         public static int[,] ApplySafeSpots(int[,] grid, List<MMTilemapGeneratorLayer.MMTilemapGeneratorLayerSafeSpot> safeSpots)
         {
             foreach (MMTilemapGeneratorLayer.MMTilemapGeneratorLayerSafeSpot safeSpot in safeSpots)
@@ -200,16 +141,6 @@ namespace MoreMountains.Tools
             }
             return grid;
         }
-
-        /// <summary>
-        /// Adds bounds (walls made of 1) to a grid, on the selected sides
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <param name="top"></param>
-        /// <param name="bottom"></param>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
         public static int[,] BindGrid(int[,] grid, bool top, bool bottom, bool left, bool right)
         {
             int width = grid.GetUpperBound(0);
@@ -250,14 +181,6 @@ namespace MoreMountains.Tools
 
             return grid;
         }
-        
-        /// <summary>
-        /// Returns the amount of adjacent walls for a specific coordinate
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
         public static int GetAdjacentWallsCount(int[,] grid, int x, int y) 
         {
             int width = grid.GetUpperBound(0);

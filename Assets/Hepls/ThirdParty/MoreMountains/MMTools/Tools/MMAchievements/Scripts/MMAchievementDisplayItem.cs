@@ -5,9 +5,6 @@ using MoreMountains.Tools;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// This class is used to display an achievement. Add it to a prefab containing all the required elements listed below.
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/Achievements/MMAchievementDisplayItem")]
     public class MMAchievementDisplayItem : MonoBehaviour 
 	{		

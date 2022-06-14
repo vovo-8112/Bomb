@@ -90,18 +90,18 @@ Shader "MoreMountains/MMToon"
 			float2 uv_Diffuse = i.uv_texcoord * _Diffuse_ST.xy + _Diffuse_ST.zw;
 			float3 ase_worldNormal = WorldNormalVector( i, float3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
-			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
+			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560
 			float3 ase_worldlightDir = 0;
-			#else //aseld
+			#else
 			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
-			#endif //aseld
+			#endif
 			float dotResult3 = dot( ase_worldNormal , ase_worldlightDir );
 			float2 temp_cast_1 = (saturate( (dotResult3*0.5 + 0.5) )).xx;
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
 			float4 ase_lightColor = 0;
-			#else //aselc
+			#else
 			float4 ase_lightColor = _LightColor0;
-			#endif //aselc
+			#endif
 			UnityGI gi11 = gi;
 			float3 diffNorm11 = ase_worldNormal;
 			gi11 = UnityGI_Base( data, 1, diffNorm11 );

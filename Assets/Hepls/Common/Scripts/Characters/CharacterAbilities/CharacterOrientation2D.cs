@@ -5,67 +5,47 @@ using MoreMountains.Tools;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// Add this ability to a character and it'll rotate or flip to face the direction of movement or the weapon's, or both, or none
-    /// Only add this ability to a 2D character
-    /// </summary>
     [MMHiddenProperties("AbilityStartFeedbacks", "AbilityStopFeedbacks")]
     [AddComponentMenu("TopDown Engine/Character/Abilities/Character Orientation 2D")]
     public class CharacterOrientation2D : CharacterAbility
     {
-        /// the possible facing modes
         public enum FacingModes { None, MovementDirection, WeaponDirection, Both }
-        /// the facing mode for this character
         public FacingModes FacingMode = FacingModes.None;
         
         [MMInformation("You can also decide if the character must automatically flip when going backwards or not. Additionnally, if you're not using sprites, you can define here how the character's model's localscale will be affected by flipping. By default it flips on the x axis, but you can change that to fit your model.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
 
         [Header("Horizontal Flip")]
-
-        /// whether we should flip the model's scale when the character changes direction or not		
         [Tooltip("whether we should flip the model's scale when the character changes direction or not	")]
         public bool ModelShouldFlip = false;
-        /// the scale value to apply to the model when facing left
         [MMCondition("ModelShouldFlip", true)]
         [Tooltip("the scale value to apply to the model when facing left")]
         public Vector3 ModelFlipValueLeft = new Vector3(-1, 1, 1);
-        /// the scale value to apply to the model when facing right
         [MMCondition("ModelShouldFlip", true)]
         [Tooltip("the scale value to apply to the model when facing right")]
         public Vector3 ModelFlipValueRight = new Vector3(1, 1, 1);
-        /// whether we should rotate the model on direction change or not		
         [Tooltip("whether we should rotate the model on direction change or not")]
         public bool ModelShouldRotate;
-        /// the rotation to apply to the model when it changes direction		
         [MMCondition("ModelShouldRotate", true)]
         [Tooltip("the rotation to apply to the model when it changes direction")]
         public Vector3 ModelRotationValueLeft = new Vector3(0f, 180f, 0f);
-        /// the rotation to apply to the model when it changes direction		
         [MMCondition("ModelShouldRotate", true)]
         [Tooltip("the rotation to apply to the model when it changes direction")]
         public Vector3 ModelRotationValueRight = new Vector3(0f, 0f, 0f);
-        /// the speed at which to rotate the model when changing direction, 0f means instant rotation		
         [MMCondition("ModelShouldRotate", true)]
         [Tooltip("the speed at which to rotate the model when changing direction, 0f means instant rotation	")]
         public float ModelRotationSpeed = 0f;
         
         [Header("Direction")]
-
-        /// true if the player is facing right
         [MMInformation("It's usually good practice to build all your characters facing right. If that's not the case of this character, select Left instead.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
         [Tooltip("true if the player is facing right")]
         public Character.FacingDirections InitialFacingDirection = Character.FacingDirections.East;
-        /// the threshold at which movement is considered
         [Tooltip("the threshold at which movement is considered")]
         public float AbsoluteThresholdMovement = 0.5f;
-        /// the threshold at which weapon gets considered
         [Tooltip("the threshold at which weapon gets considered")]
         public float AbsoluteThresholdWeapon = 0.5f;
-        /// the direction this character is currently facing
         [MMReadOnly]
         [Tooltip("the direction this character is currently facing")]
         public Character.FacingDirections CurrentFacingDirection = Character.FacingDirections.East;
-        /// whether or not this character is facing right
         [MMReadOnly]
         [Tooltip("whether or not this character is facing right")]
         public bool IsFacingRight = true;
@@ -93,19 +73,11 @@ namespace MoreMountains.TopDownEngine
         protected float _lastDirectionX;
         protected float _lastDirectionY;
         protected bool _initialized = false;
-
-        /// <summary>
-        /// On awake we init our facing direction and grab components
-        /// </summary>
         protected override void Awake()
         {
             base.Awake();
             _characterHandleWeapon = this.gameObject.GetComponentInParent<CharacterHandleWeapon>();
         }
-
-        /// <summary>
-        /// On Start we reset our CurrentDirection
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -148,10 +120,6 @@ namespace MoreMountains.TopDownEngine
                     break;
             }
         }
-
-        /// <summary>
-        /// On process ability, we flip to face the direction set in settings
-        /// </summary>
         public override void ProcessAbility()
         {
             base.ProcessAbility();
@@ -210,10 +178,6 @@ namespace MoreMountains.TopDownEngine
             _lastDirectionX = _horizontalDirection;
             _lastDirectionY = _verticalDirection;
         }
-
-        /// <summary>
-        /// Applies the current direction to the controller
-        /// </summary>
         protected virtual void ApplyCurrentDirection()
         {
             if (!_initialized)
@@ -237,10 +201,6 @@ namespace MoreMountains.TopDownEngine
                     break;
             }
         }
-        
-        /// <summary>
-        /// If the model should rotate, we modify its rotation 
-        /// </summary>
         protected virtual void ApplyModelRotation()
         {
             if (!ModelShouldRotate)
@@ -257,13 +217,8 @@ namespace MoreMountains.TopDownEngine
                 _character.CharacterModel.transform.localEulerAngles = _targetModelRotation;
             }
         }
-
-        /// <summary>
-        /// Flips the object to face direction
-        /// </summary>
         protected virtual void FlipToFaceMovementDirection()
         {
-            // if we're not supposed to face our direction, we do nothing and exit
 			if ((FacingMode != FacingModes.MovementDirection) && (FacingMode != FacingModes.Both)) { return; }
             
             if (_controller.CurrentDirection.normalized.magnitude >= AbsoluteThresholdMovement)
@@ -280,17 +235,12 @@ namespace MoreMountains.TopDownEngine
                 }
             }                
         }
-
-        /// <summary>
-        /// Flips the character to face the current weapon direction
-        /// </summary>
         protected virtual void FlipToFaceWeaponDirection()
         {
             if (_characterHandleWeapon == null)
             {
                 return;
             }
-            // if we're not supposed to face our direction, we do nothing and exit
             if ((FacingMode != FacingModes.WeaponDirection) && (FacingMode != FacingModes.Both)) { return; }
             
             if (_characterHandleWeapon.WeaponAimComponent != null)
@@ -310,11 +260,6 @@ namespace MoreMountains.TopDownEngine
                 _verticalDirection = _characterHandleWeapon.WeaponAimComponent.CurrentAimAbsolute.normalized.y;
             }            
         }
-        
-        /// <summary>
-        /// Defines the CurrentFacingDirection
-        /// </summary>
-        /// <param name="direction"></param>
         public virtual void Face(Character.FacingDirections direction)
         {
             CurrentFacingDirection = direction;
@@ -324,10 +269,6 @@ namespace MoreMountains.TopDownEngine
                 FaceDirection(-1);
             }
         }
-
-        /// <summary>
-		/// Flips the character and its dependencies (jetpack for example) horizontally
-		/// </summary>
 		public virtual void FaceDirection(int direction)
         {
             if (ModelShouldFlip)
@@ -343,11 +284,6 @@ namespace MoreMountains.TopDownEngine
             _direction = direction;
             IsFacingRight = _direction == 1;
         }
-
-        /// <summary>
-        /// Rotates the model in the specified direction
-        /// </summary>
-        /// <param name="direction"></param>
         protected virtual void RotateModel(int direction)
         {
             if (_character.CharacterModel != null)
@@ -358,10 +294,6 @@ namespace MoreMountains.TopDownEngine
                 _targetModelRotation.z = _targetModelRotation.z % 360;
             }
         }
-        
-        /// <summary>
-        /// Flips the model only, no impact on weapons or attachments
-        /// </summary>
         public virtual void FlipModel(int direction)
         {
             if (_character.CharacterModel != null)
@@ -373,10 +305,6 @@ namespace MoreMountains.TopDownEngine
                 _spriteRenderer.flipX = (direction == -1);
             }
         }
-
-        /// <summary>
-        /// Sends a flip event on all other abilities
-        /// </summary>
         protected virtual void FlipAbilities()
         {
             if ((_directionLastFrame != 0) && (_directionLastFrame != _direction))
@@ -387,10 +315,6 @@ namespace MoreMountains.TopDownEngine
 
         protected Vector3 _positionLastFrame;
         protected Vector3 _newSpeed;
-
-        /// <summary>
-        /// Computes the relative speeds
-        /// </summary>
         protected virtual void ComputeRelativeSpeeds()
         {
             if (Time.deltaTime != 0f)
@@ -399,10 +323,6 @@ namespace MoreMountains.TopDownEngine
             }            
             _positionLastFrame = this.transform.position;
         }
-
-        /// <summary>
-        /// Adds required animator parameters to the animator parameters list if they exist
-        /// </summary>
         protected override void InitializeAnimatorParameters()
         {
             RegisterAnimatorParameter(_horizontalDirectionAnimationParameterName, AnimatorControllerParameterType.Float, out _horizontalDirectionAnimationParameter);
@@ -411,10 +331,6 @@ namespace MoreMountains.TopDownEngine
             RegisterAnimatorParameter(_horizontalSpeedAnimationParameterName, AnimatorControllerParameterType.Float, out _horizontalSpeedAnimationParameter);
             RegisterAnimatorParameter(_verticalSpeedAnimationParameterName, AnimatorControllerParameterType.Float, out _verticalSpeedAnimationParameter);
         }
-
-        /// <summary>
-        /// At the end of each cycle, sends Jumping states to the Character's animator
-        /// </summary>
         public override void UpdateAnimator()
         {
             MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _horizontalDirectionAnimationParameter, _horizontalDirection, _character._animatorParameters, _character.RunAnimatorSanityChecks);

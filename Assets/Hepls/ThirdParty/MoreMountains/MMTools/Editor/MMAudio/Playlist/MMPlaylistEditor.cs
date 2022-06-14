@@ -9,10 +9,6 @@ namespace MoreMountains.Tools
 {
     [CustomEditor(typeof(MMPlaylist))]
     [CanEditMultipleObjects]
-
-    /// <summary>
-    /// A custom editor that displays the current state of a playlist when the game is running
-    /// </summary>
     public class MMPlaylistEditor : Editor
     {
         public override void OnInspectorGUI()

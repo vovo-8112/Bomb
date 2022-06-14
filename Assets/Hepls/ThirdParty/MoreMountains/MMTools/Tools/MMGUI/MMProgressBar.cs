@@ -8,64 +8,42 @@ using UnityEngine.Serialization;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Add this bar to an object and link it to a bar (possibly the same object the script is on), and you'll be able to resize the bar object based on a current value, located between a min and max value.
-    /// See the HealthBar.cs script for a use case
-    /// </summary>
     [MMRequiresConstantRepaint]
     [AddComponentMenu("More Mountains/Tools/GUI/MMProgressBar")]
     public class MMProgressBar : MMMonoBehaviour
 	{
 		public enum MMProgressBarStates {Idle, Decreasing, Increasing, InDecreasingDelay, InIncreasingDelay }
-		/// the possible fill modes 
         public enum FillModes { LocalScale, FillAmount, Width, Height, Anchor }
-        /// the possible directions for the fill (for local scale and fill amount only)
         public enum BarDirections { LeftToRight, RightToLeft, UpToDown, DownToUp }
-        /// the possible timescales the bar can work on
         public enum TimeScales { UnscaledTime, Time }
-        /// the possible ways to animate the bar fill
         public enum BarFillModes { SpeedBased, FixedDuration }
         
         [MMInspectorGroup("Bindings", true, 10)]
-        /// optional - the ID of the player associated to this bar
         public string PlayerID;
-        /// the main, foreground bar
         public Transform ForegroundBar;
-        /// the delayed bar that will show when moving from a value to a new, lower value
         [FormerlySerializedAs("DelayedBar")] 
         public Transform DelayedBarDecreasing;
-        /// the delayed bar that will show when moving from a value to a new, higher value
         public Transform DelayedBarIncreasing;
 
         
         [MMInspectorGroup("Fill Settings", true, 11)]
-        /// the local scale or fillamount value to reach when the value associated to the bar is at 0%
         [FormerlySerializedAs("StartValue")] 
         [Range(0f,1f)]
         public float MinimumBarFillValue = 0f;
-        /// the local scale or fillamount value to reach when the bar is full
         [FormerlySerializedAs("EndValue")] 
         [Range(0f,1f)]
         public float MaximumBarFillValue = 1f;
-        /// whether or not to initialize the value of the bar on start
         public bool SetInitialFillValueOnStart = false;
-        /// the initial value of the bar
         [MMCondition("SetInitialFillValueOnStart", true)]
         [Range(0f,1f)]
         public float InitialFillValue = 0f;
-        /// the direction this bar moves to
         public BarDirections BarDirection = BarDirections.LeftToRight;
-        /// the foreground bar's fill mode
         public FillModes FillMode = FillModes.LocalScale;
-        /// defines whether the bar will work on scaled or unscaled time (whether or not it'll keep moving if time is slowed down for example)
         public TimeScales TimeScale = TimeScales.UnscaledTime;
-        /// the selected fill animation mode
         public BarFillModes BarFillMode = BarFillModes.SpeedBased;
 
         [MMInspectorGroup("Foreground Bar Settings", true, 12)]
-		/// whether or not the foreground bar should lerp
 		public bool LerpForegroundBar = true;
-		/// the speed at which to lerp the foreground bar
 		[MMCondition("LerpForegroundBar", true)]
 		public float LerpForegroundBarSpeedDecreasing = 15f;
 		[FormerlySerializedAs("LerpForegroundBarSpeed")]
@@ -73,86 +51,56 @@ namespace MoreMountains.Tools
 		public float LerpForegroundBarSpeedIncreasing = 15f;
 		[MMCondition("LerpForegroundBar", true)]
 		public float LerpForegroundBarDurationDecreasing = 0.2f;
-		/// the duration each update of the foreground bar should take (only if in fixed duration bar fill mode)
 		[MMCondition("LerpForegroundBar", true)]
 		public float LerpForegroundBarDurationIncreasing = 0.2f;
-		/// the curve to use when animating the foreground bar fill
 		[MMCondition("LerpForegroundBar", true)]
 		public AnimationCurve LerpForegroundBarCurveDecreasing = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 		[MMCondition("LerpForegroundBar", true)]
 		public AnimationCurve LerpForegroundBarCurveIncreasing = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
 		[MMInspectorGroup("Delayed Bar Decreasing", true, 13)]
-		
-		/// the delay before the delayed bar moves (in seconds)
 		[FormerlySerializedAs("Delay")] 
 		public float DecreasingDelay = 1f;
-		/// whether or not the delayed bar's animation should lerp
 		[FormerlySerializedAs("LerpDelayedBar")] 
 		public bool LerpDecreasingDelayedBar = true;
-		/// the speed at which to lerp the delayed bar
 		[FormerlySerializedAs("LerpDelayedBarSpeed")] 
 		[MMCondition("LerpDecreasingDelayedBar", true)]
 		public float LerpDecreasingDelayedBarSpeed = 15f;
-		/// the duration each update of the foreground bar should take (only if in fixed duration bar fill mode)
 		[FormerlySerializedAs("LerpDelayedBarDuration")] 
 		[MMCondition("LerpDecreasingDelayedBar", true)]
 		public float LerpDecreasingDelayedBarDuration = 0.2f;
-		/// the curve to use when animating the delayed bar fill
 		[FormerlySerializedAs("LerpDelayedBarCurve")] 
 		[MMCondition("LerpDecreasingDelayedBar", true)]
 		public AnimationCurve LerpDecreasingDelayedBarCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
 		[MMInspectorGroup("Delayed Bar Increasing", true, 18)]
-		
-		/// the delay before the delayed bar moves (in seconds)
 		public float IncreasingDelay = 1f;
-		/// whether or not the delayed bar's animation should lerp
 		public bool LerpIncreasingDelayedBar = true;
-		/// the speed at which to lerp the delayed bar
 		[MMCondition("LerpIncreasingDelayedBar", true)]
 		public float LerpIncreasingDelayedBarSpeed = 15f;
-		/// the duration each update of the foreground bar should take (only if in fixed duration bar fill mode)
 		[MMCondition("LerpIncreasingDelayedBar", true)]
 		public float LerpIncreasingDelayedBarDuration = 0.2f;
-		/// the curve to use when animating the delayed bar fill
 		[MMCondition("LerpIncreasingDelayedBar", true)]
 		public AnimationCurve LerpIncreasingDelayedBarCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
 		[MMInspectorGroup("Bump", true, 14)]
-		
-		/// whether or not the bar should "bump" when changing value
 		public bool BumpScaleOnChange = true;
-		/// whether or not the bar should bump when its value increases
 		public bool BumpOnIncrease = false;
-		/// whether or not the bar should bump when its value decreases
 		public bool BumpOnDecrease = false;
-        /// the duration of the bump animation
         public float BumpDuration = 0.2f;
-        /// whether or not the bar should flash when bumping
         public bool ChangeColorWhenBumping = true;
-        /// the color to apply to the bar when bumping
         [MMCondition("ChangeColorWhenBumping", true)]
         public Color BumpColor = Color.white;
-        /// the curve to map the bump animation on
         [FormerlySerializedAs("BumpAnimationCurve")]
         public AnimationCurve BumpScaleAnimationCurve = new AnimationCurve(new Keyframe(1, 1), new Keyframe(0.3f, 1.05f), new Keyframe(1, 1));
-        /// the curve to map the bump animation color animation on
         public AnimationCurve BumpColorAnimationCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0));
-        /// whether or not the bar is bumping right now
         public bool Bumping { get; protected set; }
 
-        [MMInspectorGroup("Events", true, 16)] 
-        
-        /// an event to trigger every time the bar bumps
+        [MMInspectorGroup("Events", true, 16)]
         public UnityEvent OnBump;
-        // an event to trigger every time the bar starts decreasing
         public UnityEvent OnBarMovementDecreasingStart;
-        // an event to trigger every time the bar stops decreasing
         public UnityEvent OnBarMovementDecreasingStop;
-        // an event to trigger every time the bar starts increasing
         public UnityEvent OnBarMovementIncreasingStart;
-        // an event to trigger every time the bar stops increasing
         public UnityEvent OnBarMovementIncreasingStop;
 
         [MMInspectorGroup("Text", true, 20)] 
@@ -164,7 +112,6 @@ namespace MoreMountains.Tools
         public string TextFormat = "{000}";
 
         [MMInspectorGroup("Debug", true, 15)]
-        /// the value the bar will move to if you press the DebugSet button
         [Range(0f, 1f)] 
         public float DebugNewTargetValue;
 
@@ -180,7 +127,6 @@ namespace MoreMountains.Tools
         public bool Minus10PercentButton;
         
         [MMInspectorGroup("Debug Read Only", true, 19)]
-        /// the current progress of the bar, ideally read only
         [Range(0f,1f)]
         public float BarProgress;/// the current progress of the bar, ideally read only
         [Range(0f,1f)]
@@ -219,22 +165,10 @@ namespace MoreMountains.Tools
         protected MMProgressBarStates CurrentState = MMProgressBarStates.Idle;
 
         #region PUBLIC_API
-        
-        /// <summary>
-        /// Updates the bar's values, using a normalized value
-        /// </summary>
-        /// <param name="normalizedValue"></param>
         public virtual void UpdateBar01(float normalizedValue) 
         {
 	        UpdateBar(Mathf.Clamp01(normalizedValue), 0f, 1f);
         }
-        
-        /// <summary>
-        /// Updates the bar's values based on the specified parameters
-        /// </summary>
-        /// <param name="currentValue">Current value.</param>
-        /// <param name="minValue">Minimum value.</param>
-        /// <param name="maxValue">Max value.</param>
         public virtual void UpdateBar(float currentValue,float minValue,float maxValue) 
         {
             if (!_initialized)
@@ -315,23 +249,11 @@ namespace MoreMountains.Tools
 
             UpdateText();
         }
-
-        /// <summary>
-        /// Sets the bar value to the one specified 
-        /// </summary>
-        /// <param name="currentValue"></param>
-        /// <param name="minValue"></param>
-        /// <param name="maxValue"></param>
         public virtual void SetBar(float currentValue, float minValue, float maxValue)
         {
 	        float newPercent = MMMaths.Remap(currentValue, minValue, maxValue, 0f, 1f);
 	        SetBar01(newPercent);
         }
-
-        /// <summary>
-        /// Sets the bar value to the normalized value set in parameter
-        /// </summary>
-        /// <param name="newPercent"></param>
         public virtual void SetBar01(float newPercent)
         {
             if (!_initialized)
@@ -343,7 +265,6 @@ namespace MoreMountains.Tools
 	        BarProgress = newPercent;
 	        DelayedBarDecreasingProgress = newPercent;
 	        DelayedBarIncreasingProgress = newPercent;
-	        //_newPercent = newPercent;
 	        BarTarget = newPercent;
 	        _percentLastTimeBarWasUpdated = newPercent;
 	        _delayedBarDecreasingProgress = DelayedBarDecreasingProgress;
@@ -359,10 +280,6 @@ namespace MoreMountains.Tools
         #endregion PUBLIC_API
 
         #region START
-        
-        /// <summary>
-        /// On start we store our image component
-        /// </summary>
         protected virtual void Start()
 		{
             Initialization();
@@ -418,36 +335,20 @@ namespace MoreMountains.Tools
         #endregion START
 
         #region TESTS
-
-        /// <summary>
-        /// This test method, called via the inspector button of the same name, lets you test what happens when you update the bar to a certain value
-        /// </summary>
         protected virtual void DebugUpdateBar()
         {
 	        this.UpdateBar01(DebugNewTargetValue);
         }
-        
-        /// <summary>
-        /// Test method
-        /// </summary>
         protected virtual void DebugSetBar()
         {
 	        this.SetBar01(DebugNewTargetValue);
         }
-
-        /// <summary>
-        /// Test method
-        /// </summary>
         public virtual void Plus10Percent()
         {
 	        float newProgress = BarTarget + 0.1f;
 	        newProgress = Mathf.Clamp(newProgress, 0f, 1f);
 	        UpdateBar01(newProgress);
         }
-        
-        /// <summary>
-        /// Test method
-        /// </summary>
         public virtual void Minus10Percent()
         {
 	        float newProgress = BarTarget - 0.1f;
@@ -469,10 +370,6 @@ namespace MoreMountains.Tools
 
 	        PercentageText.text = TextPrefix + (BarTarget * TextValueMultiplier).ToString(TextFormat) + TextSuffix;
         }
-        
-		/// <summary>
-		/// On Update we update our bars
-		/// </summary>
 		protected virtual IEnumerator UpdateBarsCo()
 		{
 			while (_coroutineShouldRun)
@@ -497,17 +394,11 @@ namespace MoreMountains.Tools
         {
 		    _direction = (_newPercent > _percentLastTimeBarWasUpdated) ? 1 : -1;
         }
-
-		/// <summary>
-		/// Updates the foreground bar's scale
-		/// </summary>
 		protected virtual void UpdateBars()
 		{
 			float newFill;
 			float newFillDelayed;
 			float t1, t2 = 0f;
-			
-			// if the value is decreasing
 			if (_direction < 0)
 			{
 				newFill = ComputeNewFill(LerpForegroundBar, LerpForegroundBarSpeedDecreasing, LerpForegroundBarDurationDecreasing, LerpForegroundBarCurveDecreasing, 0f, _percentLastTimeBarWasUpdated, out t1);
@@ -528,7 +419,7 @@ namespace MoreMountains.Tools
 					CurrentState = MMProgressBarStates.InDecreasingDelay;
 				}
 			}
-			else // if the value is increasing
+			else
 			{
 				newFill = ComputeNewFill(LerpForegroundBar, LerpForegroundBarSpeedIncreasing, LerpForegroundBarDurationIncreasing, LerpForegroundBarCurveIncreasing, 0f, _delayedBarIncreasingProgress, out t1);
 				SetBarInternal(newFill, DelayedBarIncreasing, _delayedIncreasingImage, _initialBarSize);
@@ -712,10 +603,6 @@ namespace MoreMountains.Tools
 		}
 
 		#region  Bump
-
-		/// <summary>
-		/// Triggers a camera bump
-		/// </summary>
 		public virtual void Bump()
 		{
 			bool shouldBump = false;
@@ -754,11 +641,6 @@ namespace MoreMountains.Tools
 
 			OnBump?.Invoke();
 		}
-
-		/// <summary>
-		/// A coroutine that (usually quickly) changes the scale of the bar 
-		/// </summary>
-		/// <returns>The coroutine.</returns>
 		protected virtual IEnumerator BumpCoroutine()
 		{
 			float journey = 0f;
@@ -791,19 +673,10 @@ namespace MoreMountains.Tools
 		#endregion Bump
 
 		#region ShowHide
-
-		/// <summary>
-		/// A simple method you can call to show the bar (set active true)
-		/// </summary>
 		public virtual void ShowBar()
 		{
 			this.gameObject.SetActive(true);
 		}
-
-		/// <summary>
-		/// Hides (SetActive false) the progress bar object, after an optional delay
-		/// </summary>
-		/// <param name="delay"></param>
 		public virtual void HideBar(float delay)
 		{
 			if (delay <= 0)
@@ -815,12 +688,6 @@ namespace MoreMountains.Tools
 				StartCoroutine(HideBarCo(delay));
 			}
 		}
-
-		/// <summary>
-		/// An internal coroutine used to handle the disabling of the progress bar after a delay
-		/// </summary>
-		/// <param name="delay"></param>
-		/// <returns></returns>
 		protected virtual IEnumerator HideBarCo(float delay)
 		{
 			yield return MMCoroutine.WaitFor(delay);

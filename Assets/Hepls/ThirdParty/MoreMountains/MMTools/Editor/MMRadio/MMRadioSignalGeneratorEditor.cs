@@ -95,15 +95,12 @@ namespace MoreMountains.Tools
             EditorGUILayout.PropertyField(_animatedPreview);
 
             EditorGUILayout.Space(20);
-            // box
             GUILayout.Box("", GUILayout.Width(_inspectorWidth - _externalMargin), GUILayout.Height(_rawSpectrumBoxHeight));
             _spectrumBoxPosition = GUILayoutUtility.GetLastRect().position;
             _spectrumBoxSize = GUILayoutUtility.GetLastRect().size;
             _spectrumBoxBottomY = _spectrumBoxPosition.y + _spectrumBoxSize.y;
             _spectrumMaxColumnHeight = _spectrumBoxSize.y - 2 * _externalMargin;
             Handles.BeginGUI();
-
-            // horizontal axis
             Handles.color = Color.grey;
             for (int i = 0; i <= _numberOfAxisSpectrum; i++)
             {
@@ -113,8 +110,6 @@ namespace MoreMountains.Tools
                 _axisDestination.y = _axisOrigin.y;
                 Handles.DrawLine(_axisOrigin, _axisDestination);
             }
-
-            // y one label
             _rect.x = _axisOrigin.x - 12;
             _rect.y = _spectrumBoxBottomY - _spectrumBoxSize.y - 20;
             _rect.width = 40;
@@ -135,22 +130,16 @@ namespace MoreMountains.Tools
                 zeroX = maxX - MMMaths.Remap(_normalizedTime, 0f, 1f, _spectrumBoxPosition.x + _externalMargin, _spectrumBoxPosition.x + _spectrumBoxSize.x);
                 oneX = zeroX - 10;
             }
-
-            // zero label
             _rect.x = zeroX;
             _rect.y = _spectrumBoxBottomY - 20;
             _rect.width = 40;
             _rect.height = 40;
             EditorGUI.LabelField(_rect, "0", EditorStyles.boldLabel);
-
-            // one label
             _rect.x = oneX;
             _rect.y = _spectrumBoxBottomY - 20;
             _rect.width = 40;
             _rect.height = 40;
             EditorGUI.LabelField(_rect, "1", EditorStyles.boldLabel);
-
-            // level 
             if (Application.isPlaying)
             {
                 _rect.x = _axisOrigin.x + _spectrumBoxSize.x - 40;
@@ -159,8 +148,6 @@ namespace MoreMountains.Tools
                 _rect.height = 40;
                 EditorGUI.LabelField(_rect, _currentLevel.floatValue.ToString("F3"), EditorStyles.boldLabel);
             }
-
-            // cube  
             _rect.x = _spectrumBoxPosition.x + _externalMargin / 4;
             if (_duration.floatValue > 0f)
             {
@@ -182,8 +169,6 @@ namespace MoreMountains.Tools
             _rect.width = _externalMargin / 2;
             _rect.height = _externalMargin / 2;
             EditorGUI.DrawRect(_rect, _spectrumBoxColor);
-
-            // progress line
             if (Application.isPlaying && !_animatedPreview.boolValue)
             {
                 _rect.x = _spectrumBoxPosition.x 

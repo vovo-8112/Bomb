@@ -7,16 +7,6 @@ namespace MoreMountains.Tools
 {
     public class MMTilemapGridRenderer 
     {
-        /// <summary>
-        /// Renders the specified grid on the specified tilemap, with optional slow mode (only works at runtime)
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <param name="tilemap"></param>
-        /// <param name="tile"></param>
-        /// <param name="slowRender"></param>
-        /// <param name="slowRenderDuration"></param>
-        /// <param name="slowRenderTweenType"></param>
-        /// <param name="slowRenderSupport"></param>
         public static void RenderGrid(int[,] grid, MMTilemapGeneratorLayer layer, bool slowRender = false, float slowRenderDuration = 1f, 
             MMTweenType slowRenderTweenType = null, MonoBehaviour slowRenderSupport = null)
         {
@@ -49,17 +39,6 @@ namespace MoreMountains.Tools
                 Debug.LogWarning("Rendering maps in SlowRender mode is only supported at runtime.");
             }
         }
-
-        /// <summary>
-        /// Renders a grid chunk by chunk - runtime only
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <param name="tilemap"></param>
-        /// <param name="tile"></param>
-        /// <param name="slowRenderDuration"></param>
-        /// <param name="slowRenderTweenType"></param>
-        /// <param name="frameRate"></param>
-        /// <returns></returns>
         public static IEnumerator SlowRenderGrid(int[,] grid, Tilemap tilemap, TileBase tile, float slowRenderDuration, MMTweenType slowRenderTweenType, int frameRate)
         {
             int totalBlocks = TotalFilledBlocks(grid);
@@ -93,12 +72,6 @@ namespace MoreMountains.Tools
             }
             DrawGrid(grid, tilemap, tile, lastIndex, totalBlocks - lastIndex);
         }
-
-        /// <summary>
-        /// Returns the total amount of filled blocks in a grid
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <returns></returns>
         public static int TotalFilledBlocks(int[,] grid)
         {
             int width = grid.GetUpperBound(0);
@@ -117,16 +90,6 @@ namespace MoreMountains.Tools
             }
             return totalBlocks;
         }
-
-        /// <summary>
-        /// Draws the specified section of a grid on a target tilemap
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <param name="tilemap"></param>
-        /// <param name="tile"></param>
-        /// <param name="startIndex"></param>
-        /// <param name="numberOfTilesToDraw"></param>
-        /// <returns></returns>
         private static int DrawGrid(int[,] grid, Tilemap tilemap, TileBase tile, int startIndex, int numberOfTilesToDraw)
         {
             int width = grid.GetUpperBound(0);
@@ -161,24 +124,12 @@ namespace MoreMountains.Tools
             }
             return counter;
         }
-        
-        /// <summary>
-        /// Determines the offset to apply to a grid to have it centered
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
         public static Vector3Int ComputeOffset(int width, int height)
         {
             Vector3Int offset = new Vector3Int(width + 2, height + 2, 0);
             offset = offset - offset/2;
             return -offset;
         }
-        
-        /// <summary>
-        /// Clears and refreshes an entire tilemap
-        /// </summary>
-        /// <param name="tilemap"></param>
         public static void ClearTilemap(Tilemap tilemap)
         {
             tilemap.ClearAllTiles();

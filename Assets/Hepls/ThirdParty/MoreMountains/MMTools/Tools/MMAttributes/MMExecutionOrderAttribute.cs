@@ -11,34 +11,19 @@ using UnityEditor;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Add this attribute to a class and its Execution Order will be changed to the value specified in parameters
-    /// Usage : [ExecutionOrder(66)]
-    /// </summary>
     public class MMExecutionOrderAttribute : Attribute
     {
 #if UNITY_EDITOR
-        /// the execution order you want for the class this attribute is applied to 
         public int ExecutionOrder = 0;
 
         protected static Dictionary<MonoScript, MMExecutionOrderAttribute> _monoScripts;
         protected static Type _executionOrderAttributeType;
         protected static Assembly _typeAssembly;
         protected static Type[] _assemblyTypes;
-
-        /// <summary>
-        /// Attribute method
-        /// </summary>
-        /// <param name="newExecutionOrder"></param>
         public MMExecutionOrderAttribute(int newExecutionOrder)
         {
             ExecutionOrder = newExecutionOrder;
         }
-
-
-            /// <summary>
-            /// When Unity loads, modifies the execution orders of monos with an ExecutionOrder attribute, if needed
-            /// </summary>
             [InitializeOnLoadMethod]        
             protected static void ModifyExecutionOrder()
             {
@@ -51,10 +36,6 @@ namespace MoreMountains.Tools
                     UpdateExecutionOrders();
                 }
             }
-
-            /// <summary>
-            /// Initialization method
-            /// </summary>
             protected static void Initialization()
             {
                 _monoScripts = new Dictionary<MonoScript, MMExecutionOrderAttribute>();
@@ -62,10 +43,6 @@ namespace MoreMountains.Tools
                 _typeAssembly = _executionOrderAttributeType.Assembly;
                 _assemblyTypes = _typeAssembly.GetTypes();
             }
-
-            /// <summary>
-            /// Goes through all assembly types and stores execution order attributes when found
-            /// </summary>
             protected static void FindExecutionOrderAttributes()
             {
                 foreach (Type assemblyType in _assemblyTypes)
@@ -104,22 +81,11 @@ namespace MoreMountains.Tools
                     _monoScripts.Add(monoScript, attribute);
                 }
             }
-
-            /// <summary>
-            /// Returns true if the class in parameters has the ExecutionOrder attribute, false otherwise
-            /// </summary>
-            /// <param name="assemblyType"></param>
-            /// <returns></returns>
             protected static bool HasExecutionOrderAttribute(Type assemblyType)
             {
                 object[] attributes = assemblyType.GetCustomAttributes(_executionOrderAttributeType, false);
                 return (attributes.Length == 1);
             }
-
-            /// <summary>
-            /// Returns true if the execution order has changed since last time 
-            /// </summary>
-            /// <returns></returns>
             protected static bool ExecutionOrderHasChanged()
             {
                 bool executionOrderHasChanged = false;
@@ -136,10 +102,6 @@ namespace MoreMountains.Tools
                 }
                 return executionOrderHasChanged;
             }
-
-            /// <summary>
-            /// Updates the execution orders for all pairs found by FindExecutionOrderAttributes()
-            /// </summary>
             protected static void UpdateExecutionOrders()
             {
                 foreach (KeyValuePair<MonoScript, MMExecutionOrderAttribute> monoScript in _monoScripts)

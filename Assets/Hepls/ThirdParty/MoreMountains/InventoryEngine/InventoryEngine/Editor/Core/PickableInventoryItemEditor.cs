@@ -9,30 +9,18 @@ using System.Reflection;
 namespace MoreMountains.InventoryEngine
 {	
 	[CustomEditor(typeof(ItemPicker), true)]
-	/// <summary>
-	/// Pickable inventory item editor.
-	/// </summary>
 	public class PickableInventoryItemEditor : Editor 
 	{
 		protected int _targetInventoryIndex = 0;
 		protected List<string> _targetInventoriesList = new List<string>();
 		protected string[] _targetInventories;
-
-		/// <summary>
-		/// Gets the item target for future reference
-		/// </summary>
-		/// <value>The item target.</value>
 		public ItemPicker ItemTarget 
 		{ 
 			get 
 			{ 
 				return (ItemPicker)target;
 			}
-		} 
-
-		/// <summary>
-		/// On Enable, we load a list of potential target inventories, and store that in an array
-		/// </summary>
+		}
 		protected virtual void OnEnable()
 		{
 			foreach (Inventory inventory in UnityEngine.Object.FindObjectsOfType<Inventory>())
@@ -47,10 +35,6 @@ namespace MoreMountains.InventoryEngine
 				i++;
 			}
 		}
-
-		/// <summary>
-		/// When drawing the inspector, we display a popup allowing the user to add the item to a specific inventory
-		/// </summary>
 		public override void OnInspectorGUI()
 	     {
 	     	DrawDefaultInspector();

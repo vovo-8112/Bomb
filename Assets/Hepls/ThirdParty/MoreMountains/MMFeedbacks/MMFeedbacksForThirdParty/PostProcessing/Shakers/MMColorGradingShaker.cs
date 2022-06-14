@@ -6,62 +6,46 @@ using MoreMountains.Feedbacks;
 
 namespace MoreMountains.FeedbacksForThirdParty
 {
-    /// <summary>
-    /// Add this class to a Camera with a color grading post processing and it'll be able to "shake" its values by getting events
-    /// </summary>
     [AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMColorGradingShaker")]
     [RequireComponent(typeof(PostProcessVolume))]
     public class MMColorGradingShaker : MMShaker
     {
-        /// whether or not to add to the initial value
         public bool RelativeValues = true;
 
         [Header("Post Exposure")]
-        /// the curve used to animate the focus distance value on
         [Tooltip("the curve used to animate the focus distance value on")]
         public AnimationCurve ShakePostExposure = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-        /// the value to remap the curve's 0 to
         [Tooltip("the value to remap the curve's 0 to")]
         public float RemapPostExposureZero = 0f;
-        /// the value to remap the curve's 1 to
         [Tooltip("the value to remap the curve's 1 to")]
         public float RemapPostExposureOne = 1f;
 
         [Header("Hue Shift")]
-        /// the curve used to animate the aperture value on
         [Tooltip("the curve used to animate the aperture value on")]
         public AnimationCurve ShakeHueShift = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-        /// the value to remap the curve's 0 to
         [Tooltip("the value to remap the curve's 0 to")]
         [Range(-180f, 180f)]
         public float RemapHueShiftZero = 0f;
-        /// the value to remap the curve's 1 to
         [Tooltip("the value to remap the curve's 1 to")]
         [Range(-180f, 180f)]
         public float RemapHueShiftOne = 180f;
 
         [Header("Saturation")]
-        /// the curve used to animate the focal length value on
         [Tooltip("the curve used to animate the focal length value on")]
         public AnimationCurve ShakeSaturation = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-        /// the value to remap the curve's 0 to
         [Tooltip("the value to remap the curve's 0 to")]
         [Range(-100f, 100f)]
         public float RemapSaturationZero = 0f;
-        /// the value to remap the curve's 1 to
         [Tooltip("the value to remap the curve's 1 to")]
         [Range(-100f, 100f)]
         public float RemapSaturationOne = 100f;
 
         [Header("Contrast")]
-        /// the curve used to animate the focal length value on
         [Tooltip("the curve used to animate the focal length value on")]
         public AnimationCurve ShakeContrast = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-        /// the value to remap the curve's 0 to
         [Tooltip("the value to remap the curve's 0 to")]
         [Range(-100f, 100f)]
         public float RemapContrastZero = 0f;
-        /// the value to remap the curve's 1 to
         [Tooltip("the value to remap the curve's 1 to")]
         [Range(-100f, 100f)]
         public float RemapContrastOne = 100f;
@@ -86,28 +70,16 @@ namespace MoreMountains.FeedbacksForThirdParty
         protected AnimationCurve _originalShakeContrast;
         protected float _originalRemapContrastZero;
         protected float _originalRemapContrastOne;
-
-        /// <summary>
-        /// On init we initialize our values
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
             _volume = this.gameObject.GetComponent<PostProcessVolume>();
             _volume.profile.TryGetSettings(out _colorGrading);
         }
-
-        /// <summary>
-        /// When that shaker gets added, we initialize its shake duration
-        /// </summary>
         protected virtual void Reset()
         {
             ShakeDuration = 0.8f;
         }
-
-        /// <summary>
-        /// Shakes values over time
-        /// </summary>
         protected override void Shake()
         {
             float newPostExposure = ShakeFloat(ShakePostExposure, RemapPostExposureZero, RemapPostExposureOne, RelativeValues, _initialPostExposure);
@@ -119,10 +91,6 @@ namespace MoreMountains.FeedbacksForThirdParty
             float newContrast = ShakeFloat(ShakeContrast, RemapContrastZero, RemapContrastOne, RelativeValues, _initialContrast);
             _colorGrading.contrast.Override(newContrast);
         }
-
-        /// <summary>
-        /// Collects initial values on the target
-        /// </summary>
         protected override void GrabInitialValues()
         {
             _initialPostExposure = _colorGrading.postExposure;
@@ -130,16 +98,6 @@ namespace MoreMountains.FeedbacksForThirdParty
             _initialSaturation = _colorGrading.saturation;
             _initialContrast = _colorGrading.contrast;
         }
-
-        /// <summary>
-        /// When we get the appropriate event, we trigger a shake
-        /// </summary>
-        /// <param name="intensity"></param>
-        /// <param name="duration"></param>
-        /// <param name="amplitude"></param>
-        /// <param name="relativeIntensity"></param>
-        /// <param name="feedbacksIntensity"></param>
-        /// <param name="channel"></param>
         public virtual void OnMMColorGradingShakeEvent(AnimationCurve shakePostExposure, float remapPostExposureZero, float remapPostExposureOne,
             AnimationCurve shakeHueShift, float remapHueShiftZero, float remapHueShiftOne,
             AnimationCurve shakeSaturation, float remapSaturationZero, float remapSaturationOne,
@@ -199,10 +157,6 @@ namespace MoreMountains.FeedbacksForThirdParty
 
             Play();
         }
-
-        /// <summary>
-        /// Resets the target's values
-        /// </summary>
         protected override void ResetTargetValues()
         {
             base.ResetTargetValues();
@@ -211,10 +165,6 @@ namespace MoreMountains.FeedbacksForThirdParty
             _colorGrading.saturation.Override(_initialSaturation);
             _colorGrading.contrast.Override(_initialContrast);
         }
-
-        /// <summary>
-        /// Resets the shaker's values
-        /// </summary>
         protected override void ResetShakerValues()
         {
             base.ResetShakerValues();
@@ -233,29 +183,17 @@ namespace MoreMountains.FeedbacksForThirdParty
             RemapContrastZero = _originalRemapContrastZero;
             RemapContrastOne = _originalRemapContrastOne;
         }
-
-        /// <summary>
-        /// Starts listening for events
-        /// </summary>
         public override void StartListening()
         {
             base.StartListening();
             MMColorGradingShakeEvent.Register(OnMMColorGradingShakeEvent);
         }
-
-        /// <summary>
-        /// Stops listening for events
-        /// </summary>
         public override void StopListening()
         {
             base.StopListening();
             MMColorGradingShakeEvent.Unregister(OnMMColorGradingShakeEvent);
         }
     }
-
-    /// <summary>
-    /// An event used to trigger vignette shakes
-    /// </summary>
     public struct MMColorGradingShakeEvent
     {
         public delegate void Delegate(AnimationCurve shakePostExposure, float remapPostExposureZero, float remapPostExposureOne,

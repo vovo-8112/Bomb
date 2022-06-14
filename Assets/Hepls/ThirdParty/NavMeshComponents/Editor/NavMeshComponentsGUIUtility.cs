@@ -77,14 +77,8 @@ namespace UnityEditor.AI
 
             EditorGUI.EndProperty();
         }
-
-        // Agent mask is a set (internally array/list) of agentTypeIDs.
-        // It is used to describe which agents modifiers apply to.
-        // There is a special case of "None" which is an empty array.
-        // There is a special case of "All" which is an array of length 1, and value of -1.
         public static void AgentMaskPopup(string labelName, SerializedProperty agentMask)
         {
-            // Contents of the dropdown box.
             string popupContent = "";
 
             if (agentMask.hasMultipleDifferentValues)
@@ -164,8 +158,6 @@ namespace UnityEditor.AI
                 agentMask.ClearArray();
                 agentMask.serializedObject.ApplyModifiedProperties();
             }
-
-            // Find which index this agent type is in the agentMask array.
             int idx = -1;
             for (var j = 0; j < agentMask.arraySize; j++)
             {
@@ -173,14 +165,10 @@ namespace UnityEditor.AI
                 if (elem.intValue == agentTypeID)
                     idx = j;
             }
-
-            // Handle "All" special case.
             if (IsAll(agentMask))
             {
                 agentMask.DeleteArrayElementAtIndex(0);
             }
-
-            // Toggle value.
             if (value)
             {
                 if (idx == -1)

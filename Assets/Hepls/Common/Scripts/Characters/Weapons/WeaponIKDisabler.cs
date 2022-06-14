@@ -5,20 +5,13 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// You can add this class next to a WeaponIK component (so usually on a Character's Animator), and it'll let you
-    /// disable IK and optionally reparent the WeaponAttachment during certain animations 
-    /// </summary>
     public class WeaponIKDisabler : MonoBehaviour
     {
-        [Header("Animation Parameter Names")] 
-        /// a list of animation parameter names which, if true, should cause IK to be disabled 
+        [Header("Animation Parameter Names")]
         public List<string> AnimationParametersPreventingIK;
         
         [Header("Attachments")]
-        /// the WeaponAttachment transform to reparent
         public Transform WeaponAttachment;
-        /// the transform the WeaponAttachment will be reparented to when certain animation parameters are true
         public Transform WeaponAttachmentParentNoIK;
 
         protected Transform _initialParent;
@@ -29,18 +22,10 @@ namespace MoreMountains.TopDownEngine
         protected Animator _animator;
         protected List<int> _animationParametersHashes;
         protected bool _shouldSetIKLast = true;
-
-        /// <summary>
-        /// On Start we initialize our component
-        /// </summary>
         protected virtual void Start()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// Grabs animator, weaponIK, hashes the animation parameter names, and stores initial positions
-        /// </summary>
         protected virtual void Initialization()
         {
             _weaponIK = this.gameObject.GetComponent<WeaponIK>();
@@ -61,11 +46,6 @@ namespace MoreMountains.TopDownEngine
                 _initialRotation = WeaponAttachment.transform.rotation;
             }
         }
-        
-        /// <summary>
-        /// On animator IK, we turn IK on or off if needed
-        /// </summary>
-        /// <param name="layerIndex"></param>
         protected virtual void OnAnimatorIK(int layerIndex)
         {
             if ((_animator == null) || (_weaponIK == null) || (WeaponAttachment == null))
@@ -94,11 +74,6 @@ namespace MoreMountains.TopDownEngine
 
             _shouldSetIKLast = shouldPreventIK;
         }
-
-        /// <summary>
-        /// Enables or disables IK
-        /// </summary>
-        /// <param name="status"></param>
         protected virtual void PreventIK(bool status)
         {
             if (status)

@@ -4,18 +4,6 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// This component will automatically update scale and rotation 
-    /// Put it one level below the top, and have the model one level below that
-    /// Hierarchy should be as follows :
-    /// 
-    /// Parent (where the logic (and optionnally rigidbody lies)
-    /// - MMSquashAndStretch
-    /// - - Model / sprite
-    /// 
-    /// Make sure this intermediary layer only has one child
-    /// If movement feels glitchy make sure your rigidbody is on Interpolate
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/Movement/MMSquashAndStretch")]
     public class MMSquashAndStretch : MonoBehaviour
     {
@@ -24,47 +12,33 @@ namespace MoreMountains.Tools
 
         [MMInformation("This component will apply squash and stretch based on velocity (either position based or computed from a Rigidbody. It has to be put on an intermediary level in the hierarchy, between the logic (top level) and the model (bottom level).", MMInformationAttribute.InformationType.Info, false)]
         [Header("Velocity Detection")]
-        /// the possible ways to get velocity from
         public Modes Mode = Modes.Position;
-        /// whether we should use deltaTime or unscaledDeltaTime;
         public Timescales Timescale = Timescales.Regular;
 
 
         [Header("Settings")]
-        /// the intensity of the squash and stretch
         public float Intensity = 0.02f;
-        /// the maximum velocity of your parent object, used to remap the computed one
         public float MaximumVelocity = 1f;
 
         [Header("Rescale")]
-        /// the minimum scale to apply to this object
         public Vector2 MinimumScale = new Vector2(0.5f, 0.5f);
-        /// the maximum scale to apply to this object
         public Vector2 MaximumScale = new Vector2(2f, 2f);
 
         [Header("Squash")]
-        /// if this is true, the object will squash once velocity goes below the specified threshold
         public bool AutoSquashOnStop = false;
-        /// the curve to apply when squashing the object (this describes scale on x and z, will be inverted for y to maintain mass)
         public AnimationCurve SquashCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1f), new Keyframe(1, 0f));
-        /// the velocity threshold after which a squash can be triggered if the object stops
         public float SquashVelocityThreshold = 0.1f;
-        /// the maximum duration of the squash (will be reduced if velocity is low)
         [MMVector("Min","Max")]
         public Vector2 SquashDuration = new Vector2(0.25f, 0.5f);
-        /// the maximum intensity of the squash
         [MMVector("Min", "Max")]
         public Vector2 SquashIntensity = new Vector2(0f, 1f);
         
         [Header("Debug")]
         [MMReadOnly]
-        /// the current velocity of the parent object
         public Vector3 Velocity;
         [MMReadOnly]
-        /// the remapped velocity
         public float RemappedVelocity;
         [MMReadOnly]
-        /// the current velocity magnitude
         public float VelocityMagnitude;
 
         public float TimescaleTime { get { return (Timescale == Timescales.Regular) ? Time.time : Time.unscaledTime; } }
@@ -87,19 +61,10 @@ namespace MoreMountains.Tools
 
         protected bool _movementStarted = false;
         protected float _lastVelocity = 0f;
-
-
-        /// <summary>
-        /// On start, we initialize our component
-        /// </summary>
         protected virtual void Start()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// Stores the initial scale, grabs the rigidbodies (or tries to), as well as the parent and child
-        /// </summary>
         protected virtual void Initialization()
         {
             _initialScale = this.transform.localScale;
@@ -112,18 +77,10 @@ namespace MoreMountains.Tools
 
             _previousPosition = _parentTransform.position;
         }
-        
-        /// <summary>
-        /// On late update, we apply our squash and stretch effect
-        /// </summary>
         protected virtual void LateUpdate()
         {
             SquashAndStretch();
         }
-
-        /// <summary>
-        /// Computes velocity and applies the effect
-        /// </summary>
         protected virtual void SquashAndStretch()
         {
             if (TimescaleDeltaTime <= 0f)
@@ -136,10 +93,6 @@ namespace MoreMountains.Tools
             ComputeNewLocalScale();
             StorePreviousPosition();
         }
-
-        /// <summary>
-        /// Determines the current velocity and direction of the parent object
-        /// </summary>
         protected virtual void ComputeVelocityAndDirection()
         {
             Velocity = Vector3.zero;
@@ -165,7 +118,6 @@ namespace MoreMountains.Tools
 
             if (AutoSquashOnStop)
             {
-                // if we've moved fast enough and have now stopped, we trigger a squash
                 if (VelocityMagnitude > SquashVelocityThreshold)
                 {
                     _movementStarted = true;
@@ -181,10 +133,6 @@ namespace MoreMountains.Tools
                 }
             }            
         }
-
-        /// <summary>
-        /// Computes a new rotation for both this object and the child
-        /// </summary>
         protected virtual void ComputeNewRotation()
         {
             if (VelocityMagnitude > 0.01f)
@@ -195,10 +143,6 @@ namespace MoreMountains.Tools
             this.transform.rotation = _newRotation;
             _childTransform.rotation = _deltaRotation;
         }
-
-        /// <summary>
-        /// Computes a new local scale for this object
-        /// </summary>
         protected virtual void ComputeNewLocalScale()
         {
             if (_squashing)
@@ -226,20 +170,10 @@ namespace MoreMountains.Tools
 
             this.transform.localScale = _newLocalScale;
         }
-
-        /// <summary>
-        /// Stores the previous position of the parent to compute velocity
-        /// </summary>
         protected virtual void StorePreviousPosition()
         {
             _previousPosition = _parentTransform.position;
         }
-        
-        /// <summary>
-        /// Triggered either directly or via the AutoSquash setting, this squashes the object (usually after a contact / stop)
-        /// </summary>
-        /// <param name="duration"></param>
-        /// <param name="intensity"></param>
         public virtual void Squash(float duration, float intensity)
         {
             _squashStartedAt = TimescaleTime;

@@ -7,47 +7,32 @@ using UnityEngine.AI;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// Add this class to a 3D character and it'll be albe to navigate a navmesh (if there's one in the scene of course)
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/Abilities/Character Pathfinder 3D")]
     public class CharacterPathfinder3D : MonoBehaviour
     {
         [Header("PathfindingTarget")]
-
-        /// the target the character should pathfind to
         [Tooltip("the target the character should pathfind to")]
         public Transform Target;
-        /// the distance to waypoint at which the movement is considered complete
         [Tooltip("the distance to waypoint at which the movement is considered complete")]
         public float DistanceToWaypointThreshold = 1f;
-        /// if the target point can't be reached, the distance threshold around that point in which to look for an alternative end point
         [Tooltip("if the target point can't be reached, the distance threshold around that point in which to look for an alternative end point")]
         public float ClosestPointThreshold = 3f;
 
         [Header("Debug")]
-
-        /// whether or not we should draw a debug line to show the current path of the character
         [Tooltip("whether or not we should draw a debug line to show the current path of the character")]
         public bool DebugDrawPath;
-
-        /// the current path
         [MMReadOnly]
         [Tooltip("the current path")]
         public NavMeshPath AgentPath;
-        /// a list of waypoints the character will go through
         [MMReadOnly]
         [Tooltip("a list of waypoints the character will go through")]
         public Vector3[] Waypoints;
-        /// the index of the next waypoint
         [MMReadOnly]
         [Tooltip("the index of the next waypoint")]
         public int NextWaypointIndex;
-        /// the direction of the next waypoint
         [MMReadOnly]
         [Tooltip("the direction of the next waypoint")]
         public Vector3 NextWaypointDirection;
-        /// the distance to the next waypoint
         [MMReadOnly]
         [Tooltip("the distance to the next waypoint")]
         public float DistanceToNextWaypoint;
@@ -63,10 +48,6 @@ namespace MoreMountains.TopDownEngine
         protected Vector3 _closestNavmeshPosition;
         protected NavMeshHit _navMeshHit;
         protected bool _pathFound;
-
-        /// <summary>
-        /// On Awake we grab our components
-        /// </summary>
         protected virtual void Awake()
         {
             AgentPath = new NavMeshPath();
@@ -75,11 +56,6 @@ namespace MoreMountains.TopDownEngine
             _lastValidTargetPosition = this.transform.position;
             Array.Resize(ref Waypoints, 5);
         }
-
-        /// <summary>
-        /// Sets a new destination the character will pathfind to
-        /// </summary>
-        /// <param name="destinationTransform"></param>
         public virtual void SetNewDestination(Transform destinationTransform)
         {
             if (destinationTransform == null)
@@ -90,10 +66,6 @@ namespace MoreMountains.TopDownEngine
             Target = destinationTransform;
             DeterminePath(this.transform.position, destinationTransform.position);
         }
-
-        /// <summary>
-        /// On Update, we draw the path if needed, determine the next waypoint, and move to it if needed
-        /// </summary>
         protected virtual void Update()
         {
             if (Target == null)
@@ -106,10 +78,6 @@ namespace MoreMountains.TopDownEngine
             DetermineDistanceToNextWaypoint();
             MoveController();
         }
-        
-        /// <summary>
-        /// Moves the controller towards the next point
-        /// </summary>
         protected virtual void MoveController()
         {
             if ((Target == null) || (NextWaypointIndex <= 0))
@@ -125,13 +93,6 @@ namespace MoreMountains.TopDownEngine
                 _characterMovement.SetMovement(_newMovement);
             }
         }
-        
-        /// <summary>
-        /// Determines the next path position for the agent. NextPosition will be zero if a path couldn't be found
-        /// </summary>
-        /// <param name="startingPos"></param>
-        /// <param name="targetPos"></param>
-        /// <returns></returns>        
         protected virtual void DeterminePath(Vector3 startingPosition, Vector3 targetPosition)
         {
             NextWaypointIndex = 0;
@@ -151,8 +112,6 @@ namespace MoreMountains.TopDownEngine
             {
                 NavMesh.CalculatePath(startingPosition, _lastValidTargetPosition, NavMesh.AllAreas, AgentPath);
             }
-
-            // Waypoints = AgentPath.corners;
             _waypoints = AgentPath.GetCornersNonAlloc(Waypoints);
             if (_waypoints >= Waypoints.Length)
             {
@@ -166,10 +125,6 @@ namespace MoreMountains.TopDownEngine
 
             OnPathProgress?.Invoke(NextWaypointIndex, Waypoints.Length, Vector3.Distance(this.transform.position, Waypoints[NextWaypointIndex]));
         }
-        
-        /// <summary>
-        /// Determines the next waypoint based on the distance to it
-        /// </summary>
         protected virtual void DetermineNextWaypoint()
         {
             if (_waypoints <= 0)
@@ -195,10 +150,6 @@ namespace MoreMountains.TopDownEngine
                 OnPathProgress?.Invoke(NextWaypointIndex, _waypoints, distance);
             }
         }
-
-        /// <summary>
-        /// Determines the distance to the next waypoint
-        /// </summary>
         protected virtual void DetermineDistanceToNextWaypoint()
         {
             if (NextWaypointIndex <= 0)
@@ -210,10 +161,6 @@ namespace MoreMountains.TopDownEngine
                 DistanceToNextWaypoint = Vector3.Distance(this.transform.position, Waypoints[NextWaypointIndex]);
             }
         }
-
-        /// <summary>
-        /// Draws a debug line to show the current path
-        /// </summary>
         protected virtual void DrawDebugPath()
         {
             if (DebugDrawPath)

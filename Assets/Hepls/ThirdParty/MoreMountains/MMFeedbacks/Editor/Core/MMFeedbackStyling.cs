@@ -2,9 +2,6 @@
 using UnityEditor;
 
 namespace MoreMountains.Feedbacks {
-  /// <summary>
-  /// A class used to regroup most of the styling options for the MMFeedback editors
-  /// </summary>
   public static class MMFeedbackStyling {
     public static readonly GUIStyle SmallTickbox = new GUIStyle("ShurikenToggle");
 
@@ -53,10 +50,6 @@ namespace MoreMountains.Feedbacks {
     }
 
     private static GUIStyle _timingStyle = new GUIStyle();
-
-    /// <summary>
-    /// Simply drow a splitter line and a title bellow
-    /// </summary>
     static public void DrawSection(string title) {
       EditorGUILayout.Space();
 
@@ -67,12 +60,7 @@ namespace MoreMountains.Feedbacks {
 
       EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
     }
-
-    /// <summary>
-    /// Draw a separator line
-    /// </summary>
     static public void DrawSplitter() {
-      // Helper to draw a separator line
 
       var rect = GUILayoutUtility.GetRect(1f, 1f);
 
@@ -84,14 +72,8 @@ namespace MoreMountains.Feedbacks {
 
       EditorGUI.DrawRect(rect, Splitter);
     }
-
-    /// <summary>
-    /// Draw a header similar to the one used for the post-process stack
-    /// </summary>
     static public Rect DrawSimpleHeader(ref bool expanded, ref bool activeField, string title) {
       var e = Event.current;
-
-      // Initialize Rects
 
       var backgroundRect = GUILayoutUtility.GetRect(1f, 17f);
 
@@ -118,24 +100,12 @@ namespace MoreMountains.Feedbacks {
 
       var menuIcon = PaneOptionsIcon;
       var menuRect = new Rect(labelRect.xMax + 4f, labelRect.y + 4f, menuIcon.width, menuIcon.height);
-
-      // Background rect should be full-width
       backgroundRect.xMin = 0f;
       backgroundRect.width += 4f;
-
-      // Background
       EditorGUI.DrawRect(backgroundRect, HeaderBackground);
-
-      // Foldout
       expanded = GUI.Toggle(foldoutRect, expanded, GUIContent.none, EditorStyles.foldout);
-
-      // Title
       EditorGUI.LabelField(labelRect, title, EditorStyles.boldLabel);
-
-      // Active checkbox
       activeField = GUI.Toggle(toggleRect, activeField, GUIContent.none, SmallTickbox);
-
-      // Handle events
 
       if (e.type == EventType.MouseDown && labelRect.Contains(e.mousePosition) && e.button == 0) {
         expanded = !expanded;
@@ -144,10 +114,6 @@ namespace MoreMountains.Feedbacks {
 
       return backgroundRect;
     }
-
-    /// <summary>
-    /// Draw a header similar to the one used for the post-process stack
-    /// </summary>
     static public Rect DrawHeader(ref bool expanded, ref bool activeField, string title, Color feedbackColor,
       System.Action<GenericMenu> fillGenericMenu,
       float startedAt, float duration, float totalDuration, MMFeedbackTiming timing, bool pause, MMFeedbacks host) {
@@ -155,8 +121,6 @@ namespace MoreMountains.Feedbacks {
       float thisDeltaTime = timing.TimescaleMode == TimescaleModes.Scaled ? Time.deltaTime : Time.unscaledDeltaTime;
 
       var e = Event.current;
-
-      // Initialize Rects
       var backgroundRect = GUILayoutUtility.GetRect(1f, 17f);
 
       var progressRect = GUILayoutUtility.GetRect(1f, 2f);
@@ -196,8 +160,6 @@ namespace MoreMountains.Feedbacks {
       colorRect.xMin = 0f;
       colorRect.xMax = 5f;
       EditorGUI.DrawRect(colorRect, feedbackColor);
-
-      // Background rect should be full-width
       backgroundRect.xMin = 0f;
       backgroundRect.width += 4f;
 
@@ -205,7 +167,6 @@ namespace MoreMountains.Feedbacks {
       progressRect.width += 4f;
 
       Color headerBackgroundColor = Color.white;
-      // Background - if color is white we draw the default color
       if (!pause) {
         headerBackgroundColor = HeaderBackground;
       } else {
@@ -213,17 +174,11 @@ namespace MoreMountains.Feedbacks {
       }
 
       EditorGUI.DrawRect(backgroundRect, headerBackgroundColor);
-
-      // Foldout
       expanded = GUI.Toggle(foldoutRect, expanded, GUIContent.none, EditorStyles.foldout);
-
-      // Title ----------------------------------------------------------------------------------------------------
 
       using (new EditorGUI.DisabledScope(!activeField)) {
         EditorGUI.LabelField(labelRect, title, EditorStyles.boldLabel);
       }
-
-      // Direction ----------------------------------------------------------------------------------------------
 
       float directionRectWidth = 70f;
       var directionRect = new Rect(labelRect.xMax - directionRectWidth, labelRect.yMin, directionRectWidth, 17f);
@@ -241,8 +196,6 @@ namespace MoreMountains.Feedbacks {
         GUIContent directionIcon = new GUIContent(arrowDownIcon);
         EditorGUI.LabelField(directionRect, directionIcon);
       }
-
-      // Time -----------------------------------------------------------------------------------------------------
 
       string timingInfo = "";
       bool displayTotal = false;
@@ -277,15 +230,11 @@ namespace MoreMountains.Feedbacks {
         timingInfo = totalDuration.ToString("F2") + "s";
       }
 
-      //"[ 2s + 3 x (4s + 1s) ]"
-
       float timingRectWidth = 150f;
       var timingRect = new Rect(labelRect.xMax - timingRectWidth, labelRect.yMin, timingRectWidth, 17f);
       timingRect.xMin = labelRect.xMax - timingRectWidth;
       timingRect.xMax = labelRect.xMax;
       EditorGUI.LabelField(timingRect, timingInfo, _timingStyle);
-
-      // Progress bar
       if (totalDuration == 0f) {
         totalDuration = 0.1f;
       }
@@ -311,11 +260,7 @@ namespace MoreMountains.Feedbacks {
       } else {
         EditorGUI.DrawRect(progressRect, headerBackgroundColor);
       }
-
-      // Active checkbox
       activeField = GUI.Toggle(toggleRect, activeField, GUIContent.none, SmallTickbox);
-
-      // Dropdown menu icon
       GUI.DrawTexture(menuRect, menuIcon);
 
       for (int i = 0; i < 3; i++) {
@@ -324,8 +269,6 @@ namespace MoreMountains.Feedbacks {
         r.y = reorderRect.y + reorderRect.height * (i / 3.0f);
         EditorGUI.DrawRect(r, Reorder);
       }
-
-      // Handle events
 
       if (e.type == EventType.MouseDown) {
         if (menuRect.Contains(e.mousePosition)) {

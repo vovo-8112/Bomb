@@ -5,23 +5,16 @@ using MoreMountains.Tools;
 using UnityEngine.UI;
 
 namespace MoreMountains.MMInterface
-{	
-	/// <summary>
-	/// A class to add to an Image or SpriteRenderer to have it act like a button with a different sprite for on and off states
-	/// </summary>
+{
 	public class MMSpriteReplace : MonoBehaviour 
 	{
 
         [Header("Sprites")]
         [MMInformation("Add this to an Image or a SpriteRenderer to be able to swap between two sprites.", MoreMountains.Tools.MMInformationAttribute.InformationType.Info, false)]
-
-        /// the sprite to use when in the "on" state
         public Sprite OnSprite;
-		/// the sprite to use when in the "off" state
 		public Sprite OffSprite;
 
         [Header("Start settings")]
-		/// if this is true, the button will start if "on" state
 		public bool StartsOn = true;
 
         [Header("Debug")]
@@ -31,39 +24,24 @@ namespace MoreMountains.MMInterface
         public bool SwitchToOffSpriteButton;
         [MMInspectorButton("SwitchToOnSprite")]
         public bool SwitchToOnSpriteButton;
-
-        /// the current state of the button
         public bool CurrentValue { get { return (_image.sprite == OnSprite); } }
         
         protected Image _image;
         protected SpriteRenderer _spriteRenderer;
 		protected MMTouchButton _mmTouchButton;
-
-		/// <summary>
-		/// On Start we initialize our button
-		/// </summary>
 		protected virtual void Start()
 		{
 			Initialization ();
 		}
-
-		/// <summary>
-		/// On init, we grab our image component, and set our sprite in its initial state
-		/// </summary>
 		protected virtual void Initialization()
 		{
-            // grabs components
 			_image = GetComponent<Image> ();
             _spriteRenderer = GetComponent<SpriteRenderer>();
-
-            // grabs button
             _mmTouchButton = GetComponent<MMTouchButton> ();
 			if (_mmTouchButton != null)
 			{
 				_mmTouchButton.ReturnToInitialSpriteAutomatically = false;
 			}
-
-            // handles start
 			if ((OnSprite == null) || (OffSprite == null))
             {
                 return;
@@ -93,10 +71,6 @@ namespace MoreMountains.MMInterface
                 }
             }			
 		}
-
-		/// <summary>
-		/// A public method to change the sprite 
-		/// </summary>
 		public virtual void Swap()
 		{
             if (_image != null)
@@ -123,10 +97,6 @@ namespace MoreMountains.MMInterface
                 }
             }			
 		}
-
-		/// <summary>
-		/// a public method to switch to off sprite directly
-		/// </summary>
 		public virtual void SwitchToOffSprite()
 		{
 			if ((_image == null) && (_spriteRenderer == null))
@@ -140,10 +110,6 @@ namespace MoreMountains.MMInterface
 
 			SpriteOff ();
 		}
-
-		/// <summary>
-		/// sets the image's sprite to off
-		/// </summary>
 		protected virtual void SpriteOff()
 		{
             if (_image != null)
@@ -155,10 +121,6 @@ namespace MoreMountains.MMInterface
                 _spriteRenderer.sprite = OffSprite;
             }			
 		}
-
-		/// <summary>
-		/// a public method to switch to on sprite directly
-		/// </summary>
 		public virtual void SwitchToOnSprite()
         {
             if ((_image == null) && (_spriteRenderer == null))
@@ -171,11 +133,7 @@ namespace MoreMountains.MMInterface
             }
 
 			SpriteOn ();
-		}	
-
-		/// <summary>
-		/// sets the image's sprite to on
-		/// </summary>
+		}
 		protected virtual void SpriteOn()
 		{
 			

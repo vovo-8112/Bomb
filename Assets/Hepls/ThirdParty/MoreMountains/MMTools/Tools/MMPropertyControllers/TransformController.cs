@@ -4,9 +4,6 @@ using System.Reflection;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A simple class used to control properties on a transform
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/Property Controllers/TransformController")]
     public class TransformController : MonoBehaviour
     {
@@ -70,10 +67,6 @@ namespace MoreMountains.Tools
         protected Vector3 _rotation;
         protected Vector3 _localRotation;
         protected Vector3 _scale;
-
-        /// <summary>
-        /// At update, modifies the requested properties
-        /// </summary>
         protected virtual void Update()
         {
             _position = this.transform.position;

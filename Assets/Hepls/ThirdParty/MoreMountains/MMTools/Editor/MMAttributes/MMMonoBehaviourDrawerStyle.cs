@@ -20,15 +20,10 @@ namespace MoreMountains.Tools
 
         static MMMonoBehaviourDrawerStyle()
         {
-            // TEXT STYLE --------------------------------------------------------------------------------------------------------------
 
             TextStyle = new GUIStyle(EditorStyles.largeLabel);
             TextStyle.richText = true;
             TextStyle.contentOffset = new Vector2(0, 5);
-            
-            //TextStyle.font = Font.CreateDynamicFontFromOSFont(new[] { "Terminus (TTF) for Windows", "Calibri" }, 14);
-
-            // GROUP STYLE --------------------------------------------------------------------------------------------------------------
 
             GroupStyle = new GUIStyle(EditorStyles.foldout);
             
@@ -44,36 +39,13 @@ namespace MoreMountains.Tools
             GroupStyle.overflow = new RectOffset(100, 0, 0, 0);
             GroupStyle.padding = new RectOffset(20, 0, 0, 0);
 
-            // CONTAINER STYLE --------------------------------------------------------------------------------------------------------------
-
             ContainerStyle = new GUIStyle(GUI.skin.box);
             ContainerStyle.padding = new RectOffset(20, 0, 10, 10);
 
-            // BOX CHILD STYLE --------------------------------------------------------------------------------------------------------------
-
             BoxChildStyle = new GUIStyle(GUI.skin.box);
-            /*BoxChildStyle.active.background = GroupClosedTriangle;
-            BoxChildStyle.focused.background = GroupClosedTriangle;
-            BoxChildStyle.onActive.background = GroupOpenTriangle;
-            BoxChildStyle.onFocused.background = GroupOpenTriangle;*/
             BoxChildStyle.padding = new RectOffset(0, 0, 0, 0);
             BoxChildStyle.margin = new RectOffset(0, 0, 0, 0);
             BoxChildStyle.normal.background = NoTexture;
-
-            // FOLDOUT STYLE --------------------------------------------------------------------------------------------------------------
-
-            /*EditorStyles.foldout.active.background = GroupClosedTriangle;
-            EditorStyles.foldout.focused.background = GroupClosedTriangle;
-            EditorStyles.foldout.hover.background = GroupClosedTriangle;
-
-            EditorStyles.foldout.onActive.background = GroupOpenTriangle;
-            EditorStyles.foldout.onFocused.background = GroupOpenTriangle;
-            EditorStyles.foldout.onHover.background = GroupOpenTriangle;
-
-            //EditorStyles.foldout.overflow = new RectOffset(100, 0, 0, 0);
-            EditorStyles.foldout.padding = new RectOffset(0, 0, 0, 0);
-            EditorStyles.foldout.overflow = new RectOffset(0, 0, 0, 0);
-            EditorStyles.foldout.*/
         }
 
         static Texture2D MakeTex(int width, int height, Color col)

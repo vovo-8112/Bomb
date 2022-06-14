@@ -33,7 +33,7 @@ Properties {
 
 	_ReflectFaceColor	("Reflection Color", Color) = (0,0,0,1)
 	_ReflectOutlineColor("Reflection Color", Color) = (0,0,0,1)
-	_Cube 				("Reflection Cubemap", Cube) = "black" { /* TexGen CubeReflect */ }
+	_Cube 				("Reflection Cubemap", Cube) = "black" { }
 	_EnvMatrixRotation	("Texture Rotation", vector) = (0, 0, 0, 0)
 		
 
@@ -141,19 +141,17 @@ SubShader {
 			UNITY_VERTEX_OUTPUT_STEREO
 			float4	position		: SV_POSITION;
 			fixed4	color			: COLOR;
-			float2	atlas			: TEXCOORD0;		// Atlas
-			float4	param			: TEXCOORD1;		// alphaClip, scale, bias, weight
-			float4	mask			: TEXCOORD2;		// Position in object space(xy), pixel Size(zw)
+			float2	atlas			: TEXCOORD0;
+			float4	param			: TEXCOORD1;
+			float4	mask			: TEXCOORD2;
 			float3	viewDir			: TEXCOORD3;
 			
 		#if (UNDERLAY_ON || UNDERLAY_INNER)
-			float4	texcoord2		: TEXCOORD4;		// u,v, scale, bias
+			float4	texcoord2		: TEXCOORD4;
 			fixed4	underlayColor	: COLOR1;
 		#endif
 			float4 textures			: TEXCOORD5;
 		};
-
-		// Used by Unity internally to handle Texture Tiling and Offset.
 		float4 _FaceTex_ST;
 		float4 _OutlineTex_ST;
 
@@ -205,12 +203,8 @@ SubShader {
 			float y = -(_UnderlayOffsetY * _ScaleRatioC) * _GradientScale / _TextureHeight;
 			float2 bOffset = float2(x, y);
 		#endif
-
-			// Generate UV for the Masking Texture
 			float4 clampedRect = clamp(_ClipRect, -2e10, 2e10);
 			float2 maskUV = (vert.xy - clampedRect.xy) / (clampedRect.zw - clampedRect.xy);
-
-			// Support for texture tiling and offset
 			float2 textureUV = UnpackUV(input.texcoord1.x);
 			float2 faceUV = TRANSFORM_TEX(textureUV, _FaceTex);
 			float2 outlineUV = TRANSFORM_TEX(textureUV, _OutlineTex);
@@ -293,8 +287,6 @@ SubShader {
 			float4 glowColor = GetGlowColor(sd, scale);
 			faceColor.rgb += glowColor.rgb * glowColor.a;
 		#endif
-
-		// Alternative implementation to UnityGet2DClipping with support for softness.
 		#if UNITY_UI_CLIP_RECT
 			half2 m = saturate((_ClipRect.zw - _ClipRect.xy - abs(input.mask.xy)) * input.mask.zw);
 			faceColor *= m.x * m.y;

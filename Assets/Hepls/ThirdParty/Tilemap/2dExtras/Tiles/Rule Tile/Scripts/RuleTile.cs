@@ -89,11 +89,11 @@ namespace UnityEngine
 
 		private static readonly int[,] RotatedOrMirroredIndexes =
 		{
-			{2, 4, 7, 1, 6, 0, 3, 5}, // 90
-			{7, 6, 5, 4, 3, 2, 1, 0}, // 180, XY
-			{5, 3, 0, 6, 1, 7, 4, 2}, // 270
-			{2, 1, 0, 4, 3, 7, 6, 5}, // X
-			{5, 6, 7, 3, 4, 0, 1, 2}, // Y
+			{2, 4, 7, 1, 6, 0, 3, 5},
+			{7, 6, 5, 4, 3, 2, 1, 0},
+			{5, 3, 0, 6, 1, 7, 4, 2},
+			{2, 1, 0, 4, 3, 7, 6, 5},
+			{5, 6, 7, 3, 4, 0, 1, 2},
 		};
 		private static readonly int NeighborCount = 8;
 
@@ -218,8 +218,6 @@ namespace UnityEngine
                     tileData.transform = transform;
 					tileData.gameObject = rule.m_GameObject;
                     tileData.colliderType = rule.m_ColliderType;
-
-                    // Converts the tile's rotation matrix to a quaternion to be used by the instantiated Game Object
                     m_GameObjectQuaternion = Quaternion.LookRotation(new Vector3(transform.m02, transform.m12, transform.m22), new Vector3(transform.m01, transform.m11, transform.m21));
                     break;
 				}
@@ -272,7 +270,6 @@ namespace UnityEngine
 
 		public bool RuleMatches(TilingRule rule, ref TileBase[] neighboringTiles, ref Matrix4x4 transform)
 		{
-			// Check rule against rotations of 0, 90, 180, 270
 			for (int angle = 0; angle <= (rule.m_RuleTransform == TilingRule.Transform.Rotated ? 270 : 0); angle += 90)
 			{
 				if (RuleMatches(rule, ref neighboringTiles, angle))
@@ -281,15 +278,11 @@ namespace UnityEngine
 					return true;
 				}
 			}
-
-			// Check rule against x-axis mirror
 			if ((rule.m_RuleTransform == TilingRule.Transform.MirrorX) && RuleMatches(rule, ref neighboringTiles, true, false))
 			{
 				transform = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(-1f, 1f, 1f));
 				return true;
 			}
-
-			// Check rule against y-axis mirror
 			if ((rule.m_RuleTransform == TilingRule.Transform.MirrorY) && RuleMatches(rule, ref neighboringTiles, false, true))
 			{
 				transform = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1f, -1f, 1f));

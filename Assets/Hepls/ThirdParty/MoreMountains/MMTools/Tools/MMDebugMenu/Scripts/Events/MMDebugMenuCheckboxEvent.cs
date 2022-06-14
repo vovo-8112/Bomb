@@ -2,9 +2,6 @@
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// An event used to broadcast checkbox events from a MMDebugMenu
-    /// </summary>
     public struct MMDebugMenuCheckboxEvent
     {
         public enum EventModes { FromCheckbox, SetCheckbox }

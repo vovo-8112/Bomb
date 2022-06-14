@@ -2,16 +2,10 @@
 using System.Collections;
 
 namespace MoreMountains.Tools
-{	
-	/// <summary>
-	/// Image helpers
-	/// </summary>
+{
 
 	public class MMImage : MonoBehaviour 
 	{
-		/// <summary>
-	    /// Coroutine used to make the character's sprite flicker (when hurt for example).
-	    /// </summary>
 	    public static IEnumerator Flicker(Renderer renderer, Color initialColor, Color flickerColor, float flickerSpeed, float flickerDuration)
 	    {
 	    	if (renderer==null)

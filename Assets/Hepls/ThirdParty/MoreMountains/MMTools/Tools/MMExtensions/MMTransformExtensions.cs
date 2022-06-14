@@ -5,15 +5,8 @@ using UnityEngine.UI;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Transform extensions
-    /// </summary>
     public static class TransformExtensions
     {
-        /// <summary>
-        /// Destroys a transform's children
-        /// </summary>
-        /// <param name="transform"></param>
         public static void MMDestroyAllChildren(this Transform transform)
         {
             for (int t = transform.childCount - 1; t >= 0; t--)
@@ -28,13 +21,6 @@ namespace MoreMountains.Tools
                 }
             }
         }
-
-        /// <summary>
-        /// Finds children by name, breadth first
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="transformName"></param>
-        /// <returns></returns>
         public static Transform MMFindDeepChildBreadthFirst(this Transform parent, string transformName)
         {
             Queue<Transform> queue = new Queue<Transform>();
@@ -53,13 +39,6 @@ namespace MoreMountains.Tools
             }
             return null;
         }
-
-        /// <summary>
-        /// Finds children by name, depth first
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="transformName"></param>
-        /// <returns></returns>
         public static Transform MMFindDeepChildDepthFirst(this Transform parent, string transformName)
         {
             foreach (Transform child in parent)
@@ -77,12 +56,6 @@ namespace MoreMountains.Tools
             }
             return null;
         }
-
-        /// <summary>
-        /// Changes the layer of a transform and all its children to the new one
-        /// </summary>
-        /// <param name="transform"></param>
-        /// <param name="layerName"></param>
         public static void ChangeLayersRecursively(this Transform transform, string layerName)
         {
             transform.gameObject.layer = LayerMask.NameToLayer(layerName);
@@ -91,12 +64,6 @@ namespace MoreMountains.Tools
                 child.ChangeLayersRecursively(layerName);
             }
         }
-
-        /// <summary>
-        /// Changes the layer of a transform and all its children to the new one
-        /// </summary>
-        /// <param name="transform"></param>
-        /// <param name="layerIndex"></param>
         public static void ChangeLayersRecursively(this Transform transform, int layerIndex)
         {
             transform.gameObject.layer = layerIndex;

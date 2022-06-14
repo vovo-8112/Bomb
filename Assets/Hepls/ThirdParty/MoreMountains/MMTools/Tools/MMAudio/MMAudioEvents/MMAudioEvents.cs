@@ -9,10 +9,6 @@ namespace MoreMountains.Tools
     {
         
     }
-    
-    /// <summary>
-    /// A struct used to trigger sounds
-    /// </summary>
     public struct MMSfxEvent
     {
         public delegate void Delegate(AudioClip clipToPlay, AudioMixerGroup audioGroup = null, float volume = 1f, float pitch = 1f); 

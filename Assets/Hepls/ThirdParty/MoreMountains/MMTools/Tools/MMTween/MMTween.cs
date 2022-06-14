@@ -5,16 +5,9 @@ using System;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// The formulas described here are (loosely) based on Robert Penner's easing equations http://robertpenner.com/easing/
-    /// I recommend reading this blog post if you're interested in the subject : http://blog.moagrius.com/actionscript/jsas-understanding-easing/
-    /// </summary>
 
     public class MMTween : MonoBehaviour
     {
-        /// <summary>
-        /// A list of all the possible curves you can tween a value along
-        /// </summary>
         public enum MMTweenCurve
         {
             LinearTween,        
@@ -30,19 +23,6 @@ namespace MoreMountains.Tools
             EaseInCircular,     EaseOutCircular,    EaseInOutCircular,
             AntiLinearTween,    AlmostIdentity
         }
-
-        // Core methods ---------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Moves a value between a startValue and an endValue based on a currentTime, along the specified tween curve
-        /// </summary>
-        /// <param name="currentTime"></param>
-        /// <param name="initialTime"></param>
-        /// <param name="endTime"></param>
-        /// <param name="startValue"></param>
-        /// <param name="endValue"></param>
-        /// <param name="curve"></param>
-        /// <returns></returns>
         public static float Tween(float currentTime, float initialTime, float endTime, float startValue, float endValue, MMTweenCurve curve)
         {
             currentTime = MMMaths.Remap(currentTime, initialTime, endTime, 0f, 1f);
@@ -119,8 +99,6 @@ namespace MoreMountains.Tools
             return startValue;
         }
 
-        // Animation curve methods --------------------------------------------------------------------------------------------------------------
-
         public static float Tween(float currentTime, float initialTime, float endTime, float startValue, float endValue, AnimationCurve curve)
         {
             currentTime = MMMaths.Remap(currentTime, initialTime, endTime, 0f, 1f);
@@ -149,8 +127,6 @@ namespace MoreMountains.Tools
             startValue = Quaternion.Slerp(startValue, endValue, turningRate);
             return startValue;
         }
-
-        // Tween type methods ------------------------------------------------------------------------------------------------------------------------
 
         public static float Tween(float currentTime, float initialTime, float endTime, float startValue, float endValue, MMTweenType tweenType)
         {
@@ -200,8 +176,6 @@ namespace MoreMountains.Tools
             }
             return Quaternion.identity;
         }
-
-        // MOVE METHODS ---------------------------------------------------------------------------------------------------------
         public static Coroutine MoveTransform(MonoBehaviour mono, Transform targetTransform, Vector3 origin, Vector3 destination, 
             WaitForSeconds delay, float delayDuration, float duration, MMTween.MMTweenCurve curve, bool ignoreTimescale = false)
         {

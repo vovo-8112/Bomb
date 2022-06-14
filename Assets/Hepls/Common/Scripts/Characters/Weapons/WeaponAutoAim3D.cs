@@ -5,10 +5,6 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// The 3D version of the WeaponAutoAim, meant to be used on objects equipped with a WeaponAim3D.
-    /// It'll detect targets within the defined radius, pick the closest, and force the WeaponAim component to aim at them if a target is found
-    /// </summary>
     [RequireComponent(typeof(WeaponAim3D))]
     [AddComponentMenu("TopDown Engine/Weapons/Weapon Auto Aim 3D")]
     public class WeaponAutoAim3D : WeaponAutoAim
@@ -32,10 +28,6 @@ namespace MoreMountains.TopDownEngine
                 return _origin;
             }
         }
-
-        /// <summary>
-        /// On init we grab our orientation to be able to detect facing direction
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -45,11 +37,6 @@ namespace MoreMountains.TopDownEngine
                 _topDownController3D = _weapon.Owner.GetComponent<TopDownController3D>();
             }
         }
-
-        /// <summary>
-        /// Scans for targets by performing an overlap detection, then verifying line of fire with a boxcast
-        /// </summary>
-        /// <returns></returns>
         protected override bool ScanForTargets()
         {
             Target = null;
@@ -70,8 +57,6 @@ namespace MoreMountains.TopDownEngine
                         nearestDistance = distance;
                     }
                 }
-
-                // we cast a ray to make sure there's no obstacle
                 _raycastDirection = _potentialHit.transform.position - _raycastOrigin;
                 RaycastHit hit = MMDebug.Raycast3D(_raycastOrigin, _raycastDirection, Vector3.Distance(_potentialHit.transform.position, _raycastOrigin), ObstacleMask.value, Color.yellow, true);
                 if (hit.collider == null)
@@ -90,19 +75,11 @@ namespace MoreMountains.TopDownEngine
                 return false;
             }
         }
-
-        /// <summary>
-        /// Sets the aim to the relative direction of the target
-        /// </summary>
         protected override void SetAim()
         {
             _aimDirection = (Target.transform.position - _raycastOrigin).normalized;
             _weaponAim.SetCurrentAim(_aimDirection);
         }
-
-        /// <summary>
-        /// Determines the raycast origin
-        /// </summary>
         protected override void DetermineRaycastOrigin()
         {
             _raycastOrigin = Origin;

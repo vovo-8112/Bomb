@@ -5,9 +5,6 @@ using UnityEditor;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Custom editor for the ShaderController, conditional hiding 
-    /// </summary>
     [CustomEditor(typeof(ShaderController), true)]
     [CanEditMultipleObjects]
     public class ShaderControllerEditor : Editor
@@ -58,10 +55,6 @@ namespace MoreMountains.Tools
         {
             return true;
         }
-
-        /// <summary>
-        /// On enable we grab our properties
-        /// </summary>
         protected virtual void OnEnable()
         {
             ShaderController myTarget = (ShaderController)target;
@@ -106,10 +99,6 @@ namespace MoreMountains.Tools
             _FromColor = serializedObject.FindProperty("FromColor");
             _ToColor = serializedObject.FindProperty("ToColor");
         }
-
-        /// <summary>
-        /// Draws a conditional inspector
-        /// </summary>
         public override void OnInspectorGUI()
         {
             serializedObject.Update();

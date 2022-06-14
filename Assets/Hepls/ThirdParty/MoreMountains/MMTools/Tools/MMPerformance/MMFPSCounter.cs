@@ -4,18 +4,12 @@ using System.Collections;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Add this class to a gameObject with a Text component and it'll feed it the number of FPS in real time.
-    /// </summary>
 	[RequireComponent(typeof(Text))]
     [AddComponentMenu("More Mountains/Tools/Performance/MMFPSCounter")]
     public class MMFPSCounter : MonoBehaviour
 	{
 		public enum Modes { Instant, MovingAverage, InstantAndMovingAverage }
-		
-		/// the frequency at which the FPS counter should update (in seconds)
 		public float UpdateInterval = 0.3f;
-		/// if this is true, this counter will display a moving average of the framerate, not its instant framerate 
 		public Modes Mode = Modes.Instant;
 
 		protected float _framesAccumulated = 0f;
@@ -59,10 +53,6 @@ namespace MoreMountains.Tools
 			"290", "291", "292", "293", "294", "295", "296", "297", "298", "299",
 			"300"
 		};
-
-		/// <summary>
-		/// On Start(), we get the Text component and initialize our counter
-		/// </summary>
 		protected virtual void Start()
 		{
 			if(GetComponent<Text>()==null)
@@ -73,11 +63,6 @@ namespace MoreMountains.Tools
 			_text = GetComponent<Text>();
 		    _timeLeft = UpdateInterval;
 		}
-
-		/// <summary>
-		/// On Update, we increment our various counters, and if we've reached our UpdateInterval, we update our FPS counter
-		/// with the number of frames displayed since the last counter update
-		/// </summary>
 		protected virtual void Update()
 		{
 			_framesDrawnInTheInterval++;

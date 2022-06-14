@@ -5,23 +5,16 @@ using UnityEngine.UI;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// Add this class to a weapon and it'll prevent shooting when close to an obstacle (as defined by the ObstacleLayerMask)
-    /// </summary>
     [RequireComponent(typeof(Weapon))]
     [AddComponentMenu("TopDown Engine/Weapons/Weapon Prevent Shooting when Close to Walls 2D")]
     public class WeaponPreventShootingWhenCloseToWalls2D : MonoBehaviour
     {
-        /// the angle to consider when deciding whether or not there's a wall in front of the weapon (usually 5 degrees is fine)
         [Tooltip("the angle to consider when deciding whether or not there's a wall in front of the weapon (usually 5 degrees is fine)")]
         public float Angle = 5f;
-        /// the max distance to the wall we want to prevent shooting from
         [Tooltip("the max distance to the wall we want to prevent shooting from")]
         public float Distance = 2f;
-        /// the offset to apply to the detection (in addition and relative to the weapon's position)
         [Tooltip("the offset to apply to the detection (in addition and relative to the weapon's position)")]
         public Vector3 RaycastOriginOffset = Vector3.zero;
-        /// the layers to consider as obstacles
         [Tooltip("the layers to consider as obstacles")]
         public LayerMask ObstacleLayerMask = LayerManager.ObstaclesLayerMask;
 
@@ -32,20 +25,12 @@ namespace MoreMountains.TopDownEngine
         protected WeaponAim _weaponAim;
         protected CharacterHandleWeapon _characterHandleWeapon;
         protected bool _shootStopped = false;
-
-        /// <summary>
-        /// On Awake we grab our weapon
-        /// </summary>
         protected virtual void Awake()
         {
             _weapon = this.GetComponent<Weapon>();
             _weaponAim = this.GetComponent<WeaponAim>();
             _shootStopped = false;
         }
-
-        /// <summary>
-        /// On Update, we check for obstacles and prevent shooting if needed
-        /// </summary>
         protected virtual void Update()
         {
             if (_weapon == null)
@@ -64,8 +49,6 @@ namespace MoreMountains.TopDownEngine
             {
                 return;
             }
-
-            // if we've found an obstacle, we prevent shooting
             if (CheckForObstacles())
             {
                 _characterHandleWeapon.ShootStop();
@@ -74,7 +57,6 @@ namespace MoreMountains.TopDownEngine
             }
             else
             {
-                // if we haven't found an obstacle and were preventing shoot, we resume
                 if (_shootStopped)
                 {
                     _shootStopped = false;
@@ -83,12 +65,6 @@ namespace MoreMountains.TopDownEngine
             }
 
         }
-
-        /// <summary>
-        /// Casts rays in front of the weapon to check for obstacles
-        /// Returns true if an obstacle was found
-        /// </summary>
-        /// <returns></returns>
         protected virtual bool CheckForObstacles()
         {
             _hitLeft = MMDebug.RayCast(this.transform.position + _weaponAim.CurrentRotation * RaycastOriginOffset, (Quaternion.Euler(0f, 0f, -Angle / 2f) * _weaponAim.CurrentAimAbsolute).normalized, Distance, ObstacleLayerMask, Color.yellow, true);

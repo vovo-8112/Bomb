@@ -6,27 +6,9 @@ using Random = UnityEngine.Random;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Generates a grid with a path in the specified direction
-    /// </summary>
     public class MMGridGeneratorPath : MMGridGenerator 
     {
         public enum Directions { TopToBottom, BottomToTop, LeftToRight, RightToLeft }
-        
-        /// <summary>
-        /// Generates a grid with a path in the specified direction
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="seed"></param>
-        /// <param name="direction"></param>
-        /// <param name="startPosition"></param>
-        /// <param name="pathMinWidth"></param>
-        /// <param name="pathMaxWidth"></param>
-        /// <param name="directionChangeDistance"></param>
-        /// <param name="widthChangePercentage"></param>
-        /// <param name="directionChangePercentage"></param>
-        /// <returns></returns>
         public static int[,] Generate(int width, int height, int seed, Directions direction, Vector2Int startPosition, int pathMinWidth, int pathMaxWidth, int directionChangeDistance, int widthChangePercentage, int directionChangePercentage)
         {
             int[,] grid = PrepareGrid(ref width, ref height);
@@ -109,16 +91,6 @@ namespace MoreMountains.Tools
             }
             return grid;
         }
-
-        /// <summary>
-        /// Determines the new width of the path
-        /// </summary>
-        /// <param name="random"></param>
-        /// <param name="widthChangePercentage"></param>
-        /// <param name="pathMinWidth"></param>
-        /// <param name="pathMaxWidth"></param>
-        /// <param name="pathWidth"></param>
-        /// <returns></returns>
         private static int ComputeWidth(System.Random random, int widthChangePercentage, int pathMinWidth, int pathMaxWidth, int pathWidth)
         {
             if (random.Next(0, 100) > widthChangePercentage) 
@@ -137,17 +109,6 @@ namespace MoreMountains.Tools
 
             return pathWidth;
         }
-
-        /// <summary>
-        /// Determines in what direction to move the path
-        /// </summary>
-        /// <param name="random"></param>
-        /// <param name="x"></param>
-        /// <param name="directionChangeDistance"></param>
-        /// <param name="directionChangePercentage"></param>
-        /// <param name="pathMaxWidth"></param>
-        /// <param name="width"></param>
-        /// <returns></returns>
         private static int DetermineNextStep(System.Random random, int x, int directionChangeDistance, int directionChangePercentage, int pathMaxWidth, int width)
         {
             if (random.Next(0, 100) > directionChangePercentage) 

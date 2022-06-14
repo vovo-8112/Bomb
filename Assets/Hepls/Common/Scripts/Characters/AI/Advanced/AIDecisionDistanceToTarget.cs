@@ -5,34 +5,18 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This Decision will return true if the current Brain's Target is within the specified range, false otherwise.
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/AI/Decisions/AIDecisionDistanceToTarget")]
     public class AIDecisionDistanceToTarget : AIDecision
     {
-        /// The possible comparison modes
         public enum ComparisonModes { StrictlyLowerThan, LowerThan, Equals, GreatherThan, StrictlyGreaterThan }
-        /// the comparison mode
         [Tooltip("the comparison mode")]
         public ComparisonModes ComparisonMode = ComparisonModes.GreatherThan;
-        /// the distance to compare with
         [Tooltip("the distance to compare with")]
         public float Distance;
-        
-        /// <summary>
-        /// On Decide we check our distance to the Target
-        /// </summary>
-        /// <returns></returns>
         public override bool Decide()
         {
             return EvaluateDistance();
         }
-
-        /// <summary>
-        /// Returns true if the distance conditions are met
-        /// </summary>
-        /// <returns></returns>
         protected virtual bool EvaluateDistance()
         {
             if (_brain.Target == null)

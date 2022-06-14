@@ -8,32 +8,19 @@ using UnityEngine.Audio;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// This feedback will let you trigger save, load, and reset on MMSoundManager settings. You will need a MMSoundManager in your scene for this to work.
-    /// </summary>
     [AddComponentMenu("")]
     [FeedbackPath("Audio/MMSoundManager Save and Load")]
     [FeedbackHelp("This feedback will let you trigger save, load, and reset on MMSoundManager settings. You will need a MMSoundManager in your scene for this to work.")]
     public class MMFeedbackMMSoundManagerSaveLoad : MMFeedback
     {
-        /// sets the inspector color for this feedback
         #if UNITY_EDITOR
             public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.SoundsColor; } }
         #endif
-
-        /// the possible modes you can use to interact with save settings
         public enum Modes { Save, Load, Reset }
 
-        [Header("MMSoundManager Save and Load")] 
-        /// the selected mode to interact with save settings on the MMSoundManager
+        [Header("MMSoundManager Save and Load")]
         [Tooltip("the selected mode to interact with save settings on the MMSoundManager")]
         public Modes Mode = Modes.Save;
-        
-        /// <summary>
-        /// On Play, saves, loads or resets settings
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             if (Active)

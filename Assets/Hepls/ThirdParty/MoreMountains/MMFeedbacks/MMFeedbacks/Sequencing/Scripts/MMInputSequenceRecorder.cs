@@ -5,58 +5,39 @@ using UnityEngine;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// This class lets you record sequences via input presses
-    /// </summary>
     [AddComponentMenu("More Mountains/Feedbacks/Sequencing/MMInputSequenceRecorder")]
     [ExecuteAlways]
     public class MMInputSequenceRecorder : MonoBehaviour
     {
         [Header("Target")]
-        /// the target scriptable object to write to
         [Tooltip("the target scriptable object to write to")]
         public MMSequence SequenceScriptableObject;
 
         [Header("Recording")]
-        /// whether this recorder is recording right now or not
         [MMFReadOnly]
         [Tooltip("whether this recorder is recording right now or not")]
         public bool Recording;
-        /// whether any silence between the start of the recording and the first press should be removed or not
         [Tooltip("whether any silence between the start of the recording and the first press should be removed or not")]
         public bool RemoveInitialSilence = true;
-        /// whether this recording should write on top of existing entries or not
         [Tooltip("whether this recording should write on top of existing entries or not")]
         public bool AdditiveRecording = false;
-        /// whether this recorder should start recording when entering play mode
         [Tooltip("whether this recorder should start recording when entering play mode")]
         public bool StartRecordingOnGameStart = false;
-        /// the offset to apply to entries
         [Tooltip("the offset to apply to entries")]
         public float RecordingStartOffset = 0f;
 
         [Header("Recorder Keys")]
-        /// the key binding for recording start
         [Tooltip("the key binding for recording start")]
         public KeyCode StartRecordingHotkey = KeyCode.Home;
-        /// the key binding for recording stop
         [Tooltip("the key binding for recording stop")]
         public KeyCode StopRecordingHotkey = KeyCode.End;
 
         protected MMSequenceNote _note;
         protected float _recordingStartedAt = 0f;
-
-        /// <summary>
-        /// On awake we initialize our recorder
-        /// </summary>
         protected virtual void Awake()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// Makes sure we have a scriptable object to record to
-        /// </summary>
         public virtual void Initialization()
         {
             Recording = false;
@@ -68,10 +49,6 @@ namespace MoreMountains.Feedbacks
                 Debug.LogError(this.name + " this input based sequencer needs a bound scriptable object to function, please create one and bind it in the inspector.");
             }
         }
-
-        /// <summary>
-        /// On Start, starts a recording if needed
-        /// </summary>
         protected virtual void Start()
         {
             if (StartRecordingOnGameStart)
@@ -79,10 +56,6 @@ namespace MoreMountains.Feedbacks
                 StartRecording();
             }
         }
-
-        /// <summary>
-        /// Clears the sequence if needed and starts recording
-        /// </summary>
         public virtual void StartRecording()
         {
             Recording = true;
@@ -92,19 +65,11 @@ namespace MoreMountains.Feedbacks
             }            
             _recordingStartedAt = Time.realtimeSinceStartup;
         }
-
-        /// <summary>
-        /// Stops the recording
-        /// </summary>
         public virtual void StopRecording()
         {
             Recording = false;
             SequenceScriptableObject.QuantizeOriginalSequence();
         }
-
-        /// <summary>
-        /// On update we look for key presses
-        /// </summary>
         protected virtual void Update()
         {
             if (!Application.isPlaying)
@@ -114,10 +79,6 @@ namespace MoreMountains.Feedbacks
             DetectStartAndEnd();
             DetectRecording();
         }
-
-        /// <summary>
-        /// Detects key presses for start and end recording actions
-        /// </summary>
         protected virtual void DetectStartAndEnd()
         {
             if (!Recording)
@@ -135,10 +96,6 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        /// <summary>
-        /// Look for key presses to write to the sequence
-        /// </summary>
         protected virtual void DetectRecording()
         {
             if (Recording && (SequenceScriptableObject != null))
@@ -152,11 +109,6 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        /// <summary>
-        /// Adds a note to the specified track
-        /// </summary>
-        /// <param name="track"></param>
         public virtual void AddNoteToTrack(MMSequenceTrack track)
         {
            if ((SequenceScriptableObject.OriginalSequence.Line.Count == 0) && RemoveInitialSilence)

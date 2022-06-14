@@ -6,32 +6,18 @@ using UnityEngine.Events;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A class used to pick a property on a target object / component / scriptable object
-    /// </summary>
     [Serializable]
     public class MMPropertyPicker
     {
-        /// the target object to look for a property on
         public UnityEngine.Object TargetObject;
-        /// the component to look for a property on | storage only, not displayed in the inspector
         public Component TargetComponent;
-        /// the component to look for a property on | storage only, not displayed in the inspector
         public ScriptableObject TargetScriptableObject;
-        /// the name of the property to link to
         public string TargetPropertyName;
-        /// whether or not this property has been found
         public bool PropertyFound { get; protected set; }
         
         protected MMProperty _targetMMProperty;
         protected bool _initialized = false;
         protected MMPropertyLink _propertySetter;
-
-        /// <summary>
-        /// When the property picker gets initialized, it grabs the stored property or field 
-        /// and initializes a MMProperty and MMPropertyLink
-        /// </summary>
-        /// <param name="source"></param>
         public virtual void Initialization(GameObject source)
         {
             if ((TargetComponent == null) && (TargetScriptableObject == null))
@@ -60,8 +46,6 @@ namespace MoreMountains.Tools
             }
             PropertyFound = true;
             _initialized = true;
-
-            // if succession because pattern matching isn't supported before C# 7
             if (_targetMMProperty.PropertyType == typeof(string))
             {
                 _propertySetter = new MMPropertyLinkString();

@@ -11,120 +11,80 @@ namespace MoreMountains.Tools
 {	
 	[System.Serializable]
 	public class ProgressEvent : UnityEvent<float>{}
-
-	/// <summary>
-	/// A simple class used to store additive loading settings
-	/// </summary>
 	[Serializable]
 	public class MMAdditiveSceneLoadingManagerSettings
 	{
-		/// the name of the MMSceneLoadingManager scene you want to use when in additive mode
 		[Tooltip("the name of the MMSceneLoadingManager scene you want to use when in additive mode")]
 		public string LoadingSceneName = "MMAdditiveLoadingScreen";
-		/// when in additive loading mode, the thread priority to apply to the loading
 		[Tooltip("when in additive loading mode, the thread priority to apply to the loading")]
 		public ThreadPriority ThreadPriority = ThreadPriority.High;
-		/// whether or not to make additional sanity checks (better leave this to true)
 		[Tooltip("whether or not to make additional sanity checks (better leave this to true)")]
 		public bool SecureLoad = true;
-		/// when in additive loading mode, whether or not to interpolate the progress bar's progress
 		[Tooltip("when in additive loading mode, whether or not to interpolate the progress bar's progress")]
 		public bool InterpolateProgress = true;
-		/// when in additive loading mode, when in additive loading mode, the duration (in seconds) of the delay before the entry fade
 		[Tooltip("when in additive loading mode, when in additive loading mode, the duration (in seconds) of the delay before the entry fade")]
 		public float BeforeEntryFadeDelay = 0f;
-		/// when in additive loading mode, the duration (in seconds) of the entry fade
 		[Tooltip("when in additive loading mode, the duration (in seconds) of the entry fade")]
 		public float EntryFadeDuration = 0.25f;
-		/// when in additive loading mode, the duration (in seconds) of the delay before the entry fade
 		[Tooltip("when in additive loading mode, the duration (in seconds) of the delay before the entry fade")]
 		public float AfterEntryFadeDelay = 0.1f;
-		/// when in additive loading mode, the duration (in seconds) of the delay before the exit fade
 		[Tooltip("when in additive loading mode, the duration (in seconds) of the delay before the exit fade")]
 		public float BeforeExitFadeDelay = 0.25f;
-		/// when in additive loading mode, the duration (in seconds) of the exit fade
 		[Tooltip("when in additive loading mode, the duration (in seconds) of the exit fade")]
 		public float ExitFadeDuration = 0.2f;
-		/// when in additive loading mode, when in additive loading mode, the tween to use to fade on entry
 		[Tooltip("when in additive loading mode, when in additive loading mode, the tween to use to fade on entry")]
 		public MMTweenType EntryFadeTween = null;
-		/// when in additive loading mode, the tween to use to fade on exit
 		[Tooltip("when in additive loading mode, the tween to use to fade on exit")]
 		public MMTweenType ExitFadeTween = null;
-		/// when in additive loading mode, the speed at which the loader's progress bar should move
 		[Tooltip("when in additive loading mode, the speed at which the loader's progress bar should move")]
 		public float ProgressBarSpeed = 5f;
-		/// when in additive loading mode, the selective additive fade mode
 		[Tooltip("when in additive loading mode, the selective additive fade mode")]
 		public MMAdditiveSceneLoadingManager.FadeModes FadeMode = MMAdditiveSceneLoadingManager.FadeModes.FadeInThenOut;
 	}
-	
-	/// <summary>
-	/// A class to load scenes using a loading screen instead of just the default API
-	/// This is a new version of the classic LoadingSceneManager (now renamed to MMSceneLoadingManager for consistency)
-	/// </summary>
 	public class MMAdditiveSceneLoadingManager : MonoBehaviour 
 	{
-		/// The possible orders in which to play fades (depends on the fade you've set in your loading screen
 		public enum FadeModes { FadeInThenOut, FadeOutThenIn }
 
 		[Header("Audio Listener")] 
 		public AudioListener LoadingAudioListener;
 		
         [Header("Settings")]
-        /// the ID on which to trigger a fade, has to match the ID on the fader in your scene
         [Tooltip("the ID on which to trigger a fade, has to match the ID on the fader in your scene")]
         public int FaderID = 500;
-        /// whether or not to output debug messages to the console
         [Tooltip("whether or not to output debug messages to the console")]
         public bool DebugMode = false;
 
-        [Header("Progress Events")] 
-        /// an event used to update progress 
+        [Header("Progress Events")]
         [Tooltip("an event used to update progress")]
         public ProgressEvent SetRealtimeProgressValue;
-        /// an event used to update progress with interpolation
         [Tooltip("an event used to update progress with interpolation")]
         public ProgressEvent SetInterpolatedProgressValue;
 
         [Header("State Events")]
-        /// an event that will be invoked when the load starts
         [Tooltip("an event that will be invoked when the load starts")]
         public UnityEvent OnLoadStarted;
-        /// an event that will be invoked when the delay before the entry fade starts
         [Tooltip("an event that will be invoked when the delay before the entry fade starts")]
         public UnityEvent OnBeforeEntryFade;
-        /// an event that will be invoked when the entry fade starts
         [Tooltip("an event that will be invoked when the entry fade starts")]
         public UnityEvent OnEntryFade;
-        /// an event that will be invoked when the delay after the entry fade starts
         [Tooltip("an event that will be invoked when the delay after the entry fade starts")]
         public UnityEvent OnAfterEntryFade;
-        /// an event that will be invoked when the origin scene gets unloaded
         [Tooltip("an event that will be invoked when the origin scene gets unloaded")]
         public UnityEvent OnUnloadOriginScene;
-        /// an event that will be invoked when the destination scene starts loading
         [Tooltip("an event that will be invoked when the destination scene starts loading")]
         public UnityEvent OnLoadDestinationScene;
-        /// an event that will be invoked when the load of the destination scene is complete
         [Tooltip("an event that will be invoked when the load of the destination scene is complete")]
         public UnityEvent OnLoadProgressComplete;
-        /// an event that will be invoked when the interpolated load of the destination scene is complete
         [Tooltip("an event that will be invoked when the interpolated load of the destination scene is complete")]
         public UnityEvent OnInterpolatedLoadProgressComplete;
-        /// an event that will be invoked when the delay before the exit fade starts
         [Tooltip("an event that will be invoked when the delay before the exit fade starts")]
         public UnityEvent OnBeforeExitFade;
-        /// an event that will be invoked when the exit fade starts
         [Tooltip("an event that will be invoked when the exit fade starts")]
         public UnityEvent OnExitFade;
-        /// an event that will be invoked when the destination scene gets activated
         [Tooltip("an event that will be invoked when the destination scene gets activated")]
         public UnityEvent OnDestinationSceneActivation;
-        /// an event that will be invoked when the scene loader gets unloaded
         [Tooltip("an event that will be invoked when the scene loader gets unloaded")]
         public UnityEvent OnUnloadSceneLoader;
-        /// an event that will be invoked when the whole transition is complete
         [Tooltip("an event that will be invoked when the whole transition is complete")]
         public UnityEvent OnLoadTransitionComplete;
 
@@ -151,23 +111,12 @@ namespace MoreMountains.Tools
         protected bool _setRealtimeProgressValueIsNull;
         protected bool _setInterpolatedProgressValueIsNull;
         protected const float _asyncProgressLimit = 0.9f;
-
-        /// <summary>
-        /// Call this static method to load a scene from anywhere (packed settings signature)
-        /// </summary>
-        /// <param name="sceneToLoadName"></param>
-        /// <param name="settings"></param>
         public static void LoadScene(string sceneToLoadName, MMAdditiveSceneLoadingManagerSettings settings)
         {
 	        LoadScene(sceneToLoadName, settings.LoadingSceneName, settings.ThreadPriority, settings.SecureLoad, settings.InterpolateProgress,
 		        settings.BeforeEntryFadeDelay, settings.EntryFadeDuration, settings.AfterEntryFadeDelay, settings.BeforeExitFadeDelay,
 		        settings.ExitFadeDuration, settings.EntryFadeTween, settings.ExitFadeTween, settings.ProgressBarSpeed, settings.FadeMode);
         }
-        
-        /// <summary>
-        /// Call this static method to load a scene from anywhere
-        /// </summary>
-        /// <param name="sceneToLoadName">Level name.</param>
         public static void LoadScene(string sceneToLoadName, string loadingSceneName = "MMAdditiveLoadingScreen", 
                                         ThreadPriority threadPriority = ThreadPriority.High, bool secureLoad = true,
                                         bool interpolateProgress = true,
@@ -233,18 +182,10 @@ namespace MoreMountains.Tools
 
             SceneManager.LoadScene(_loadingScreenSceneName, LoadSceneMode.Additive);
 		}
-
-		/// <summary>
-		/// On Start(), we start loading the new level asynchronously
-		/// </summary>
 		protected virtual void Awake()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// Initializes timescale, computes null checks, and starts the load sequence
-        /// </summary>
         protected virtual void Initialization()
         {
 	        MMLoadingSceneDebug("MMLoadingSceneManagerAdditive : Initialization");
@@ -268,18 +209,10 @@ namespace MoreMountains.Tools
             
             StartCoroutine(LoadSequence());
         }
-
-		/// <summary>
-		/// Every frame, we fill the bar smoothly according to loading progress
-		/// </summary>
 		protected virtual void Update()
 		{
 			UpdateProgress();
 		}
-
-		/// <summary>
-		/// Sends progress value via UnityEvents
-		/// </summary>
 		protected virtual void UpdateProgress()
 		{
 			if (!_setRealtimeProgressValueIsNull)
@@ -300,10 +233,6 @@ namespace MoreMountains.Tools
 				SetInterpolatedProgressValue.Invoke(_loadProgress);	
 			}
 		}
-
-		/// <summary>
-		/// Loads the scene to load asynchronously.
-		/// </summary>
 		protected virtual IEnumerator LoadSequence()
 		{
 			InitiateLoad();
@@ -318,10 +247,6 @@ namespace MoreMountains.Tools
 			yield return UnloadSceneLoader();
 			LoadTransitionComplete();
 		}
-
-		/// <summary>
-		/// Initializes counters and timescale
-		/// </summary>
 		protected virtual void InitiateLoad()
 		{
 			_loadProgress = 0f;
@@ -332,11 +257,6 @@ namespace MoreMountains.Tools
 			MMSceneLoadingManager.LoadingSceneEvent.Trigger(_sceneToLoadName, MMSceneLoadingManager.LoadingStatus.LoadStarted);
 			OnLoadStarted?.Invoke();
 		}
-
-		/// <summary>
-		/// Waits for the specified BeforeEntryFadeDelay duration
-		/// </summary>
-		/// <returns></returns>
 		protected virtual IEnumerator ProcessDelayBeforeEntryFade()
 		{
 			if (_beforeEntryFadeDelay > 0f)
@@ -348,11 +268,6 @@ namespace MoreMountains.Tools
 				yield return MMCoroutine.WaitFor(_beforeEntryFadeDelay);
 			}
 		}
-
-		/// <summary>
-		/// Calls a fader on entry
-		/// </summary>
-		/// <returns></returns>
 		protected virtual IEnumerator EntryFade()
 		{
 			if (_entryFadeDuration > 0f)
@@ -375,11 +290,6 @@ namespace MoreMountains.Tools
 				yield return MMCoroutine.WaitFor(_entryFadeDuration);
 			}
 		}
-
-		/// <summary>
-		/// Waits for the specified AfterEntryFadeDelay
-		/// </summary>
-		/// <returns></returns>
 		protected virtual IEnumerator ProcessDelayAfterEntryFade()
 		{
 			if (_afterEntryFadeDelay > 0f)
@@ -391,11 +301,6 @@ namespace MoreMountains.Tools
 				yield return MMCoroutine.WaitFor(_afterEntryFadeDelay);
 			}
 		}
-
-		/// <summary>
-		/// Unloads the original scene(s) and waits for the unload to complete
-		/// </summary>
-		/// <returns></returns>
 		protected virtual IEnumerator UnloadOriginScenes()
 		{
 			foreach (Scene scene in _initialScenes)
@@ -413,11 +318,6 @@ namespace MoreMountains.Tools
 				}
 			}
 		}
-
-		/// <summary>
-		/// Loads the destination scene
-		/// </summary>
-		/// <returns></returns>
 		protected virtual IEnumerator LoadDestinationScene()
 		{
 			MMLoadingSceneDebug("MMLoadingSceneManagerAdditive : load destination scene");
@@ -438,11 +338,7 @@ namespace MoreMountains.Tools
 			MMLoadingSceneDebug("MMLoadingSceneManagerAdditive : load progress complete");
 			MMSceneLoadingManager.LoadingSceneEvent.Trigger(_sceneToLoadName, MMSceneLoadingManager.LoadingStatus.LoadProgressComplete);
 			OnLoadProgressComplete?.Invoke();
-
-			// when the load is close to the end (it'll never reach it), we set it to 100%
 			_loadProgress = 1f;
-
-			// we wait for the bar to be visually filled to continue
 			if (_interpolateProgress)
 			{
 				while (_interpolatedLoadProgress < 1f)
@@ -455,11 +351,6 @@ namespace MoreMountains.Tools
 			MMSceneLoadingManager.LoadingSceneEvent.Trigger(_sceneToLoadName, MMSceneLoadingManager.LoadingStatus.InterpolatedLoadProgressComplete);
 			OnInterpolatedLoadProgressComplete?.Invoke();
 		}
-
-        /// <summary>
-        /// Waits for BeforeExitFadeDelay seconds
-        /// </summary>
-        /// <returns></returns>
         protected virtual IEnumerator ProcessDelayBeforeExitFade()
 		{
 			if (_beforeExitFadeDelay > 0f)
@@ -471,11 +362,6 @@ namespace MoreMountains.Tools
 				yield return MMCoroutine.WaitFor(_beforeExitFadeDelay);
 			}
 		}
-
-		/// <summary>
-		/// Requests a fade on exit
-		/// </summary>
-		/// <returns></returns>
 		protected virtual IEnumerator ExitFade()
 		{
 			SetAudioListener(false);
@@ -496,10 +382,6 @@ namespace MoreMountains.Tools
 				yield return MMCoroutine.WaitFor(_exitFadeDuration);
 			}
 		}
-
-		/// <summary>
-		/// Activates the destination scene
-		/// </summary>
 		protected virtual IEnumerator DestinationSceneActivation()
         {
             yield return MMCoroutine.WaitForFrames(1);
@@ -512,39 +394,25 @@ namespace MoreMountains.Tools
                 yield return null;
             }
         }
-
-        /// <summary>
-        /// A method triggered when the async operation completes
-        /// </summary>
-        /// <param name="obj"></param>
         protected virtual void OnLoadOperationComplete(AsyncOperation obj)
         {
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(_sceneToLoadName));
             MMLoadingSceneDebug("MMLoadingSceneManagerAdditive : set active scene to " + _sceneToLoadName);
 
         }
-
-        /// <summary>
-        /// Unloads the scene loader
-        /// </summary>
-        /// <returns></returns>
         protected virtual IEnumerator UnloadSceneLoader()
 		{
 			MMLoadingSceneDebug("MMLoadingSceneManagerAdditive : unloading scene loader");
 			MMSceneLoadingManager.LoadingSceneEvent.Trigger(_sceneToLoadName, MMSceneLoadingManager.LoadingStatus.UnloadSceneLoader);
 			OnUnloadSceneLoader?.Invoke();
 			
-			yield return null; // mandatory yield to avoid an unjustified warning
+			yield return null;
 			_unloadLoadingAsyncOperation = SceneManager.UnloadSceneAsync(_loadingScreenSceneName);
 			while (_unloadLoadingAsyncOperation.progress < _asyncProgressLimit)
 			{
 				yield return null;
 			}	
 		}
-
-		/// <summary>
-		/// Completes the transition
-		/// </summary>
 		protected virtual void LoadTransitionComplete()
 		{
 			MMLoadingSceneDebug("MMLoadingSceneManagerAdditive : load transition complete");
@@ -553,31 +421,16 @@ namespace MoreMountains.Tools
 			
 			_loadingInProgress = false;
 		}
-
-		/// <summary>
-		/// Turns the loading audio listener on or off
-		/// </summary>
-		/// <param name="state"></param>
 		protected virtual void SetAudioListener(bool state)
 		{
 			if (LoadingAudioListener != null)
 			{
-				//LoadingAudioListener.gameObject.SetActive(state);
 			}
 		}
-
-		/// <summary>
-		/// On Destroy we reset our state
-		/// </summary>
 		protected virtual void OnDestroy()
 		{
 			_loadingInProgress = false;
 		}
-
-		/// <summary>
-		/// A debug method used to output console messages, for this class only
-		/// </summary>
-		/// <param name="message"></param>
 		protected virtual void MMLoadingSceneDebug(string message)
 		{
 			if (!DebugMode)

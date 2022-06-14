@@ -10,13 +10,6 @@ namespace MoreMountains.Tools
         LoadSettings,
         ResetSettings
     }
-    
-    /// <summary>
-    /// This event will let you trigger a save/load/reset on the MMSoundManager settings
-    ///
-    /// Example : MMSoundManagerEvent.Trigger(MMSoundManagerEventTypes.SaveSettings);
-    /// will save settings. 
-    /// </summary>
     public struct MMSoundManagerEvent
     {
         public MMSoundManagerEventTypes EventType;

@@ -5,12 +5,7 @@ using UnityEngine;
 
 namespace MoreMountains.Feedbacks
 {
-    /// the possible states for sequence notes
     public enum MMSequenceTrackStates { Idle, Down, Up }
-
-    /// <summary>
-    /// A class describing the contents of a sequence note, basically a timestamp and the ID to play at that timestamp
-    /// </summary>
     [System.Serializable]
     public class MMSequenceNote
     {
@@ -25,10 +20,6 @@ namespace MoreMountains.Feedbacks
             return newNote;
         }
     }
-
-    /// <summary>
-    /// A class describing the properties of a sequence's track : ID, color (for the inspector), Key (for the recorder), State (for the recorder)
-    /// </summary>
     [System.Serializable]
     public class MMSequenceTrack
     {
@@ -54,48 +45,32 @@ namespace MoreMountains.Feedbacks
             }            
         }
     }
-
-    /// <summary>
-    /// A class used to store sequence notes
-    /// </summary>
     [System.Serializable]
     public class MMSequenceList
     {
         public List<MMSequenceNote> Line;
     }
-
-    /// <summary>
-    /// This scriptable object holds "sequences", data used to record and play events in sequence
-    /// MMSequences can be played by MMFeedbacks from their Timing section, by Sequencers and potentially other classes
-    /// </summary>
     [CreateAssetMenu(menuName = "MoreMountains/Sequencer/MMSequence")]
     public class MMSequence : ScriptableObject
     {
         [Header("Sequence")]
-        /// the length (in seconds) of the sequence
         [Tooltip("the length (in seconds) of the sequence")]
         [MMFReadOnly]
         public float Length;
-        /// the original sequence (as outputted by the input sequence recorder)
         [Tooltip("the original sequence (as outputted by the input sequence recorder)")]
         public MMSequenceList OriginalSequence;
-        /// the duration in seconds to apply after the last input
         [Tooltip("the duration in seconds to apply after the last input")]
         public float EndSilenceDuration = 0f;
 
         [Header("Sequence Contents")]
-        /// the list of tracks for this sequence
         [Tooltip("the list of tracks for this sequence")]
         public List<MMSequenceTrack> SequenceTracks;
 
         [Header("Quantizing")]
-        /// whether this sequence should be used in quantized form or not
         [Tooltip("whether this sequence should be used in quantized form or not")]
         public bool Quantized;
-        /// the target BPM for this sequence
         [Tooltip("the target BPM for this sequence")]
         public int TargetBPM = 120;
-        /// the contents of the quantized sequence
         [Tooltip("the contents of the quantized sequence")]
         public List<MMSequenceList> QuantizedSequence;
         
@@ -106,46 +81,23 @@ namespace MoreMountains.Feedbacks
         
         protected float[] _quantizedBeats; 
         protected List<MMSequenceNote> _deleteList;
-
-        /// <summary>
-        /// Compares and sorts two sequence notes
-        /// </summary>
-        /// <param name="p1"></param>
-        /// <param name="p2"></param>
-        /// <returns></returns>
         static int SortByTimestamp(MMSequenceNote p1, MMSequenceNote p2)
         {
             return p1.Timestamp.CompareTo(p2.Timestamp);
         }
-
-        /// <summary>
-        /// Sorts the original sequence based on timestamps
-        /// </summary>
         public virtual void SortOriginalSequence()
         {
             OriginalSequence.Line.Sort(SortByTimestamp);
         }
-
-        /// <summary>
-        /// Quantizes the original sequence, filling the QuantizedSequence list, arranging events on the beat
-        /// </summary>
         public virtual void QuantizeOriginalSequence()
         {
             ComputeLength();
             QuantizeSequenceToBPM(OriginalSequence.Line);
         }
-
-        /// <summary>
-        /// Computes the length of the sequence
-        /// </summary>
         public virtual void ComputeLength()
         {
             Length = OriginalSequence.Line[OriginalSequence.Line.Count - 1].Timestamp + EndSilenceDuration;
         }
-
-        /// <summary>
-        /// Makes every timestamp in the sequence match the BPM track
-        /// </summary>
         public virtual void QuantizeSequenceToBPM(List<MMSequenceNote> baseSequence)
         {
             float sequenceLength = Length;
@@ -154,8 +106,6 @@ namespace MoreMountains.Feedbacks
             QuantizedSequence = new List<MMSequenceList>();
             _deleteList = new List<MMSequenceNote>();
             _deleteList.Clear();
-
-            // we fill the BPM track with the computed timestamps
             _quantizedBeats = new float[numberOfBeatsInSequence];
             for (int i = 0; i < numberOfBeatsInSequence; i++)
             {
@@ -184,10 +134,6 @@ namespace MoreMountains.Feedbacks
                 }
             }        
         }
-
-        /// <summary>
-        /// On validate, we initialize our track's properties
-        /// </summary>
         protected virtual void OnValidate()
         {
             for (int i = 0; i < SequenceTracks.Count; i++)
@@ -195,10 +141,6 @@ namespace MoreMountains.Feedbacks
                 SequenceTracks[i].SetDefaults(i);
             }
         }
-
-        /// <summary>
-        /// Randomizes track colors
-        /// </summary>
         protected virtual void RandomizeTrackColors()
         {
             foreach(MMSequenceTrack track in SequenceTracks)
@@ -206,11 +148,6 @@ namespace MoreMountains.Feedbacks
                 track.TrackColor = RandomSequenceColor();
             }
         }
-
-        /// <summary>
-        /// Returns a random color for the sequence tracks
-        /// </summary>
-        /// <returns></returns>
         public static Color RandomSequenceColor()
         {
             int random = UnityEngine.Random.Range(0, 32);
@@ -252,13 +189,6 @@ namespace MoreMountains.Feedbacks
             }
             return new Color32(240, 248, 255, 255); 
         }
-        
-        /// <summary>
-        /// Rounds a float to the closest float in an array (array has to be sorted)
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="array"></param>
-        /// <returns></returns>
         public static float RoundFloatToArray(float value, float[] array)
         {
             int min = 0;

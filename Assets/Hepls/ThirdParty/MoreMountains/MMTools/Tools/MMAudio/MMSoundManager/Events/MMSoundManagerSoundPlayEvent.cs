@@ -5,12 +5,6 @@ using UnityEngine.Audio;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// This event will let you play a sound on the MMSoundManager
-    ///
-    /// Example : MMSoundManagerSoundPlayEvent.Trigger(ExplosionSfx, MMSoundManager.MMSoundManagerTracks.Sfx, this.transform.position);
-    /// will play a clip (here ours is called ExplosionSfx) on the SFX track, at the position of the object calling it
-    /// </summary>
     public struct MMSoundManagerSoundPlayEvent
     {
         public delegate AudioSource Delegate(AudioClip clip, MMSoundManagerPlayOptions options); 

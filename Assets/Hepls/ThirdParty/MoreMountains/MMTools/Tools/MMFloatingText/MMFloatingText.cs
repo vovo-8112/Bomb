@@ -7,28 +7,17 @@ using Random = System.Random;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A class used to handle the movement and behaviour of floating texts, usually used to display damage text.
-    /// This is designed to be spawned by a MMFloatingTextSpawner, not used on its own.
-    /// It also requires a specific hierarchy. You'll find examples of it in the MMTools/Tools/MMFloatingText/Prefabs folder
-    /// </summary>
     public class MMFloatingText : MonoBehaviour
     {
         [Header("Bindings")]
-
-        /// the part of the prefab that we'll move
         [Tooltip("the part of the prefab that we'll move")]
         public Transform MovingPart;
-        /// the part of the prefab that we'll rotate to face the target camera
         [Tooltip("the part of the prefab that we'll rotate to face the target camera")]
         public Transform Billboard;
-        /// the TextMesh used to display the value
         [Tooltip("the TextMesh used to display the value")]
         public TextMesh TargetTextMesh;
         
         [Header("Debug")]
-
-        /// the direction of this floating text, used for debug only
         [Tooltip("the direction of this floating text, used for debug only")]
         [MMReadOnly]
         public Vector3 Direction = Vector3.up;
@@ -76,19 +65,10 @@ namespace MoreMountains.Tools
 
         protected float _elapsedTime;
         protected float _remappedTime;
-
-        /// <summary>
-        /// On enable, we initialize our floating text
-        /// </summary>
         protected virtual void OnEnable()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// Changes whether or not this floating text should use unscaled time
-        /// </summary>
-        /// <param name="status"></param>
         public virtual void SetUseUnscaledTime(bool status, bool resetStartedAt)
         {
             _useUnscaledTime = status;
@@ -97,10 +77,6 @@ namespace MoreMountains.Tools
                 _startedAt = GetTime();    
             }
         }
-
-        /// <summary>
-        /// Stores start time and initial color
-        /// </summary>
         protected virtual void Initialization()
         {
             _startedAt = GetTime();
@@ -109,25 +85,15 @@ namespace MoreMountains.Tools
                 _initialTextColor = TargetTextMesh.color;
             }            
         }
-
-        /// <summary>
-        /// On Update we move our text
-        /// </summary>
         protected virtual void Update()
         {
             UpdateFloatingText();
         }
-
-        /// <summary>
-        /// Handles the text's life cycle, movement, scale, color, opacity, alignment and billboard
-        /// </summary>
         protected virtual void UpdateFloatingText()
         {
             
             _elapsedTime = GetTime() - _startedAt;
             _remappedTime = MMMaths.Remap(_elapsedTime, 0f, _lifetime, 0f, 1f);
-            
-            // lifetime
             if (_elapsedTime > _lifetime)
             {
                 TurnOff();
@@ -140,13 +106,8 @@ namespace MoreMountains.Tools
             HandleAlignment();            
             HandleBillboard();
         }
-
-        /// <summary>
-        /// Moves the text along the specified curves
-        /// </summary>
         protected virtual void HandleMovement()
         {
-            // position movement
             if (_animateMovement)
             {
                 this.transform.up = Direction;
@@ -154,21 +115,13 @@ namespace MoreMountains.Tools
                 _newPosition.x = _animateX ? MMMaths.Remap(_animateXCurve.Evaluate(_remappedTime), 0f, 1, _remapXZero, _remapXOne) : 0f;
                 _newPosition.y = _animateY ? MMMaths.Remap(_animateYCurve.Evaluate(_remappedTime), 0f, 1, _remapYZero, _remapYOne) : 0f;
                 _newPosition.z = _animateZ ? MMMaths.Remap(_animateZCurve.Evaluate(_remappedTime), 0f, 1, _remapZZero, _remapZOne) : 0f;
-
-                // we move the moving part
                 MovingPart.transform.localPosition = _newPosition;
-
-                // we store the last position
                 if (Vector3.Distance(_movingPartPositionLastFrame, MovingPart.position) > 0.5f)
                 {
                     _movingPartPositionLastFrame = MovingPart.position;
                 }
             }
         }
-
-        /// <summary>
-        /// Animates the text's color over the specified gradient
-        /// </summary>
         protected virtual void HandleColor()
         {
             if (_animateColor)
@@ -177,10 +130,6 @@ namespace MoreMountains.Tools
                 SetColor(_newColor);
             }
         }
-
-        /// <summary>
-        /// Animates the text's opacity over the specified curve
-        /// </summary>
         protected virtual void HandleOpacity()
         {
             if (_animateOpacity)
@@ -189,10 +138,6 @@ namespace MoreMountains.Tools
                 SetOpacity(newOpacity);
             }
         }
-
-        /// <summary>
-        /// Animates the text's scale over the specified curve
-        /// </summary>
         protected virtual void HandleScale()
         {
             if (_animateScale)
@@ -201,10 +146,6 @@ namespace MoreMountains.Tools
                 MovingPart.transform.localScale = _newScale;
             }
         }
-
-        /// <summary>
-        /// Handles text rotation to match either a fixed alignment, the initial direction or the movement's direction
-        /// </summary>
         protected virtual void HandleAlignment()
         {
             if (_alignmentMode == MMFloatingTextSpawner.AlignmentModes.Fixed)
@@ -221,10 +162,6 @@ namespace MoreMountains.Tools
                 MovingPart.transform.up = _movementDirection.normalized;
             }
         }
-
-        /// <summary>
-        /// Forces the text to face the camera
-        /// </summary>
         protected virtual void HandleBillboard()
         {
             if (_alwaysFaceCamera)
@@ -233,40 +170,6 @@ namespace MoreMountains.Tools
                 Billboard.transform.LookAt(MovingPart.transform.position + _targetCameraRotation * Vector3.forward, _targetCameraRotation * MovingPart.up);
             }
         }
-
-        /// <summary>
-        /// Called by the spawner, sets all required variables
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="lifetime"></param>
-        /// <param name="direction"></param>
-        /// <param name="animateMovement"></param>
-        /// <param name="alignmentMode"></param>
-        /// <param name="fixedAlignment"></param>
-        /// <param name="alwaysFaceCamera"></param>
-        /// <param name="targetCamera"></param>
-        /// <param name="animateX"></param>
-        /// <param name="animateXCurve"></param>
-        /// <param name="remapXZero"></param>
-        /// <param name="remapXOne"></param>
-        /// <param name="animateY"></param>
-        /// <param name="animateYCurve"></param>
-        /// <param name="remapYZero"></param>
-        /// <param name="remapYOne"></param>
-        /// <param name="animateZ"></param>
-        /// <param name="animateZCurve"></param>
-        /// <param name="remapZZero"></param>
-        /// <param name="remapZOne"></param>
-        /// <param name="animateOpacity"></param>
-        /// <param name="animateOpacityCurve"></param>
-        /// <param name="remapOpacityZero"></param>
-        /// <param name="remapOpacityOne"></param>
-        /// <param name="animateScale"></param>
-        /// <param name="animateScaleCurve"></param>
-        /// <param name="remapScaleZero"></param>
-        /// <param name="remapScaleOne"></param>
-        /// <param name="animateColor"></param>
-        /// <param name="animateColorGradient"></param>
         public virtual void SetProperties(string value, float lifetime, Vector3 direction, bool animateMovement, 
                                             MMFloatingTextSpawner.AlignmentModes alignmentMode, Vector3 fixedAlignment,
                                             bool alwaysFaceCamera, Camera targetCamera,
@@ -309,10 +212,6 @@ namespace MoreMountains.Tools
             _animateColorGradient = animateColorGradient;
             UpdateFloatingText();
         }
-
-        /// <summary>
-        /// Resets this text's position
-        /// </summary>
         public virtual void ResetPosition()
         {
             if (_animateMovement)
@@ -321,39 +220,20 @@ namespace MoreMountains.Tools
             }
             _movingPartPositionLastFrame = MovingPart.position - Direction;
         }
-        
-        /// <summary>
-        /// Sets the target mesh's text value
-        /// </summary>
-        /// <param name="newValue"></param>
         public virtual void SetText(string newValue)
         {
             TargetTextMesh.text = newValue;
         }
-
-        /// <summary>
-        /// Sets the color of the target text
-        /// </summary>
-        /// <param name="newColor"></param>
         public virtual void SetColor(Color newColor)
         {
             TargetTextMesh.color = newColor;
         }
-
-        /// <summary>
-        /// Sets the opacity of the target text
-        /// </summary>
-        /// <param name="newOpacity"></param>
         public virtual void SetOpacity(float newOpacity)
         {
             _newColor = TargetTextMesh.color;
             _newColor.a = newOpacity;
             TargetTextMesh.color = _newColor;
         }
-
-        /// <summary>
-        /// Turns of the text for recycling
-        /// </summary>
         protected virtual void TurnOff()
         {
             this.gameObject.SetActive(false);

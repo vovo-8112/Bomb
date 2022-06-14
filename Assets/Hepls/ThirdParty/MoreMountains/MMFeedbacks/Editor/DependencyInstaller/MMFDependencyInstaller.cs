@@ -7,9 +7,6 @@ using UnityEngine;
 using System.Threading.Tasks;
 
 namespace MoreMountains.Feedbacks {
-  /// <summary>
-  /// This class is used to automatically install optional dependencies used in MMFeedbacks
-  /// </summary>
   public static class MMFDependencyInstaller {
     static ListRequest _listRequest;
     static AddRequest _addRequest;
@@ -21,10 +18,6 @@ namespace MoreMountains.Feedbacks {
       "com.unity.textmeshpro",
       "com.unity.2d.animation"
     };
-
-    /// <summary>
-    /// Installs all dependencies listed in _packages
-    /// </summary>
     [MenuItem("Tools/More Mountains/MMFeedbacks/Install All Dependencies", false, 701)]
     public static void InstallAllDependencies() {
       _currentIndex = 0;
@@ -36,10 +29,6 @@ namespace MoreMountains.Feedbacks {
 
       EditorApplication.update += ListProgress;
     }
-
-    /// <summary>
-    /// Installs all dependencies, use this when calling from a running application
-    /// </summary>
     public async static void InstallFromPlay() {
       EditorApplication.ExitPlaymode();
       while (Application.isPlaying) {
@@ -53,10 +42,6 @@ namespace MoreMountains.Feedbacks {
       await Task.Delay(500);
       InstallAllDependencies();
     }
-
-    /// <summary>
-    /// Clears the console. Why isn't this a built-in one liner? Who knows. 
-    /// </summary>
     public static void ClearConsole() {
       var logEntries = System.Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
       if (logEntries != null) {
@@ -67,10 +52,6 @@ namespace MoreMountains.Feedbacks {
         }
       }
     }
-
-    /// <summary>
-    /// Proceeds to install the next package in line
-    /// </summary>
     static void InstallNext() {
       if (_currentIndex < _packages.Length) {
         bool packageFound = false;
@@ -94,10 +75,6 @@ namespace MoreMountains.Feedbacks {
         Debug.Log("[MMFDependencyInstaller] It's recommended to now close that scene and reopen it before playing it.");
       }
     }
-
-    /// <summary>
-    /// Processes the list request
-    /// </summary>
     static void ListProgress() {
       if (_listRequest.IsCompleted) {
         EditorApplication.update -= ListProgress;
@@ -108,10 +85,6 @@ namespace MoreMountains.Feedbacks {
         }
       }
     }
-
-    /// <summary>
-    /// Processes add requests
-    /// </summary>
     static void AddProgress() {
       if (_addRequest.IsCompleted) {
         if (_addRequest.Status == StatusCode.Success) {

@@ -4,9 +4,6 @@ using UnityEditor;
 using UnityEngine;
 
 namespace MoreMountains.Feedbacks {
-  /// <summary>
-  /// Custom editor for MMSequencer, handles recalibration and sequencer display
-  /// </summary>
   [CustomEditor(typeof(MMSequencer), true)]
   [CanEditMultipleObjects]
   public class MMSequencerEditor : Editor {
@@ -30,18 +27,9 @@ namespace MoreMountains.Feedbacks {
     protected Color _controlColor;
 
     protected List<float> _trackControlLastUseTimestamps;
-
-    /// <summary>
-    /// We want constant repaint on this inspector
-    /// </summary>
-    /// <returns></returns>
     public override bool RequiresConstantRepaint() {
       return true;
     }
-
-    /// <summary>
-    /// On enable we grab our textures and initialize our styles
-    /// </summary>
     protected virtual void OnEnable() {
       _targetSequencer = (MMSequencer) target;
       _buttonBackground = Resources.Load("SequencerButtonBackground") as Texture2D;
@@ -73,7 +61,6 @@ namespace MoreMountains.Feedbacks {
     }
 
     protected virtual void FillControlList() {
-      // fill the control timer list
       if (_targetSequencer.Sequence != null) {
         _trackControlLastUseTimestamps = new List<float>();
         foreach (MMSequenceTrack track in _targetSequencer.Sequence.SequenceTracks) {
@@ -81,10 +68,6 @@ namespace MoreMountains.Feedbacks {
         }
       }
     }
-
-    /// <summary>
-    /// Draws the default inspector and the sequencer
-    /// </summary>
     public override void OnInspectorGUI() {
       serializedObject.Update();
       Undo.RecordObject(target, "Modified Sequence Recorder");
@@ -95,8 +78,6 @@ namespace MoreMountains.Feedbacks {
         _targetSequencer.LastSequence = null;
         return;
       }
-
-      // gets the width and computes how many boxes we can fit per line
       _inspectorWidth = EditorGUIUtility.currentViewWidth - 24;
       _boxesPerLine = (int) Mathf.Round(
         (_inspectorWidth - ((_targetSequencer.Sequence.SequenceTracks.Count) * _distanceBetweenButtons) -
@@ -105,8 +86,6 @@ namespace MoreMountains.Feedbacks {
       ) + 1;
 
       LookForChanges();
-
-      // separator
       EditorGUILayout.Space();
       EditorGUILayout.LabelField("Sequencer", EditorStyles.boldLabel);
 
@@ -146,10 +125,6 @@ namespace MoreMountains.Feedbacks {
 
       serializedObject.ApplyModifiedProperties();
     }
-
-    /// <summary>
-    /// Whenever we detect a change in the settings we recalibrate our sequence accordingly
-    /// </summary>
     protected virtual void LookForChanges() {
       if (_targetSequencer.LastSequence != _targetSequencer.Sequence) {
         FillControlList();
@@ -182,10 +157,6 @@ namespace MoreMountains.Feedbacks {
 
       _targetSequencer.EditorMaintenance();
     }
-
-    /// <summary>
-    /// Draws control buttons
-    /// </summary>
     protected virtual void DrawControlButtons() {
       if (!Application.isPlaying) {
         return;
@@ -209,10 +180,6 @@ namespace MoreMountains.Feedbacks {
         _targetSequencer.PlayBeat();
       }
     }
-
-    /// <summary>
-    /// Draws an index for each sequence item
-    /// </summary>
     protected virtual void DrawSequenceIndexes() {
       GUILayout.BeginHorizontal();
 
@@ -223,7 +190,6 @@ namespace MoreMountains.Feedbacks {
       for (int i = 0; i < _targetSequencer.SequencerLength; i++) {
         label = i < 10 ? " " + i.ToString() : i.ToString();
         _trackControlStyle.fontStyle = (i % 4 == 0) ? FontStyle.Bold : FontStyle.Normal;
-        //GUILayout.Label(label, _indexStyle, GUILayout.Width(_buttonWidth + _distanceBetweenButtons), GUILayout.Height(_trackControlWidth));
         if (GUILayout.Button(label, _indexStyle, GUILayout.Width(_buttonWidth + _distanceBetweenButtons),
           GUILayout.Height(_trackControlWidth))) {
           _targetSequencer.ToggleStep(i);
@@ -235,11 +201,6 @@ namespace MoreMountains.Feedbacks {
       GUILayout.EndHorizontal();
       GUILayout.Space(_distanceBetweenButtons * 1.5f);
     }
-
-    /// <summary>
-    /// Draws a line of the sequencer
-    /// </summary>
-    /// <param name="trackIndex"></param>
     protected virtual void DrawTrack(int trackIndex) {
       int counter = 0;
 
@@ -254,8 +215,6 @@ namespace MoreMountains.Feedbacks {
       GUILayout.BeginHorizontal();
 
       GUILayout.BeginVertical();
-
-      // draw active track control
 
       if (_targetSequencer.Sequence.SequenceTracks[trackIndex].Active) {
         _trackControlColor = _targetSequencer.Sequence.SequenceTracks[trackIndex].TrackColor;
@@ -273,8 +232,6 @@ namespace MoreMountains.Feedbacks {
       }
 
       GUILayout.Space(_distanceBetweenButtons / 5);
-
-      // draw test track control
       _trackControlColor = _targetSequencer.Sequence.SequenceTracks[trackIndex].TrackColor;
       _controlColor = Application.isPlaying
         ? SequencerColor(_trackControlLastUseTimestamps[trackIndex], _trackControlColor)
@@ -293,7 +250,6 @@ namespace MoreMountains.Feedbacks {
       GUILayout.Space(_distanceBetweenButtons);
 
       for (int i = 0; i < _targetSequencer.Sequence.QuantizedSequence[trackIndex].Line.Count; i++) {
-        // handle new lines
         if (counter > _boxesPerLine) {
           GUILayout.EndHorizontal();
           GUILayout.Space(_distanceBetweenButtons);
@@ -310,8 +266,6 @@ namespace MoreMountains.Feedbacks {
             _buttonColor = _emptyButtonColor;
           }
         }
-
-        // if the track is inactive, we reduce colors
         if (!_targetSequencer.Sequence.SequenceTracks[trackIndex].Active) {
           _buttonColor = _buttonColor / 2f;
         }
@@ -325,13 +279,6 @@ namespace MoreMountains.Feedbacks {
       GUILayout.EndHorizontal();
       GUILayout.Space(_distanceBetweenButtons);
     }
-
-    /// <summary>
-    /// Draws an interactive button for the sequencer
-    /// </summary>
-    /// <param name="trackIndex"></param>
-    /// <param name="sequenceIndex"></param>
-    /// <param name="buttonColor"></param>
     protected virtual void DrawSequenceButton(int trackIndex, int sequenceIndex, Color buttonColor) {
       if (Application.isPlaying && _targetSequencer.PlayedOnce && (_targetSequencer.LastBeatIndex == sequenceIndex)) {
         if (_targetSequencer.BeatThisFrame) {
@@ -354,13 +301,6 @@ namespace MoreMountains.Feedbacks {
 
       GUILayout.Space(_distanceBetweenButtons);
     }
-
-    /// <summary>
-    /// Color interpolation on hits
-    /// </summary>
-    /// <param name="lastBeatTimestamp"></param>
-    /// <param name="buttonColor"></param>
-    /// <returns></returns>
     protected virtual Color SequencerColor(float lastBeatTimestamp, Color buttonColor) {
       float x = (Time.time - lastBeatTimestamp);
       float A = 0f;

@@ -7,49 +7,28 @@ using MoreMountains.Feedbacks;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// Add this ability to a 3D character and it'll be able to dash (cover the specified distance in the specified time)
-    ///
-    /// Animation parameters :
-    /// Dashing : true if the character is currently dashing
-    /// DashStarted : true when the dash starts
-    /// DashingDirectionX : the x component of the dash direction, normalized
-    /// DashingDirectionY : the y component of the dash direction, normalized
-    /// DashingDirectionZ : the z component of the dash direction, normalized
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/Abilities/Character Dash 3D")]
     public class CharacterDash3D : CharacterAbility
     {
-        /// the possible dash modes (fixed = always the same direction)
         public enum DashModes { Fixed, MainMovement, SecondaryMovement, MousePosition }
-
-        /// the current dash mode
         [Tooltip("the current dash mode (fixed : always the same direction, MainMovement : usually your left stick, SecondaryMovement : usually your right stick, MousePosition : the cursor's position")]
         public DashModes DashMode = DashModes.MainMovement;
         
         [Header("Dash")]
-        /// the direction of the dash, relative to the character
         [Tooltip("the direction of the dash, relative to the character")]
         public Vector3 DashDirection = Vector3.forward;
-        /// the distance to cover
         [Tooltip("the distance to cover")]
         public float DashDistance = 10f;
-        /// the duration of the dash
         [Tooltip("the duration of the dash, in seconds")]
         public float DashDuration = 0.5f;
-        /// the curve to apply to the dash's acceleration
         [Tooltip("the curve to apply to the dash's acceleration")]
         public AnimationCurve DashCurve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(1f, 1f));
-        /// if this is true, dash will be allowed while jumping, otherwise it'll be ignored
         [Tooltip("if this is true, dash will be allowed while jumping, otherwise it'll be ignored")]
         public bool AllowDashWhenJumping = false;
 
         [Header("Cooldown")]
-        /// this ability's cooldown
         [Tooltip("this ability's cooldown")]
         public MMCooldown Cooldown;
-
-        /// the feedbacks to play when dashing
         [Tooltip("the feedbacks to play when dashing")]
         public MMFeedbacks DashFeedback;
 
@@ -74,10 +53,6 @@ namespace MoreMountains.TopDownEngine
         protected int _dashingDirectionXAnimationParameter;
         protected int _dashingDirectionYAnimationParameter;
         protected int _dashingDirectionZAnimationParameter;
-        
-        /// <summary>
-        /// On init we initialize our cooldown and feedback
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -86,10 +61,6 @@ namespace MoreMountains.TopDownEngine
             Cooldown.Initialization();
             DashFeedback?.Initialization(this.gameObject);
         }
-
-        /// <summary>
-        /// Watches for input and starts a dash if needed
-        /// </summary>
         protected override void HandleInput()
         {
             base.HandleInput();
@@ -110,10 +81,6 @@ namespace MoreMountains.TopDownEngine
                 DashStart();
             }
         }
-
-        /// <summary>
-        /// Starts a dash
-        /// </summary>
         public virtual void DashStart()
         {
             if (!Cooldown.Ready())
@@ -177,10 +144,6 @@ namespace MoreMountains.TopDownEngine
                     break;
             }
         }
-
-        /// <summary>
-        /// Stops the dash
-        /// </summary>
         protected virtual void DashStop()
         {
             Cooldown.Stop();
@@ -191,10 +154,6 @@ namespace MoreMountains.TopDownEngine
             StopStartFeedbacks();
             PlayAbilityStopFeedbacks();
         }
-
-        /// <summary>
-        /// On process ability, we move our character if we're currently dashing
-        /// </summary>
         public override void ProcessAbility()
         {
             base.ProcessAbility();
@@ -215,10 +174,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-        
-        /// <summary>
-        /// Adds required animator parameters to the animator parameters list if they exist
-        /// </summary>
         protected override void InitializeAnimatorParameters()
         {
             RegisterAnimatorParameter(_dashingAnimationParameterName, AnimatorControllerParameterType.Bool, out _dashingAnimationParameter);
@@ -227,10 +182,6 @@ namespace MoreMountains.TopDownEngine
             RegisterAnimatorParameter(_dashingDirectionYAnimationParameterName, AnimatorControllerParameterType.Float, out _dashingDirectionYAnimationParameter);
             RegisterAnimatorParameter(_dashingDirectionZAnimationParameterName, AnimatorControllerParameterType.Float, out _dashingDirectionZAnimationParameter);
         }
-
-        /// <summary>
-        /// At the end of each cycle, we send our Running status to the character's animator
-        /// </summary>
         public override void UpdateAnimator()
         {
             MMAnimatorExtensions.UpdateAnimatorBool(_animator, _dashingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Dashing), _character._animatorParameters, _character.RunAnimatorSanityChecks);

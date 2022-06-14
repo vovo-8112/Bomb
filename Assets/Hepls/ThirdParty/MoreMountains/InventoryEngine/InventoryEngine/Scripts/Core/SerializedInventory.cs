@@ -5,9 +5,6 @@ using System;
 namespace MoreMountains.InventoryEngine
 {
 	[Serializable]
-	/// <summary>
-	/// Serialized class to help store / load inventories from files.
-	/// </summary>
 	public class SerializedInventory 
 	{
 		public int NumberOfRows;

@@ -5,9 +5,6 @@ using UnityEditor;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Custom editor for the FloatController, conditional hiding and dropdown fill
-    /// </summary>
     [CustomEditor(typeof(FloatController), true)]
     [CanEditMultipleObjects]    
     public class FloatControllerEditor : Editor
@@ -61,10 +58,6 @@ namespace MoreMountains.Tools
         {
             return true;
         }
-        
-        /// <summary>
-        /// On enable, grabs our serialized properties
-        /// </summary>
         protected virtual void OnEnable()
         {
             FloatController myTarget = (FloatController)target;
@@ -121,7 +114,6 @@ namespace MoreMountains.Tools
 
         protected virtual void OnDisable()
         {
-            //BindPropertyName();
             AssemblyReloadEvents.afterAssemblyReload -= OnAfterAssemblyReload;
         }
 
@@ -144,8 +136,6 @@ namespace MoreMountains.Tools
         protected virtual void VerifyChosenIndex()
         {
             FloatController myTarget = (FloatController)target;
-
-            // determine choice index
             int index = 0;
             bool found = false;
             foreach (string attName in myTarget.AttributeNames)
@@ -172,10 +162,6 @@ namespace MoreMountains.Tools
             VerifyChosenIndex();
             serializedObject.ApplyModifiedProperties();
         }
-        
-        /// <summary>
-        /// Draws a custom conditional inspector
-        /// </summary>
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -188,7 +174,6 @@ namespace MoreMountains.Tools
             {
                 if (myTarget.AttributeNames.Length > 0)
                 {
-                    // draws a dropdown with all our properties
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.PrefixLabel("Property");
 

@@ -38,13 +38,6 @@ namespace MoreMountains.Tools
 
         protected Type[] _authorizedTypes;
         protected bool _targetIsScriptableObject;
-
-        /// <summary>
-        /// Defines the height of the drawer
-        /// </summary>
-        /// <param name="property"></param>
-        /// <param name="label"></param>
-        /// <returns></returns>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             Initialization(property);
@@ -72,11 +65,6 @@ namespace MoreMountains.Tools
         {
             return 0f;
         }
-
-        /// <summary>
-        /// Initializes the dropdowns
-        /// </summary>
-        /// <param name="property"></param>
         protected virtual void Initialization(SerializedProperty property)
         {
             if (_initialized)
@@ -126,17 +114,9 @@ namespace MoreMountains.Tools
         }
 
         #if  UNITY_EDITOR
-        /// <summary>
-        /// Draws the inspector
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="property"></param>
-        /// <param name="label"></param>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             Initialization(property);
-            
-            // rectangles
             Rect targetLabelRect = new Rect(position.x, position.y, position.width, _lineHeight);
             Rect targetObjectRect = new Rect(position.x, position.y + (_lineHeight + _lineMargin), position.width, _lineHeight);
             Rect targetComponentRect = new Rect(position.x, position.y + (_lineHeight + _lineMargin) * 2, position.width, _lineHeight);
@@ -147,10 +127,6 @@ namespace MoreMountains.Tools
             EditorGUI.LabelField(targetLabelRect, new GUIContent(property.name));
 
             EditorGUI.indentLevel++;
-
-            // displays the target object selector
-            
-            // property.serializedObject.Update(); // removed to prevent blocking upper parts of the inspector
 
             EditorGUI.BeginChangeCheck();
 
@@ -168,14 +144,10 @@ namespace MoreMountains.Tools
                     FillPropertyList(property);
                 }
             }
-
-            // displays a label for scriptable objects
             if (_targetIsScriptableObject)
             {
                 EditorGUI.LabelField(targetComponentRect, "Type", "Scriptable Object");
             }
-
-            // displays the component dropdown for gameobjects
             if ((_componentNames != null) && (_componentNames.Length > 0))
             {
                 EditorGUI.BeginChangeCheck();
@@ -187,8 +159,6 @@ namespace MoreMountains.Tools
                     FillPropertyList(property);
                 }
             }
-
-            // displays the properties dropdown
             if (((_selectedComponentIndex != 0) || _targetIsScriptableObject) && (_propertiesNames != null) && (_propertiesNames.Length > 0))
             {
                 EditorGUI.BeginChangeCheck();
@@ -247,11 +217,6 @@ namespace MoreMountains.Tools
                 EditorGUI.DrawRect(levelProgressFront, frontColor);
             }            
         }
-
-        /// <summary>
-        /// Fills a list of all the components on the target object
-        /// </summary>
-        /// <param name="property"></param>
         protected virtual void FillComponentsList(SerializedProperty property)
         {
             _TargetObject = property.FindPropertyRelative("TargetObject").objectReferenceValue as UnityEngine.Object;
@@ -268,17 +233,11 @@ namespace MoreMountains.Tools
                 _componentNames = null;
                 return;
             }
-
-            // we create a list of components and an array of names
             _componentList = new List<Component>();
             _componentNames = new string[0];
-
-            // we create a temp list to fill our array with
             List<string> tempComponentsNameList = new List<string>();
             tempComponentsNameList.Add(_undefinedComponentString);
             _componentList.Add(null);
-
-            // we add all components to the list
             Component[] components = _TargetGameObject.GetComponents(typeof(Component));
             foreach (Component component in components)
             {
@@ -287,11 +246,6 @@ namespace MoreMountains.Tools
             }
             _componentNames = tempComponentsNameList.ToArray();
         }
-
-        /// <summary>
-        /// Fills a list of all properties and fields on the target component
-        /// </summary>
-        /// <param name="property"></param>
         protected virtual void FillPropertyList(SerializedProperty property)
         {
             if (_TargetObject == null)
@@ -304,19 +258,14 @@ namespace MoreMountains.Tools
             {
                 return;
             }
-
-            // we create a list of components and an array of names
             _propertiesNames = new string[0];
             _propertiesList = new List<string>();
-
-            // we create a temp list to fill our array with
             List<string> tempPropertiesList = new List<string>();
             tempPropertiesList.Add(_undefinedPropertyString);
             _propertiesList.Add("");
 
             if (!_targetIsScriptableObject)
             {
-                // Find all fields
                 var fieldsList = property.FindPropertyRelative("TargetComponent").objectReferenceValue.GetType()
                     .GetFields(BindingFlags.Public | BindingFlags.Instance)
                     .Where(field =>
@@ -330,8 +279,6 @@ namespace MoreMountains.Tools
                     tempPropertiesList.Add(newEntry);
                     _propertiesList.Add(fieldInfo.Name);
                 }
-
-                // finds all properties
                 var propertiesList = property.FindPropertyRelative("TargetComponent").objectReferenceValue.GetType()
                   .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                    .Where(prop =>
@@ -348,8 +295,6 @@ namespace MoreMountains.Tools
             }
             else
             {
-                // if this is a scriptable object
-                // finds all fields
                 var fieldsList = property.FindPropertyRelative("TargetObject").objectReferenceValue.GetType()
                     .GetFields(BindingFlags.Public | BindingFlags.Instance)
                     .Where(field =>
@@ -363,8 +308,6 @@ namespace MoreMountains.Tools
                     tempPropertiesList.Add(newEntry);
                     _propertiesList.Add(fieldInfo.Name);
                 }
-
-                // finds all properties
                 var propertiesList = property.FindPropertyRelative("TargetObject").objectReferenceValue.GetType()
                   .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                    .Where(prop =>
@@ -382,11 +325,6 @@ namespace MoreMountains.Tools
 
             _propertiesNames = tempPropertiesList.ToArray();
         }
-
-        /// <summary>
-        /// Sets the target property
-        /// </summary>
-        /// <param name="property"></param>
         protected virtual void SetTargetProperty(SerializedProperty property)
         {
             if (_selectedPropertyIndex > 0)
@@ -405,11 +343,6 @@ namespace MoreMountains.Tools
                 _propertyType = null;
             }
         }
-
-        /// <summary>
-        /// Sets the target component
-        /// </summary>
-        /// <param name="property"></param>
         protected virtual void SetTargetComponent(SerializedProperty property)
         {
             if (_targetIsScriptableObject)
@@ -439,11 +372,6 @@ namespace MoreMountains.Tools
                 property.serializedObject.ApplyModifiedProperties();
             }
         }
-
-        /// <summary>
-        /// Gets the component index
-        /// </summary>
-        /// <param name="property"></param>
         protected virtual void GetComponentIndex(SerializedProperty property)
         {
             int index = 0;
@@ -471,11 +399,6 @@ namespace MoreMountains.Tools
                 _selectedComponentIndex = 0;
             }
         }
-
-        /// <summary>
-        /// Gets the property index
-        /// </summary>
-        /// <param name="property"></param>
         protected virtual void GetPropertyIndex(SerializedProperty property)
         {
             int index = 0;

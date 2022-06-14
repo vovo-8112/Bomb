@@ -7,17 +7,10 @@ using UnityEngine.Events;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A static class used to save / load peaks once they've been computed
-    /// </summary>
     public static class PeaksSaver
     {
         public static float[] Peaks;
     }
-
-    /// <summary>
-    /// An event you can listen to that will get automatically triggered for every remapped beat
-    /// </summary>
     public struct MMBeatEvent
     {
         public delegate void Delegate(string name, float value);
@@ -44,7 +37,6 @@ namespace MoreMountains.Tools
     {
         public string Name = "Beat";
         public enum Modes { Raw, Normalized, BufferedRaw, BufferedNormalized, Amplitude, NormalizedAmplitude, AmplitudeBuffered, NormalizedAmplitudeBuffered }
-        // remapped will send beat events when a threshold is passed, live just updates the value with whatever value is reading right now
         public enum BeatValueModes { Remapped, Live }
 
         public Modes Mode = Modes.BufferedNormalized;
@@ -95,16 +87,6 @@ namespace MoreMountains.Tools
             }
         }
     }
-
-    /// <summary>
-    /// This component lets you pick an audio source (either global : the whole scene's audio, a unique source, or the 
-    /// microphone), and will cut it into chunks that you can then use to emit beat events, that other objects can consume and act upon. 
-    /// The sample interval is the frequency at which sound will be analyzed, the amount of spectrum samples will determine the 
-    /// accuracy of the sampling, the window defines the method used to reduce leakage, and the number of bands 
-    /// will determine in how many bands you want to cut the sound. The more bands, the more levers you'll have to play with afterwards.
-    /// In general, for all of these settings, higher values mean better quality and lower performance. The buffer speed determines how 
-    /// fast buffered band levels readjust.
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/Audio/MMAudioAnalyzer")]
     public class MMAudioAnalyzer : MonoBehaviour
     {
@@ -219,8 +201,6 @@ namespace MoreMountains.Tools
             RawSpectrum = new float[SpectrumSamples];
             BandLevels = new float[_cachedNumberOfBands];
             BufferedBandLevels = new float[_cachedNumberOfBands];
-
-            // we make sure our peaks match our bands
             if ((BandPeaks == null) || (BandPeaks.Length == 0))
             {
                 BandPeaks = new float[_cachedNumberOfBands];
@@ -246,10 +226,7 @@ namespace MoreMountains.Tools
 #if !UNITY_WEBGL
                 GameObject audioSourceGo = new GameObject("Microphone");
                 audioSourceGo.transform.SetParent(this.gameObject.transform);
-                TargetAudioSource = audioSourceGo.AddComponent<AudioSource>();                
-                //UNCOMMENT_MICROPHONE string _microphone = Microphone.devices[MicrophoneID].ToString();
-                //UNCOMMENT_MICROPHONE TargetAudioSource.clip = Microphone.Start(_microphone, true, _microphoneDuration, (int)_microphoneFrequency);
-                //UNCOMMENT_MICROPHONE TargetAudioSource.Play();
+                TargetAudioSource = audioSourceGo.AddComponent<AudioSource>();
                 _microphoneStartedAt = Time.time;
 #endif
             }
@@ -281,7 +258,6 @@ namespace MoreMountains.Tools
                     case Modes.Microphone:
 #if !UNITY_WEBGL
                         int microphoneSamples = 0;
-                        //UNCOMMENT_MICROPHONE microphoneSamples = Microphone.GetPosition(_microphone);
                         if (microphoneSamples / _microphoneFrequency > _microphoneDelay)
                         {
                             if (!TargetAudioSource.isPlaying)
@@ -399,20 +375,15 @@ namespace MoreMountains.Tools
                 }
                 else
                 {
-                    // if audio value went below the bias during this frame
                     if ((beat._previousValue > beat.Threshold) && (value <= beat.Threshold))
                     {
-                        // if minimum beat interval is reached
                         if (Time.time - beat._lastBeatAt > beat.MinimumTimeBetweenBeats)
                         {
                             OnBeat(beat, value);
                         }
                     }
-
-                    // if audio value went above the bias during this frame
                     if ((beat._previousValue <= beat.Threshold) && (value > beat.Threshold))
                     {
-                        // if minimum beat interval is reached
                         if (Time.time - beat._lastBeatAt > beat.MinimumTimeBetweenBeats)
                         {
                             OnBeat(beat, value);
@@ -442,7 +413,6 @@ namespace MoreMountains.Tools
 
             while (Time.time - remapStartedAt < beat.RemappedAttack + beat.RemappedDecay)
             {
-                // attack
                 if (Time.time - remapStartedAt < beat.RemappedAttack)
                 {
                     beat.CurrentValue = Mathf.Lerp(0f, 1f, (Time.time - remapStartedAt) / beat.RemappedAttack);

@@ -8,9 +8,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace MoreMountains.Tools
 {
 	[ExecuteAlways]
-	/// <summary>
-	/// This static class is in charge of storing the current state of the achievements, unlocking/locking them, and saving them to data files
-	/// </summary>
 	public static class MMAchievementManager
 	{
 		public static List<MMAchievement> AchievementsList { get { return _achievements; }}
@@ -24,23 +21,15 @@ namespace MoreMountains.Tools
 
 		private static string _saveFileName;
 		private static string _listID;
-
-		/// <summary>
-		/// You'll need to call this method to initialize the manager
-		/// </summary>
 		public static void LoadAchievementList()
 		{
 			_achievements = new List<MMAchievement> ();
-
-			// the Achievement List scriptable object must be in a Resources folder inside your project, like so : Resources/Achievements/PUT_SCRIPTABLE_OBJECT_HERE
 			MMAchievementList achievementList = (MMAchievementList) Resources.Load("Achievements/AchievementList");
 
 			if (achievementList == null)
 			{
 				return;
 			}
-
-			// we store the ID for save purposes
 			_listID = achievementList.AchievementsListID;
 
 			foreach (MMAchievement achievement in achievementList.Achievements)
@@ -48,11 +37,6 @@ namespace MoreMountains.Tools
 				_achievements.Add (achievement.Copy());
 			}
 		}
-
-		/// <summary>
-		/// Unlocks the specified achievement (if found).
-		/// </summary>
-		/// <param name="achievementID">Achievement I.</param>
 		public static void UnlockAchievement(string achievementID)
 		{
 			_achievement = AchievementManagerContains(achievementID);
@@ -61,11 +45,6 @@ namespace MoreMountains.Tools
 				_achievement.UnlockAchievement();
 			}
 		}
-
-		/// <summary>
-		/// Locks the specified achievement (if found).
-		/// </summary>
-		/// <param name="achievementID">Achievement ID.</param>
 		public static void LockAchievement(string achievementID)
 		{
 			_achievement = AchievementManagerContains(achievementID);
@@ -74,12 +53,6 @@ namespace MoreMountains.Tools
 				_achievement.LockAchievement();
 			}
 		}
-
-		/// <summary>
-		/// Adds progress to the specified achievement (if found).
-		/// </summary>
-		/// <param name="achievementID">Achievement ID.</param>
-		/// <param name="newProgress">New progress.</param>
 		public static void AddProgress(string achievementID, int newProgress)
 		{
 			_achievement = AchievementManagerContains(achievementID);
@@ -88,12 +61,6 @@ namespace MoreMountains.Tools
 				_achievement.AddProgress(newProgress);
 			}
 		}
-
-		/// <summary>
-		/// Sets the progress of the specified achievement (if found) to the specified progress.
-		/// </summary>
-		/// <param name="achievementID">Achievement ID.</param>
-		/// <param name="newProgress">New progress.</param>
 		public static void SetProgress(string achievementID, int newProgress)
 		{
 			_achievement = AchievementManagerContains(achievementID);
@@ -101,13 +68,7 @@ namespace MoreMountains.Tools
 			{
 				_achievement.SetProgress(newProgress);
 			}
-		}		
-
-		/// <summary>
-		/// Determines if the achievement manager contains an achievement of the specified ID. Returns it if found, otherwise returns null
-		/// </summary>
-		/// <returns>The achievement corresponding to the searched ID if found, otherwise null.</returns>
-		/// <param name="searchedID">Searched I.</param>
+		}
 		private static MMAchievement AchievementManagerContains(string searchedID)
 		{
 			if (_achievements.Count == 0)
@@ -123,13 +84,6 @@ namespace MoreMountains.Tools
 			}
 			return null;
 		}
-
-		// SAVE ------------------------------------------------------------------------------------------------------------------------------------
-
-		/// <summary>
-		/// Removes saved data and resets all achievements from a list
-		/// </summary>
-		/// <param name="listID">The ID of the achievement list to reset.</param>
 		public static void ResetAchievements(string listID)
 		{
 			if (_achievements != null)
@@ -151,20 +105,12 @@ namespace MoreMountains.Tools
 			LoadAchievementList ();
 			ResetAchievements (_listID);
 		}
-
-		/// <summary>
-		/// Loads the saved achievements file and updates the array with its content.
-		/// </summary>
 		public static void LoadSavedAchievements()
 		{
 			DeterminePath ();
 			SerializedMMAchievementManager serializedMMAchievementManager = (SerializedMMAchievementManager)MMSaveLoadManager.Load(typeof(SerializedMMAchievementManager), _saveFileName+ _saveFileExtension, _saveFolderName);
 			ExtractSerializedMMAchievementManager(serializedMMAchievementManager);
 		}
-
-		/// <summary>
-		/// Saves the achievements current status to a file on disk
-		/// </summary>
 		public static void SaveAchievements()
 		{
 			DeterminePath ();
@@ -172,10 +118,6 @@ namespace MoreMountains.Tools
 			FillSerializedMMAchievementManager(serializedMMAchievementManager);
 			MMSaveLoadManager.Save(serializedMMAchievementManager, _saveFileName+_saveFileExtension, _saveFolderName);
 		}
-
-		/// <summary>
-		/// Determines the path the achievements save file should be saved to.
-		/// </summary>
 		private static void DeterminePath(string specifiedFileName = "")
 		{
 			string tempFileName = (!string.IsNullOrEmpty(_listID)) ? _listID : _defaultFileName;
@@ -186,11 +128,6 @@ namespace MoreMountains.Tools
 
 			_saveFileName = tempFileName;
 		}
-
-		/// <summary>
-		/// Serializes the contents of the achievements array to a serialized, ready to save object
-		/// </summary>
-		/// <param name="serializedInventory">Serialized inventory.</param>
 		public static void FillSerializedMMAchievementManager(SerializedMMAchievementManager serializedAchievements)
 		{
 			serializedAchievements.Achievements = new SerializedMMAchievement[_achievements.Count];
@@ -201,11 +138,6 @@ namespace MoreMountains.Tools
 				serializedAchievements.Achievements [i] = newAchievement;
 			}
 		}
-
-		/// <summary>
-		/// Extracts the serialized achievements into our achievements array if the achievements ID match.
-		/// </summary>
-		/// <param name="serializedAchievements">Serialized achievements.</param>
 		public static void ExtractSerializedMMAchievementManager(SerializedMMAchievementManager serializedAchievements)
 		{
 			if (serializedAchievements == null)

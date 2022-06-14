@@ -7,47 +7,32 @@ using UnityEngine.Tilemaps;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This component, added on an empty object in your level will handle the generation of a unique and randomized tilemap
-    /// </summary>
     public class TilemapLevelGenerator : MMTilemapGenerator
     {
         [FormerlySerializedAs("GenerateOnStart")]
         [Header("TopDown Engine Settings")]
-        /// Whether or not this level should be generated automatically on Awake
         [Tooltip("Whether or not this level should be generated automatically on Awake")]
         public bool GenerateOnAwake = false;
 
-        [Header("Bindings")] 
-        /// the Grid on which to work
+        [Header("Bindings")]
         [Tooltip("the Grid on which to work")]
         public Grid TargetGrid;
-        /// the tilemap containing the walls
         [Tooltip("the tilemap containing the walls")]
-        public Tilemap ObstaclesTilemap; 
-        /// the tilemap containing the walls' shadows
+        public Tilemap ObstaclesTilemap;
         [Tooltip("the tilemap containing the walls' shadows")]
         public MMTilemapShadow WallsShadowTilemap;
-        /// the level manager
         [Tooltip("the level manager")]
         public LevelManager TargetLevelManager;
 
-        [Header("Spawn")] 
-        /// the object at which the player will spawn
+        [Header("Spawn")]
         [Tooltip("the object at which the player will spawn")]
         public Transform InitialSpawn;
-        /// the exit of the level
         [Tooltip("the exit of the level")]
         public Transform Exit;
-        /// the minimum distance that should separate spawn and exit.
         [Tooltip("the minimum distance that should separate spawn and exit.")]
         public float MinDistanceFromSpawnToExit = 2f;
 
         protected const int _maxIterationsCount = 100;
-        
-        /// <summary>
-        /// On awake we generate our level if needed
-        /// </summary>
         protected virtual void Awake()
         {
             if (GenerateOnAwake)
@@ -55,10 +40,6 @@ namespace MoreMountains.TopDownEngine
                 Generate();
             }
         }
-
-        /// <summary>
-        /// Generates a new level
-        /// </summary>
         public override void Generate()
         {
             base.Generate();
@@ -66,10 +47,6 @@ namespace MoreMountains.TopDownEngine
             PlaceEntryAndExit();
             ResizeLevelManager();
         }
-
-        /// <summary>
-        /// Resizes the level manager's bounds to match the new level
-        /// </summary>
         protected virtual void ResizeLevelManager()
         {
             BoxCollider boxCollider = TargetLevelManager.GetComponent<BoxCollider>();
@@ -78,10 +55,6 @@ namespace MoreMountains.TopDownEngine
             boxCollider.center = bounds.center;
             boxCollider.size = new Vector3(bounds.size.x, bounds.size.y, boxCollider.size.z);
         }
-
-        /// <summary>
-        /// Moves the spawn and exit to empty places
-        /// </summary>
         protected virtual void PlaceEntryAndExit()
         {
             UnityEngine.Random.InitState(GlobalSeed);
@@ -101,10 +74,6 @@ namespace MoreMountains.TopDownEngine
                 iterationsCount++;
             }
         }
-        
-        /// <summary>
-        /// Copies the contents of the Walls layer to the WallsShadows layer to get nice shadows automatically
-        /// </summary>
         protected virtual void HandleWallsShadow()
         {
             if (WallsShadowTilemap != null)

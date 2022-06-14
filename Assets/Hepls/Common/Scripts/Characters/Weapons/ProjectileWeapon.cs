@@ -5,33 +5,23 @@ using System;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// A weapon class aimed specifically at allowing the creation of various projectile weapons, from shotgun to machine gun, via plasma gun or rocket launcher
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Weapons/Projectile Weapon")]
     public class ProjectileWeapon : Weapon 
 	{
         [MMInspectorGroup("Projectiles", true, 22)]
-        /// the offset position at which the projectile will spawn
         [Tooltip("the offset position at which the projectile will spawn")]
         public Vector3 ProjectileSpawnOffset = Vector3.zero;
-        /// the number of projectiles to spawn per shot
         [Tooltip("the number of projectiles to spawn per shot")]
         public int ProjectilesPerShot = 1;
-        /// the spread (in degrees) to apply randomly (or not) on each angle when spawning a projectile
         [Tooltip("the spread (in degrees) to apply randomly (or not) on each angle when spawning a projectile")]
         public Vector3 Spread = Vector3.zero;
-        /// whether or not the weapon should rotate to align with the spread angle
         [Tooltip("whether or not the weapon should rotate to align with the spread angle")]
         public bool RotateWeaponOnSpread = false;
-        /// whether or not the spread should be random (if not it'll be equally distributed)
         [Tooltip("whether or not the spread should be random (if not it'll be equally distributed)")]
         public bool RandomSpread = true;
-        /// the projectile's spawn position
         [MMReadOnly]
         [Tooltip("the projectile's spawn position")]
         public Vector3 SpawnPosition = Vector3.zero;
-        /// the object pooler used to spawn projectiles
         public MMObjectPooler ObjectPooler { get; set; }
 
         protected Vector3 _flippedProjectileSpawnOffset;
@@ -40,12 +30,7 @@ namespace MoreMountains.TopDownEngine
         protected Transform _projectileSpawnTransform;
 
         [MMInspectorButton("TestShoot")]
-        /// a button to test the shoot method
 		public bool TestShootButton;
-        
-        /// <summary>
-        /// A test method that triggers the weapon
-        /// </summary>
 		protected virtual void TestShoot()
 		{
 			if (WeaponState.CurrentState == WeaponStates.WeaponIdle)
@@ -57,10 +42,6 @@ namespace MoreMountains.TopDownEngine
 				WeaponInputStop ();
 			}
 		}
-        
-		/// <summary>
-		/// Initialize this weapon
-		/// </summary>
 		public override void Initialization()
 		{
 			base.Initialization();            
@@ -89,10 +70,6 @@ namespace MoreMountains.TopDownEngine
                 _poolInitialized = true;
             }
         }
-
-        /// <summary>
-		/// Called everytime the weapon is used
-		/// </summary>
 		public override void WeaponUse()
         {
             base.WeaponUse();
@@ -104,28 +81,19 @@ namespace MoreMountains.TopDownEngine
                 SpawnProjectile(SpawnPosition, i, ProjectilesPerShot, true);
             }
         }
-
-        /// <summary>
-        /// Spawns a new object and positions/resizes it
-        /// </summary>
         public virtual GameObject SpawnProjectile(Vector3 spawnPosition, int projectileIndex, int totalProjectiles, bool triggerObjectActivation = true)
         {
-            /// we get the next object in the pool and make sure it's not null
             GameObject nextGameObject = ObjectPooler.GetPooledGameObject();
-
-            // mandatory checks
             if (nextGameObject == null) { return null; }
             if (nextGameObject.GetComponent<MMPoolableObject>() == null)
             {
                 throw new Exception(gameObject.name + " is trying to spawn objects that don't have a PoolableObject component.");
             }
-            // we position the object
             nextGameObject.transform.position = spawnPosition;
             if (_projectileSpawnTransform != null)
             {
                 nextGameObject.transform.position = _projectileSpawnTransform.position;
             }
-            // we set its direction
 
             Projectile projectile = nextGameObject.GetComponent<Projectile>();
             if (projectile != null)
@@ -136,7 +104,6 @@ namespace MoreMountains.TopDownEngine
                     projectile.SetOwner(Owner.gameObject);
                 }
             }
-            // we activate the object
             nextGameObject.gameObject.SetActive(true);
 
             if (projectile != null)
@@ -202,19 +169,10 @@ namespace MoreMountains.TopDownEngine
             }
             return (nextGameObject);
         }
-
-        /// <summary>
-        /// Sets a forced projectile spawn position
-        /// </summary>
-        /// <param name="newSpawnTransform"></param>
         public virtual void SetProjectileSpawnTransform(Transform newSpawnTransform)
         {
             _projectileSpawnTransform = newSpawnTransform;
         }
-
-        /// <summary>
-        /// Determines the spawn position based on the spawn offset and whether or not the weapon is flipped
-        /// </summary>
         public virtual void DetermineSpawnPosition()
         {
             if (Flipped)
@@ -238,10 +196,6 @@ namespace MoreMountains.TopDownEngine
                 SpawnPosition = WeaponUseTransform.position;
             }
         }
-
-        /// <summary>
-        /// When the weapon is selected, draws a circle at the spawn's position
-        /// </summary>
         protected virtual void OnDrawGizmosSelected()
 		{
 			DetermineSpawnPosition ();

@@ -2,9 +2,6 @@
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// An event used to broadcast slider events from a MMDebugMenu
-    /// </summary>
     public struct MMDebugMenuSliderEvent
     {
         public enum EventModes { FromSlider, SetSlider }

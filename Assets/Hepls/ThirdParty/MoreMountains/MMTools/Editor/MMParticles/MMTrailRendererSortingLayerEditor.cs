@@ -21,7 +21,7 @@ namespace MoreMountains.Tools
 			_mmTrailRendererSortingLayer = (MMTrailRendererSortingLayer)target;
 			_trailRenderer = _mmTrailRendererSortingLayer.GetComponent<TrailRenderer> ();
 
-			for (int i = 0; i<sortingLayerNames.Length;i++) //here we initialize our popupMenuIndex with the current Sort Layer Name
+			for (int i = 0; i<sortingLayerNames.Length;i++)
 			{
 				if (sortingLayerNames[i] == _trailRenderer.sortingLayerName)
 					popupMenuIndex = i;

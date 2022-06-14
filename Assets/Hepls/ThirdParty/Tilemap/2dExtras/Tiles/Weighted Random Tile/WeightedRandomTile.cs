@@ -28,12 +28,8 @@ namespace UnityEngine.Tilemaps {
             hash = hash + 0x46ac12fd + (hash << 7);
             hash = hash + 0xbe9730af ^ (hash << 11);
             Random.InitState((int) hash);
-
-            // Get the cumulative weight of the sprites
             var cumulativeWeight = 0;
             foreach (var spriteInfo in Sprites) cumulativeWeight += spriteInfo.Weight;
-
-            // Pick a random weight and choose a sprite depending on it
             var randomWeight = Random.Range(0, cumulativeWeight);
             foreach (var spriteInfo in Sprites) {
                 randomWeight -= spriteInfo.Weight;

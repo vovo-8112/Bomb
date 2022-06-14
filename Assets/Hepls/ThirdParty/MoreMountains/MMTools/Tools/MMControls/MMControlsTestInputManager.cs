@@ -3,13 +3,9 @@ using System.Collections;
 using MoreMountains.Tools;
 
 namespace MoreMountains.Tools
-{	
-	/// <summary>
-	/// This persistent singleton handles the inputs and sends commands to the player in the MMControls demo, its sole purpose is to output debug logs of the various interactions with the demo's inputs
-	/// </summary>
+{
 	public class MMControlsTestInputManager : MonoBehaviour, MMEventListener<MMSwipeEvent>
 	{
-		// on start, we force a high target frame rate for a more fluid experience on mobile devices
 		protected virtual void Start()
 		{
 			Application.targetFrameRate = 300;

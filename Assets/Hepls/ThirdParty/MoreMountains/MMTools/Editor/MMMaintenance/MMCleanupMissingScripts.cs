@@ -5,14 +5,8 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// This class lets you clean all missing scripts on a selection of gameobjects
-    /// </summary>
     public class MMCleanupMissingScripts : MonoBehaviour
     {
-        /// <summary>
-        /// Processes the cleaning of gameobjects for all missing scripts on them
-        /// </summary>
         [MenuItem("Tools/More Mountains/Cleanup missing scripts on selected GameObjects", false, 504)]
         protected static void CleanupMissingScripts()
         {

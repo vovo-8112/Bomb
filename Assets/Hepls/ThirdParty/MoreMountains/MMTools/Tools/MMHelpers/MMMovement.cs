@@ -4,21 +4,10 @@ using System.Collections;
 using System;
 
 namespace MoreMountains.Tools
-{	
-	/// <summary>
-	/// Movement helpers
-	/// </summary>
+{
 
 	public static class MMMovement 
 	{
-
-		/// <summary>
-		/// Moves an object from point A to point B in a given time
-		/// </summary>
-		/// <param name="movingObject">Moving object.</param>
-		/// <param name="pointA">Point a.</param>
-		/// <param name="pointB">Point b.</param>
-		/// <param name="duration">Time.</param>
 		public static IEnumerator MoveFromTo(GameObject movingObject,Vector3 pointA, Vector3 pointB, float duration, AnimationCurve curve = null)
 		{	                    
             float journey = 0f;

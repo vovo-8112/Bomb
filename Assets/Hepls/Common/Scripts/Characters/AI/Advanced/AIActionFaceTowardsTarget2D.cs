@@ -5,18 +5,12 @@ using MoreMountains.Tools;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This AI Action will let an agent with a CharacterOrientation2D ability face its target
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/AI/Actions/AIActionFaceTowardsTarget2D")]
-    //[RequireComponent(typeof(CharacterOrientation2D))]
     public class AIActionFaceTowardsTarget2D : AIAction
     {
-        /// the possible modes you can ask the AI to face (should - usually - match your CharacterOrientation2D settings)  
         public enum Modes { LeftRight, FacingDirections }
 
-        [Header("Face Towards Target 2D")] 
-        /// the selected facing mode
+        [Header("Face Towards Target 2D")]
         public Modes Mode = Modes.LeftRight;
         
         protected CharacterOrientation2D _characterOrientation2D;
@@ -24,10 +18,6 @@ namespace MoreMountains.TopDownEngine
         protected Vector2 _distance;
         protected bool _chacterOrientation2DNotNull;
         protected Character.FacingDirections _newFacingDirection;
-        
-        /// <summary>
-        /// On init we grab our CharacterOrientation2D ability
-        /// </summary>
         protected override void Initialization()
         {
             _characterOrientation2D = this.gameObject.GetComponentInParent<Character>()?.FindAbility<CharacterOrientation2D>();
@@ -37,18 +27,10 @@ namespace MoreMountains.TopDownEngine
                 _characterOrientation2D.FacingMode = CharacterOrientation2D.FacingModes.None;    
             }
         }
-
-        /// <summary>
-        /// On PerformAction we face our target
-        /// </summary>
         public override void PerformAction()
         {
             FaceTarget();
         }
-
-        /// <summary>
-        /// Makes the orientation 2D ability face towards the brain target
-        /// </summary>
         protected virtual void FaceTarget()
         {
             if ((_brain.Target == null) || !_chacterOrientation2DNotNull)

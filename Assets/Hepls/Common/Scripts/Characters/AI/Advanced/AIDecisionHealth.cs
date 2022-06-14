@@ -5,49 +5,27 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This decision will return true if the specified Health conditions are met. You can have it be lower, strictly lower, equal, higher or strictly higher than the specified value.
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/AI/Decisions/AIDecisionHealth")]
-    //[RequireComponent(typeof(Health))]
     public class AIDecisionHealth : AIDecision
     {
-        /// the different comparison modes
         public enum ComparisonModes { StrictlyLowerThan, LowerThan, Equals, GreatherThan, StrictlyGreaterThan }
-        /// the comparison mode with which we'll evaluate the HealthValue
         [Tooltip("the comparison mode with which we'll evaluate the HealthValue")]
         public ComparisonModes TrueIfHealthIs;
-        /// the Health value to compare to
         [Tooltip("the Health value to compare to")]
         public int HealthValue;
-        /// whether we want this comparison to be done only once or not
         [Tooltip("whether we want this comparison to be done only once or not")]
         public bool OnlyOnce = true;
 
         protected Health _health;
         protected bool _once = false;
-
-        /// <summary>
-        /// On init we grab our Health component
-        /// </summary>
         public override void Initialization()
         {
             _health = _brain.gameObject.GetComponentInParent<Health>();
         }
-
-        /// <summary>
-        /// On Decide we evaluate our current Health level
-        /// </summary>
-        /// <returns></returns>
         public override bool Decide()
         {
             return EvaluateHealth();
         }
-
-        /// <summary>
-        /// Compares our health value and returns true if the condition is met
-        /// </summary>
-        /// <returns></returns>
         protected virtual bool EvaluateHealth()
         {
             bool returnValue = false;

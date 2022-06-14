@@ -6,9 +6,6 @@ using System;
 namespace MoreMountains.Feedbacks
 {
 	[Serializable]
-	/// <summary>
-	/// Camera shake properties
-	/// </summary>
 	public struct MMCameraShakeProperties
 	{
 		public float Duration;
@@ -97,31 +94,16 @@ namespace MoreMountains.Feedbacks
 
     [RequireComponent(typeof(MMWiggle))]
     [AddComponentMenu("More Mountains/Feedbacks/Shakers/Camera/MMCameraShaker")]
-    /// <summary>
-    /// A class to add to your camera. It'll listen to MMCameraShakeEvents and will shake your camera accordingly
-    /// </summary>
     public class MMCameraShaker : MonoBehaviour
     {
-	    /// the channel to broadcast this shake on
 	    [Tooltip("the channel to broadcast this shake on")]
         public int Channel = 0;
 	    
         protected MMWiggle _wiggle;
-
-		/// <summary>
-		/// On Awake, grabs the MMShaker component
-		/// </summary>
 		protected virtual void Awake()
 		{
 			_wiggle = GetComponent<MMWiggle>();
 		}
-
-		/// <summary>
-		/// Shakes the camera for Duration seconds, by the desired amplitude and frequency
-		/// </summary>
-		/// <param name="duration">Duration.</param>
-		/// <param name="amplitude">Amplitude.</param>
-		/// <param name="frequency">Frequency.</param>
 		public virtual void ShakeCamera(float duration, float amplitude, float frequency, float amplitudeX, float amplitudeY, float amplitudeZ, bool useUnscaledTime)
 		{
             if ((amplitudeX != 0f) || (amplitudeY != 0f) || (amplitudeZ != 0f))
@@ -147,11 +129,6 @@ namespace MoreMountains.Feedbacks
             _wiggle.PositionWiggleProperties.NoiseFrequencyMax = frequency * Vector3.one;
             _wiggle.WigglePosition(duration);
 		}
-
-		/// <summary>
-		/// When a MMCameraShakeEvent is caught, shakes the camera
-		/// </summary>
-		/// <param name="shakeEvent">Shake event.</param>
 		public virtual void OnCameraShakeEvent(float duration, float amplitude, float frequency, float amplitudeX, float amplitudeY, float amplitudeZ, bool infinite, int channel, bool useUnscaledTime)
 		{
             if (channel != Channel)
@@ -160,18 +137,10 @@ namespace MoreMountains.Feedbacks
             }
 			this.ShakeCamera (duration, amplitude, frequency, amplitudeX, amplitudeY, amplitudeZ, useUnscaledTime);
 		}
-
-		/// <summary>
-		/// On enable, starts listening for events
-		/// </summary>
 		protected virtual void OnEnable()
 		{
             MMCameraShakeEvent.Register(OnCameraShakeEvent);
         }
-
-		/// <summary>
-		/// On disable, stops listening to events
-		/// </summary>
 		protected virtual void OnDisable()
 		{
             MMCameraShakeEvent.Unregister(OnCameraShakeEvent);

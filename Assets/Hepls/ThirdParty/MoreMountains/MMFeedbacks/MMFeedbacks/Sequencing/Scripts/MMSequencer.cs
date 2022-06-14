@@ -6,62 +6,46 @@ using UnityEngine.Events;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// This class lets you design a quantized MMSequence using a sequencer interface, and lets you play a quantized sequence, triggering events on beats if specified
-    /// </summary>
     [AddComponentMenu("More Mountains/Feedbacks/Sequencing/MMSequencer")]
     public class MMSequencer : MonoBehaviour
     {
         [Header("Sequence")]
-        /// the sequence to design on or to play
         [Tooltip("the sequence to design on or to play")]
         public MMSequence Sequence;
-        /// the intended BPM for playback and design
         [Tooltip("the intended BPM for playback and design")]
         public int BPM = 160;
-        /// the number of notes in the sequence
         [Tooltip("the number of notes in the sequence")]
         public int SequencerLength = 8;
 
         [Header("Playback")]
-        /// whether the sequence should loop or not when played back
         [Tooltip("whether the sequence should loop or not when played back")]
         public bool Loop = true;
-        /// if this is true the sequence will play in random order
         [Tooltip("if this is true the sequence will play in random order")]
         public bool RandomSequence = false;
-        /// whether that sequencer should start playing on application start
         [Tooltip("whether that sequencer should start playing on application start")]
         public bool PlayOnStart = false;
         
         [Header("Metronome")]
-        /// a sound to play every beat
         [Tooltip("a sound to play every beat")]
         public AudioClip MetronomeSound;
-        /// the volume of the metronome sound
         [Tooltip("the volume of the metronome sound")]
         [Range(0f, 1f)]
         public float MetronomeVolume = 0.2f;
 
         [Header("Events")]
-        /// a list of events to play every time an active beat is found on each track (one event per track)
         [Tooltip("a list of events to play every time an active beat is found on each track (one event per track)")]
         public List<UnityEvent> TrackEvents;
 
         [Header("Monitor")]
-        /// true if the sequencer is playing right now
         [Tooltip("true if the sequencer is playing right now")]
         [MMFReadOnly]
         public bool Playing = false;
-        /// true if the sequencer has been played once
         [Tooltip("true if the sequencer has been played once")]
         [HideInInspector]
         public bool PlayedOnce = false;
-        /// true if a perfect beat was found this frame
         [Tooltip("true if a perfect beat was found this frame")]
         [MMFReadOnly]
         public bool BeatThisFrame = false;
-        /// the index of the last played bit (our position in the playing sequence)
         [Tooltip("the index of the last played bit (our position in the playing sequence)")]
         [MMFReadOnly]
         public int LastBeatIndex = 0;
@@ -81,18 +65,10 @@ namespace MoreMountains.Feedbacks
 
         protected float _beatInterval;
         protected AudioSource _beatSoundAudiosource;
-
-        /// <summary>
-        /// On Start we initialize our sequencer
-        /// </summary>
         protected virtual void Start()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// On init, initializes the metronome and plays the sequence if needed
-        /// </summary>
         protected virtual void Initialization()
         {
             Playing = false;
@@ -111,10 +87,6 @@ namespace MoreMountains.Feedbacks
                 PlaySequence();
             }
         }
-
-        /// <summary>
-        /// Plays or stops the sequence based on its current state
-        /// </summary>
         public virtual void ToggleSequence()
         {
             if (Playing)
@@ -126,28 +98,16 @@ namespace MoreMountains.Feedbacks
                 PlaySequence();
             }
         }
-
-        /// <summary>
-        /// Starts playing the sequence
-        /// </summary>
         public virtual void PlaySequence()
         {
             CurrentSequenceIndex = 0;
             Playing = true;
             LastBeatTimestamp = 0f;            
         }
-
-        /// <summary>
-        /// Stops the playback of the sequence
-        /// </summary>
         public virtual void StopSequence()
         {
             Playing = false;
         }
-
-        /// <summary>
-        /// Clears the contents of the sequence
-        /// </summary>
         public virtual void ClearSequence()
         {
             for (int trackIndex = 0; trackIndex < Sequence.SequenceTracks.Count; trackIndex++)
@@ -158,18 +118,10 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        /// <summary>
-        /// On update we handle our beat
-        /// </summary>
         protected virtual void Update()
         {
             HandleBeat();
         }
-
-        /// <summary>
-        /// Determines if we're on a beat, and plays the beat if needed
-        /// </summary>
         protected virtual void HandleBeat()
         {
             BeatThisFrame = false;
@@ -192,10 +144,6 @@ namespace MoreMountains.Feedbacks
                 PlayBeat();
             }
         }
-
-        /// <summary>
-        /// Triggers events on the beat if needed
-        /// </summary>
         public virtual void PlayBeat()
         {
             BeatThisFrame = true;
@@ -225,37 +173,18 @@ namespace MoreMountains.Feedbacks
                 CurrentSequenceIndex = UnityEngine.Random.Range(0, SequencerLength);
             }
         }
-
-        /// <summary>
-        /// Triggered every time a beat is found, meant to be overriden
-        /// </summary>
         protected virtual void OnBeat()
         {
 
         }
-
-        /// <summary>
-        /// Plays the track event supposed to happen for the specified track
-        /// </summary>
-        /// <param name="index"></param>
         public virtual void PlayTrackEvent(int index)
         {
             TrackEvents[index].Invoke();
         }
-
-        /// <summary>
-        /// Turns a sequence track active (will play its notes) or inactive (won't do it)
-        /// </summary>
-        /// <param name="trackIndex"></param>
         public virtual void ToggleActive(int trackIndex)
         {
             Sequence.SequenceTracks[trackIndex].Active = !Sequence.SequenceTracks[trackIndex].Active;
         }
-
-        /// <summary>
-        /// Toggles a whole step column, turning all its notes active or inactive
-        /// </summary>
-        /// <param name="stepIndex"></param>
         public virtual void ToggleStep(int stepIndex)
         {
             bool active = (Sequence.QuantizedSequence[0].Line[stepIndex].ID != -1);
@@ -272,10 +201,6 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        /// <summary>
-        /// Plays the sound of the metronome
-        /// </summary>
         protected virtual void PlayMetronomeSound()
         {
             if (MetronomeSound != null)
@@ -284,10 +209,6 @@ namespace MoreMountains.Feedbacks
                 _beatSoundAudiosource.Play();
             }
         }
-
-        /// <summary>
-        /// Adds one column at the end of the sequence
-        /// </summary>
         public virtual void IncrementLength()
         {
             if (Sequence == null)
@@ -307,10 +228,6 @@ namespace MoreMountains.Feedbacks
                 Sequence.QuantizedSequence[trackIndex].Line.Add(newNote);
             }
         }
-
-        /// <summary>
-        /// Removes the last column of the sequence
-        /// </summary>
         public virtual void DecrementLength()
         {
             if (Sequence == null)
@@ -328,10 +245,6 @@ namespace MoreMountains.Feedbacks
                 Sequence.QuantizedSequence[trackIndex].Line.RemoveAt(removeIndex);
             }
         }
-
-        /// <summary>
-        /// Parses the sequence contents and updates timestamps to match the new BPM
-        /// </summary>
         public virtual void UpdateTimestampsToMatchNewBPM()
         {
             if (Sequence == null)
@@ -354,10 +267,6 @@ namespace MoreMountains.Feedbacks
             }
             LastBPM = BPM;
         }
-        
-        /// <summary>
-        /// Rebuilds the sequence properties to match length and track count - will destroy contents
-        /// </summary>
         public virtual void ApplySequencerLengthToSequence()
         {
             if (Sequence == null)
@@ -393,26 +302,16 @@ namespace MoreMountains.Feedbacks
             LastTracksCount = Sequence.SequenceTracks.Count;
             LastSequencerLength = SequencerLength;
         }
-
-        /// <summary>
-        /// Performed every frame by the editor to handle potential changes
-        /// </summary>
         public virtual void EditorMaintenance()
         {
             SetupTrackEvents();
         }
-
-        /// <summary>
-        /// Adds or rebuilds to the event list
-        /// </summary>
         public virtual void SetupTrackEvents()
         {
             if (Sequence == null)
             {
                 return;
             }
-
-            // setup events
             if (TrackEvents.Count < Sequence.SequenceTracks.Count)
             {
                 for (int i = 0; i < Sequence.SequenceTracks.Count; i++)

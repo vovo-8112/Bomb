@@ -5,70 +5,50 @@ using MoreMountains.Tools;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// This feedback will let you control values on a target ShaderController, letting you modify the behaviour and aspect of a shader driven material at runtime
-    /// </summary>
     [AddComponentMenu("")]
     [FeedbackHelp("This feedback lets you trigger a one time play on a target ShaderController.")]
     [FeedbackPath("Renderer/ShaderController")]
     public class MMFeedbackShaderController : MMFeedback
     {
-        /// the different possible modes 
         public enum Modes { OneTime, ToDestination }
-        /// sets the inspector color for this feedback
         #if UNITY_EDITOR
         public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.RendererColor; } }
         #endif
 
         [Header("Float Controller")]
-        /// the mode this controller is in
         [Tooltip("the mode this controller is in")]
         public Modes Mode = Modes.OneTime;
-        /// the float controller to trigger a one time play on
         [Tooltip("the float controller to trigger a one time play on")]
         public ShaderController TargetShaderController;
-        /// whether this should revert to original at the end
         [Tooltip("whether this should revert to original at the end")]
         public bool RevertToInitialValueAfterEnd = false;
-        /// the duration of the One Time shake
         [Tooltip("the duration of the One Time shake")]
         [MMFEnumCondition("Mode", (int)Modes.OneTime)]
         public float OneTimeDuration = 1f;
-        /// the amplitude of the One Time shake (this will be multiplied by the curve's height)
         [Tooltip("the amplitude of the One Time shake (this will be multiplied by the curve's height)")]
         [MMFEnumCondition("Mode", (int)Modes.OneTime)]
         public float OneTimeAmplitude = 1f;
-        /// the low value to remap the normalized curve value to 
         [Tooltip("the low value to remap the normalized curve value to")]
         [MMFEnumCondition("Mode", (int)Modes.OneTime)]
         public float OneTimeRemapMin = 0f;
-        /// the high value to remap the normalized curve value to 
         [Tooltip("the high value to remap the normalized curve value to")]
         [MMFEnumCondition("Mode", (int)Modes.OneTime)]
         public float OneTimeRemapMax = 1f;
-        /// the curve to apply to the one time shake
         [Tooltip("the curve to apply to the one time shake")]
         [MMFEnumCondition("Mode", (int)Modes.OneTime)]
         public AnimationCurve OneTimeCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-
-        /// the new value towards which to move the current value
         [Tooltip("the new value towards which to move the current value")]
         [MMFEnumCondition("Mode", (int)Modes.ToDestination)]
         public float ToDestinationValue = 1f;
-        /// the duration over which to interpolate the target value
         [Tooltip("the duration over which to interpolate the target value")]
         [MMFEnumCondition("Mode", (int)Modes.ToDestination)]
         public float ToDestinationDuration = 1f;
-        /// the color to aim for (when targetting a Color property
         [Tooltip("the color to aim for (when targetting a Color property")]
         [MMFEnumCondition("Mode", (int)Modes.ToDestination)]
         public Color ToDestinationColor = Color.red;
-        /// the curve over which to interpolate the value
         [Tooltip("the curve over which to interpolate the value")]
         [MMFEnumCondition("Mode", (int)Modes.ToDestination)]
         public AnimationCurve ToDestinationCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-
-        /// the duration of this feedback is the duration of the one time hit
         public override float FeedbackDuration
         {
             get { return (Mode == Modes.OneTime) ? ApplyTimeMultiplier(OneTimeDuration) : ApplyTimeMultiplier(ToDestinationDuration); } 
@@ -84,11 +64,6 @@ namespace MoreMountains.Feedbacks
         protected float _toDestinationDurationStorage;
         protected AnimationCurve _toDestinationCurveStorage;
         protected bool _revertToInitialValueAfterEndStorage;
-
-        /// <summary>
-        /// On init we grab our initial controller values
-        /// </summary>
-        /// <param name="owner"></param>
         protected override void CustomInitialization(GameObject owner)
         {
             if (Active && (TargetShaderController != null))
@@ -104,12 +79,6 @@ namespace MoreMountains.Feedbacks
                 _revertToInitialValueAfterEndStorage = TargetShaderController.RevertToInitialValueAfterEnd;
             }
         }
-
-        /// <summary>
-        /// On play we trigger a OneTime or ToDestination play on our shader controller
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             if (Active && (TargetShaderController != null))
@@ -144,12 +113,6 @@ namespace MoreMountains.Feedbacks
                 }                
             }
         }
-        
-        /// <summary>
-        /// Stops this feedback
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         protected override void CustomStopFeedback(Vector3 position, float feedbacksIntensity = 1)
         {
             base.CustomStopFeedback(position, feedbacksIntensity);
@@ -161,10 +124,6 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        /// <summary>
-        /// On reset we restore our initial values
-        /// </summary>
         protected override void CustomReset()
         {
             base.CustomReset();

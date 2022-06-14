@@ -6,19 +6,11 @@ using UnityEngine.UI;
 namespace MoreMountains.TopDownEngine
 {
     [RequireComponent(typeof(Weapon))]
-    /// <summary>
-    /// Add this component to a Weapon and you'll be able to aim it (meaning you'll rotate it)
-    /// Supported control modes are mouse, primary movement (you aim wherever you direct your character) and secondary movement (using a secondary axis, separate from the movement).
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Weapons/Weapon Aim 2D")]
     public class WeaponAim2D : WeaponAim
     {
         protected Vector2 _inputMovement;
         protected Camera _mainCamera;
-
-        /// <summary>
-        /// On init, we grab our camera and init our last non null movement
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -42,10 +34,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// the current angle the weapon is aiming at, adjusted to compensate for the current orientation of the character
-        /// </summary>
         public override float CurrentAngleRelative
         {
             get
@@ -70,10 +58,6 @@ namespace MoreMountains.TopDownEngine
                 return 0;
             }
         }
-
-        /// <summary>
-        /// Computes the current aim direction
-        /// </summary>
         protected override void GetCurrentAim()
         {
             if (_weapon.Owner == null)
@@ -168,30 +152,18 @@ namespace MoreMountains.TopDownEngine
                     break;
             }
         }
-
-        /// <summary>
-        /// Resets the aim
-        /// </summary>
         public virtual void GetOffAim()
         {
             _currentAim = Vector2.right;
             _currentAimAbsolute = Vector2.right;
             _direction = Vector2.right;
         }
-
-        /// <summary>
-        /// Computes the current aim and direction based on the current aim provided by script
-        /// </summary>
         public virtual void GetScriptAim()
         {
             _currentAimAbsolute = _currentAim;
             _currentAim = (_weapon.Owner.Orientation2D.IsFacingRight) ? _currentAim : -_currentAim;
             _direction = -(transform.position - _currentAim);
         }
-
-        /// <summary>
-        /// Grabs primary input (left stick, by default) movement
-        /// </summary>
         public virtual void GetPrimaryMovementAim()
         {
             if ((_weapon.Owner == null) || (_weapon.Owner.LinkedInputManager == null))
@@ -224,10 +196,6 @@ namespace MoreMountains.TopDownEngine
 
             StoreLastMovement();
         }
-
-        /// <summary>
-        /// Grabs secondary movement (right stick by default)
-        /// </summary>
         public virtual void GetSecondaryMovementAim()
         {
             if ((_weapon.Owner == null) || (_weapon.Owner.LinkedInputManager == null))
@@ -257,10 +225,6 @@ namespace MoreMountains.TopDownEngine
             }
             StoreLastMovement();
         }
-
-        /// <summary>
-        /// Grabs mouse aim
-        /// </summary>
         public virtual void GetMouseAim()
         {
             _mousePosition = Input.mousePosition;
@@ -287,10 +251,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }            
         }
-
-        /// <summary>
-        /// Grabs the last movement stored value if necessary
-        /// </summary>
         protected virtual void TestLastMovement()
         {
             if (RotationMode == RotationModes.Strict2Directions)
@@ -303,10 +263,6 @@ namespace MoreMountains.TopDownEngine
                 _inputMovement = _inputMovement.magnitude > 0 ? _inputMovement : _lastNonNullMovement;
             }
         }
-
-        /// <summary>
-        /// Stores the movement value for use next frame
-        /// </summary>
         protected virtual void StoreLastMovement()
         {
             if (RotationMode == RotationModes.Strict2Directions)
@@ -319,10 +275,6 @@ namespace MoreMountains.TopDownEngine
                 _lastNonNullMovement = _inputMovement.magnitude > 0 ? _inputMovement : _lastNonNullMovement;
             }
         }
-
-        /// <summary>
-        /// Every frame, we compute the aim direction and rotate the weapon accordingly
-        /// </summary>
         protected override void Update()
         {
             HideMousePointer();
@@ -334,10 +286,6 @@ namespace MoreMountains.TopDownEngine
             GetCurrentAim();
             DetermineWeaponRotation();
         }
-
-        /// <summary>
-        /// At fixed update we move the target and reticle
-        /// </summary>
         protected virtual void FixedUpdate()
         {
             if (GameManager.Instance.Paused)
@@ -347,10 +295,6 @@ namespace MoreMountains.TopDownEngine
             MoveTarget();
             MoveReticle();
         }
-
-        /// <summary>
-        /// Determines the weapon rotation based on the current aim direction
-        /// </summary>
         protected override void DetermineWeaponRotation()
         {
             if (_currentAim != Vector3.zero)
@@ -367,11 +311,7 @@ namespace MoreMountains.TopDownEngine
                     {
                         CurrentAngle = 0f;
                     }
-
-                    // we add our additional angle
                     CurrentAngle += _additionalAngle;
-
-                    // we clamp the angle to the min/max values set in the inspector
                     if (_weapon.Owner.Orientation2D != null)
                     {
                         if (_weapon.Owner.Orientation2D.IsFacingRight)
@@ -399,10 +339,6 @@ namespace MoreMountains.TopDownEngine
             }
             MMDebug.DebugDrawArrow(this.transform.position, _currentAimAbsolute.normalized, Color.green);
         }
-        
-        /// <summary>
-        /// If a reticle has been set, instantiates the reticle and positions it
-        /// </summary>
         protected override void InitializeReticle()
         {
             if (_weapon.Owner == null) { return; }
@@ -434,10 +370,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Every frame, moves the reticle if it's been told to follow the pointer
-        /// </summary>
         protected override void MoveReticle()
         {
             if (ReticleType == ReticleTypes.None) { return; }
@@ -446,7 +378,6 @@ namespace MoreMountains.TopDownEngine
 
             if (ReticleType == ReticleTypes.Scene)
             {
-                // if we're not supposed to rotate the reticle, we force its rotation, otherwise we apply the current look rotation
                 if (!RotateReticle)
                 {
                     _reticle.transform.rotation = Quaternion.identity;
@@ -458,18 +389,12 @@ namespace MoreMountains.TopDownEngine
                         _reticle.transform.rotation = _lookRotation;
                     }
                 }
-
-                // if we're in follow mouse mode and the current control scheme is mouse, we move the reticle to the mouse's position
                 if (ReticleAtMousePosition && AimControl == AimControls.Mouse)
                 {
                     _reticle.transform.position = _reticlePosition;
                 }                
             }
         }
-
-        /// <summary>
-        /// Moves the camera target
-        /// </summary>
         protected override void MoveTarget()
         {
             if (_weapon.Owner == null)

@@ -8,14 +8,9 @@ using UnityEditor.Animations;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// A struct used to store character animation parameter definitions, to be used by the CharacterAnimationParametersInitializer class
-    /// </summary>
     public struct TopDownCharacterAnimationParameter
     {
-        /// the name of the parameter
         public string ParameterName;
-        /// the type of the parameter
         public AnimatorControllerParameterType ParameterType;
 
         public TopDownCharacterAnimationParameter(string name, AnimatorControllerParameterType type)
@@ -24,14 +19,9 @@ namespace MoreMountains.TopDownEngine
             ParameterType = type;
         }
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
     public class CharacterAnimationParametersInitializer : MonoBehaviour
     {
         [Header("Initialization")]
-        /// if this is true, this component will remove itself after adding the character parameters
         [Tooltip("if this is true, this component will remove itself after adding the character parameters")]
         public bool AutoRemoveAfterInitialization = true;
         [MMInspectorButton("AddAnimationParameters")]
@@ -83,20 +73,13 @@ namespace MoreMountains.TopDownEngine
         protected AnimatorController _controller;
 #endif
         protected List<string> _parameters = new List<string>();
-
-        /// <summary>
-        /// Adds all the default animation parameters on your character's animator
-        /// </summary>
         public virtual void AddAnimationParameters()
         {
-            // we grab the animator
             _animator = this.gameObject.GetComponent<Animator>();
             if (_animator == null)
             {
                 Debug.LogError("You need to add the AnimationParameterInitializer class to a gameobject with an Animator.");
             }
-
-            // we grab the controller
 #if UNITY_EDITOR
             _controller = _animator.runtimeAnimatorController as AnimatorController;
             if (_controller == null)
@@ -104,15 +87,11 @@ namespace MoreMountains.TopDownEngine
                 Debug.LogError("You need an animator controller on this Animator.");
             }
 #endif
-
-            // we store its parameters
             _parameters.Clear();
             foreach (AnimatorControllerParameter param in _animator.parameters)
             {
                 _parameters.Add(param.name);
             }
-
-            // we add all the listed parameters
             foreach (TopDownCharacterAnimationParameter parameter in ParametersArray)
             {
                 if (!_parameters.Contains(parameter.ParameterName))
@@ -122,8 +101,6 @@ namespace MoreMountains.TopDownEngine
 #endif
                 }
             }
-
-            // we remove this component if needed
             if (AutoRemoveAfterInitialization)
             {
                 DestroyImmediate(this);

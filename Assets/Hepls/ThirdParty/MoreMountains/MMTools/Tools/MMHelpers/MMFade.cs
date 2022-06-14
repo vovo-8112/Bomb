@@ -5,19 +5,9 @@ using System;
 
 namespace MoreMountains.Tools
 {
-	/// <summary>
-	/// Fade helpers
-	/// </summary>
 
 	public static class MMFade
 	{
-
-		/// <summary>
-		/// Fades the specified image to the target opacity and duration.
-		/// </summary>
-		/// <param name="target">Target.</param>
-		/// <param name="opacity">Opacity.</param>
-		/// <param name="duration">Duration.</param>
 		public static IEnumerator FadeImage(Image target, float duration, Color color)
 		{
 			if (target==null)
@@ -36,12 +26,6 @@ namespace MoreMountains.Tools
 			target.color=color;
 
 		}
-		/// <summary>
-		/// Fades the specified image to the target opacity and duration.
-		/// </summary>
-		/// <param name="target">Target.</param>
-		/// <param name="opacity">Opacity.</param>
-		/// <param name="duration">Duration.</param>
 		public static IEnumerator FadeText(Text target, float duration, Color color)
 		{
 			if (target==null)
@@ -59,12 +43,6 @@ namespace MoreMountains.Tools
 			}			
 			target.color=color;
 		}
-		/// <summary>
-		/// Fades the specified image to the target opacity and duration.
-		/// </summary>
-		/// <param name="target">Target.</param>
-		/// <param name="opacity">Opacity.</param>
-		/// <param name="duration">Duration.</param>
 		public static IEnumerator FadeSprite(SpriteRenderer target, float duration, Color color)
 		{
 			if (target==null)

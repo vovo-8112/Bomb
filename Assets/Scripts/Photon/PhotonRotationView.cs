@@ -23,7 +23,6 @@ public class PhotonRotationView : MonoBehaviourPun, IPunObservable
 
     private void Reset()
     {
-        // Only default to true with new instances. useLocal will remain false for old projects that are updating PUN.
         m_UseLocal = true;
     }
 
@@ -54,8 +53,6 @@ public class PhotonRotationView : MonoBehaviourPun, IPunObservable
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         var tr = transform;
-
-        // Write
         if (stream.IsWriting)
         {
             if (this.m_SynchronizeRotation)
@@ -70,8 +67,6 @@ public class PhotonRotationView : MonoBehaviourPun, IPunObservable
                 }
             }
         }
-
-        // Read
         else
         {
             if (this.m_SynchronizeRotation)

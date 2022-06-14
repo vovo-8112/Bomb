@@ -4,22 +4,8 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Uses random walk to generate a ground with controlled elevation
-    /// </summary>
     public class MMGridGeneratorRandomWalkGround : MMGridGenerator
     {
-        /// <summary>
-        /// Uses random walk to generate a ground with controlled elevation
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="seed"></param>
-        /// <param name="minHeightDifference"></param>
-        /// <param name="maxHeightDifference"></param>
-        /// <param name="minFlatDistance"></param>
-        /// <param name="maxFlatDistance"></param>
-        /// <returns></returns>
         public static int[,] Generate(int width, int height, int seed, int minHeightDifference, int maxHeightDifference, int minFlatDistance, int maxFlatDistance, int maxHeight)
         {
             System.Random random = new System.Random(seed.GetHashCode());

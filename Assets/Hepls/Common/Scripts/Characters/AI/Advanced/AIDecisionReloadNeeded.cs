@@ -5,27 +5,15 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This Decision will return true if a reload is needed
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/AI/Decisions/AIDecisionReloadNeeded")]
     public class AIDecisionReloadNeeded : AIDecision
     {
         protected CharacterHandleWeapon _characterHandleWeapon;
-
-        /// <summary>
-        /// On Init we store our CharacterHandleWeapon
-        /// </summary>
         public override void Initialization()
         {
             base.Initialization();
             _characterHandleWeapon = this.gameObject.GetComponentInParent<Character>()?.FindAbility<CharacterHandleWeapon>();
         }
-
-        /// <summary>
-        /// On Decide we return true if a reload is needed
-        /// </summary>
-        /// <returns></returns>
         public override bool Decide()
         {
             if (_characterHandleWeapon == null)

@@ -4,12 +4,8 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A helper class to handle geometry related operations    
-    /// </summary>    
     public static class MMGeometry
     {
-        // Based on https://answers.unity.com/questions/1019436/get-outeredge-vertices-c.html
         public struct MMEdge
         {
             public int Vertice1;
@@ -45,7 +41,6 @@ namespace MoreMountains.Tools
             {
                 for (int n = i - 1; n >= 0; n--)
                 {
-                    // if we find a shared edge we remove both
                     if (edgeList[i].Vertice1 == edgeList[n].Vertice2 && edgeList[i].Vertice2 == edgeList[n].Vertice1)
                     {
                         edgeList.RemoveAt(i);
@@ -70,12 +65,10 @@ namespace MoreMountains.Tools
                     {                        
                         if (n == i + 1)
                         {
-                            // if they're already in order, we move on
                             break;
                         }
                         else
                         {
-                            // otherwise we swap
                             edgeList[n] = edgeList[i + 1];
                             edgeList[i + 1] = a;
                             break;

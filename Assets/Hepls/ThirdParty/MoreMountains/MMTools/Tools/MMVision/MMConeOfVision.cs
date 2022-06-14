@@ -6,17 +6,10 @@ using System;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// This class will create a cone of vision defined by an angle and a distance around a point. It will look for targets within that field, and draw a mesh to show the cone of vision
-    /// initially inspired by this great tutorial by Sebastian Lague : https://www.youtube.com/watch?v=rQG9aUWarwE - check out his tutorials, they're amazing!
-    /// </summary>
     [Serializable]
     [AddComponentMenu("More Mountains/Tools/Vision/MMConeOfVision")]
     public class MMConeOfVision : MonoBehaviour
     {
-        /// <summary>
-        /// A struct to store raycast data
-        /// </summary>
         public struct RaycastData
         {
             public bool Hit;

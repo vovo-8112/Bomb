@@ -5,27 +5,14 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This decision will return true if the Brain's current target is facing this character. Yes, it's quite specific to Ghosts. But hey now you can use it too!
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/AI/Decisions/AIDecisionTargetFacingAI2D")]
     public class AIDecisionTargetFacingAI2D : AIDecision
     {
         protected CharacterOrientation2D _orientation2D;
-        
-        /// <summary>
-        /// On Decide we check whether the Target is facing us
-        /// </summary>
-        /// <returns></returns>
         public override bool Decide()
         {
             return EvaluateTargetFacingDirection();
         }
-
-        /// <summary>
-        /// Returns true if the Brain's Target is facing us (this will require that the Target has a Character component)
-        /// </summary>
-        /// <returns></returns>
         protected virtual bool EvaluateTargetFacingDirection()
         {
             if (_brain.Target == null)

@@ -4,14 +4,10 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// Add this ability to a character, and it'll be able to rotate to face the movement's direction or the weapon's rotation
-    /// </summary>
     [MMHiddenProperties("AbilityStartFeedbacks", "AbilityStopFeedbacks")]
     [AddComponentMenu("TopDown Engine/Character/Abilities/Character Orientation 3D")]
     public class CharacterOrientation3D : CharacterAbility
     {
-        /// the possible rotation modes
         public enum RotationModes
         {
             None,
@@ -19,8 +15,6 @@ namespace MoreMountains.TopDownEngine
             WeaponDirection,
             Both
         }
-
-        /// the possible rotation speeds
         public enum RotationSpeeds
         {
             Instant,
@@ -29,95 +23,59 @@ namespace MoreMountains.TopDownEngine
         }
 
         [Header("Rotation Mode")]
-
-        /// whether the character should face movement direction, weapon direction, or both, or none
         [Tooltip("whether the character should face movement direction, weapon direction, or both, or none")]
         public RotationModes RotationMode = RotationModes.None;
-
-        /// if this is false, no rotation will occur
         [Tooltip("if this is false, no rotation will occur")]
         public bool CharacterRotationAuthorized = true;
 
         [Header("Movement Direction")]
-
-        /// If this is true, we'll rotate our model towards the direction
         [Tooltip("If this is true, we'll rotate our model towards the direction")]
         public bool ShouldRotateToFaceMovementDirection = true;
-
-        /// the current rotation mode
         [MMCondition("ShouldRotateToFaceMovementDirection", true)]
         [Tooltip("the current rotation mode")]
         public RotationSpeeds MovementRotationSpeed = RotationSpeeds.Instant;
-
-        /// the object we want to rotate towards direction. If left empty, we'll use the Character's model
         [MMCondition("ShouldRotateToFaceMovementDirection", true)]
         [Tooltip("the object we want to rotate towards direction. If left empty, we'll use the Character's model")]
         public GameObject MovementRotatingModel;
-
-        /// the speed at which to rotate towards direction (smooth and absolute only)
         [MMCondition("ShouldRotateToFaceMovementDirection", true)]
         [Tooltip("the speed at which to rotate towards direction (smooth and absolute only)")]
         public float RotateToFaceMovementDirectionSpeed = 10f;
-
-        /// the threshold after which we start rotating (absolute mode only)
         [MMCondition("ShouldRotateToFaceMovementDirection", true)]
         [Tooltip("the threshold after which we start rotating (absolute mode only)")]
         public float AbsoluteThresholdMovement = 0.5f;
-
-        /// the direction of the model
         [MMReadOnly]
         [Tooltip("the direction of the model")]
         public Vector3 ModelDirection;
-
-        /// the direction of the model in angle values
         [MMReadOnly]
         [Tooltip("the direction of the model in angle values")]
         public Vector3 ModelAngles;
 
         [Header("Weapon Direction")]
-
-        /// If this is true, we'll rotate our model towards the weapon's direction
         [Tooltip("If this is true, we'll rotate our model towards the weapon's direction")]
         public bool ShouldRotateToFaceWeaponDirection = true;
-
-        /// the current rotation mode
         [MMCondition("ShouldRotateToFaceWeaponDirection", true)]
         [Tooltip("the current rotation mode")]
         public RotationSpeeds WeaponRotationSpeed = RotationSpeeds.Instant;
-
-        /// the object we want to rotate towards direction. If left empty, we'll use the Character's model
         [MMCondition("ShouldRotateToFaceWeaponDirection", true)]
         [Tooltip("the object we want to rotate towards direction. If left empty, we'll use the Character's model")]
         public GameObject WeaponRotatingModel;
-
-        /// the speed at which to rotate towards direction (smooth and absolute only)
         [MMCondition("ShouldRotateToFaceWeaponDirection", true)]
         [Tooltip("the speed at which to rotate towards direction (smooth and absolute only)")]
         public float RotateToFaceWeaponDirectionSpeed = 10f;
-
-        /// the threshold after which we start rotating (absolute mode only)
         [MMCondition("ShouldRotateToFaceWeaponDirection", true)]
         [Tooltip("the threshold after which we start rotating (absolute mode only)")]
         public float AbsoluteThresholdWeapon = 0.5f;
-
-        /// the threshold after which we start rotating (absolute mode only)
         [MMCondition("ShouldRotateToFaceWeaponDirection", true)]
         [Tooltip("the threshold after which we start rotating (absolute mode only)")]
         public bool LockVerticalRotation = true;
 
         [Header("Animation")]
-
-        /// the speed at which the instant rotation animation parameter float resets to 0
         [Tooltip("the speed at which the instant rotation animation parameter float resets to 0")]
         public float RotationSpeedResetSpeed = 2f;
 
         [Header("Forced Rotation")]
-
-        /// whether the character is being applied a forced rotation
         [Tooltip("whether the character is being applied a forced rotation")]
         public bool ForcedRotation = false;
-
-        /// the forced rotation applied by an external script
         [MMCondition("ForcedRotation", true)]
         [Tooltip("the forced rotation applied by an external script")]
         public Vector3 ForcedRotationDirection;
@@ -159,10 +117,6 @@ namespace MoreMountains.TopDownEngine
 
         [SerializeField]
         private PhotonView _photonView;
-
-        /// <summary>
-        /// On init we grab our model if necessary
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -186,10 +140,6 @@ namespace MoreMountains.TopDownEngine
                 WeaponRotatingModel = _model;
             }
         }
-
-        /// <summary>
-        /// Every frame we rotate towards the direction
-        /// </summary>
         public override void ProcessAbility()
         {
             base.ProcessAbility();
@@ -216,10 +166,6 @@ namespace MoreMountains.TopDownEngine
         {
             ComputeRelativeSpeeds();
         }
-
-        /// <summary>
-        /// Rotates the player model to face the current direction
-        /// </summary>
         protected virtual void RotateToFaceMovementDirection()
         {
             if (_photonView != null)
@@ -229,8 +175,6 @@ namespace MoreMountains.TopDownEngine
                     return;
                 }
             }
-
-            // if we're not supposed to face our direction, we do nothing and exit
             if (!ShouldRotateToFaceMovementDirection)
             {
                 return;
@@ -242,8 +186,6 @@ namespace MoreMountains.TopDownEngine
             }
 
             _currentDirection = ForcedRotation ? ForcedRotationDirection : _controller.CurrentDirection;
-
-            // if the rotation mode is instant, we simply rotate to face our direction
             if (MovementRotationSpeed == RotationSpeeds.Instant)
             {
                 if (_currentDirection != Vector3.zero)
@@ -251,8 +193,6 @@ namespace MoreMountains.TopDownEngine
                     _newMovementQuaternion = Quaternion.LookRotation(_currentDirection);
                 }
             }
-
-            // if the rotation mode is smooth, we lerp towards our direction
             if (MovementRotationSpeed == RotationSpeeds.Smooth)
             {
                 if (_currentDirection != Vector3.zero)
@@ -263,8 +203,6 @@ namespace MoreMountains.TopDownEngine
                         Time.deltaTime * RotateToFaceMovementDirectionSpeed);
                 }
             }
-
-            // if the rotation mode is smooth, we lerp towards our direction even if the input has been released
             if (MovementRotationSpeed == RotationSpeeds.SmoothAbsolute)
             {
                 if (_currentDirection.normalized.magnitude >= AbsoluteThresholdMovement)
@@ -284,10 +222,6 @@ namespace MoreMountains.TopDownEngine
             ModelDirection = MovementRotatingModel.transform.forward.normalized;
             ModelAngles = MovementRotatingModel.transform.eulerAngles;
         }
-
-        /// <summary>
-        /// Rotates the character so it faces the weapon's direction
-        /// </summary>
         protected virtual void RotateToFaceWeaponDirection()
         {
             if (_photonView != null)
@@ -301,8 +235,6 @@ namespace MoreMountains.TopDownEngine
             _newWeaponQuaternion = Quaternion.identity;
             _weaponRotationDirection = Vector3.zero;
             _shouldRotateTowardsWeapon = false;
-
-            // if we're not supposed to face our direction, we do nothing and exit
             if (!ShouldRotateToFaceWeaponDirection)
             {
                 return;
@@ -335,8 +267,6 @@ namespace MoreMountains.TopDownEngine
             _weaponRotationDirection = _rotationDirection;
 
             MMDebug.DebugDrawArrow(this.transform.position, _rotationDirection, Color.red);
-
-            // if the rotation mode is instant, we simply rotate to face our direction
             if (WeaponRotationSpeed == RotationSpeeds.Instant)
             {
                 if (_rotationDirection != Vector3.zero)
@@ -344,8 +274,6 @@ namespace MoreMountains.TopDownEngine
                     _newWeaponQuaternion = Quaternion.LookRotation(_rotationDirection);
                 }
             }
-
-            // if the rotation mode is smooth, we lerp towards our direction
             if (WeaponRotationSpeed == RotationSpeeds.Smooth)
             {
                 if (_rotationDirection != Vector3.zero)
@@ -354,8 +282,6 @@ namespace MoreMountains.TopDownEngine
                         Time.deltaTime * RotateToFaceWeaponDirectionSpeed);
                 }
             }
-
-            // if the rotation mode is smooth, we lerp towards our direction even if the input has been released
             if (WeaponRotationSpeed == RotationSpeeds.SmoothAbsolute)
             {
                 if (_rotationDirection.normalized.magnitude >= AbsoluteThresholdWeapon)
@@ -372,10 +298,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Rotates models if needed
-        /// </summary>
         protected virtual void RotateModel()
         {
             if (_photonView != null)
@@ -396,10 +318,6 @@ namespace MoreMountains.TopDownEngine
 
         protected Vector3 _positionLastFrame;
         protected Vector3 _newSpeed;
-
-        /// <summary>
-        /// Computes the relative speeds
-        /// </summary>
         protected virtual void ComputeRelativeSpeeds()
         {
             if ((MovementRotatingModel == null) && (WeaponRotatingModel == null))
@@ -411,8 +329,6 @@ namespace MoreMountains.TopDownEngine
             {
                 _newSpeed = (this.transform.position - _positionLastFrame) / Time.deltaTime;
             }
-
-            // relative speed
             if ((_characterHandleWeapon == null) || (_characterHandleWeapon.CurrentWeapon == null))
             {
                 _relativeSpeed = MovementRotatingModel.transform.InverseTransformVector(_newSpeed);
@@ -421,8 +337,6 @@ namespace MoreMountains.TopDownEngine
             {
                 _relativeSpeed = WeaponRotatingModel.transform.InverseTransformVector(_newSpeed);
             }
-
-            // remapped speed
 
             float maxSpeed = 0f;
 
@@ -439,11 +353,7 @@ namespace MoreMountains.TopDownEngine
             _remappedSpeed.x = MMMaths.Remap(_relativeSpeed.x, 0f, maxSpeed, 0f, 1f);
             _remappedSpeed.y = MMMaths.Remap(_relativeSpeed.y, 0f, maxSpeed, 0f, 1f);
             _remappedSpeed.z = MMMaths.Remap(_relativeSpeed.z, 0f, maxSpeed, 0f, 1f);
-
-            // relative speed normalized
             _relativeSpeedNormalized = _relativeSpeed.normalized;
-
-            // RotationSpeed
             if (Mathf.Abs(_modelAnglesYLastFrame - ModelAngles.y) > 1f)
             {
                 _rotationSpeed = Mathf.Abs(_modelAnglesYLastFrame - ModelAngles.y);
@@ -461,11 +371,6 @@ namespace MoreMountains.TopDownEngine
             _modelAnglesYLastFrame = ModelAngles.y;
             _positionLastFrame = this.transform.position;
         }
-
-        /// <summary>
-        /// Forces the character's model to face in the specified direction
-        /// </summary>
-        /// <param name="direction"></param>
         public virtual void Face(Character.FacingDirections direction)
         {
             switch (direction)
@@ -484,10 +389,6 @@ namespace MoreMountains.TopDownEngine
                     break;
             }
         }
-
-        /// <summary>
-        /// Adds required animator parameters to the animator parameters list if they exist
-        /// </summary>
         protected override void InitializeAnimatorParameters()
         {
             RegisterAnimatorParameter(_rotationSpeeddAnimationParameterName, AnimatorControllerParameterType.Float, out _rotationSpeeddAnimationParameter);
@@ -513,10 +414,6 @@ namespace MoreMountains.TopDownEngine
             RegisterAnimatorParameter(_remappedSpeedNormalizedAnimationParameterName, AnimatorControllerParameterType.Float,
                 out _remappedSpeedNormalizedAnimationParameter);
         }
-
-        /// <summary>
-        /// Sends the current speed and the current value of the Walking state to the animator
-        /// </summary>
         public override void UpdateAnimator()
         {
             MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _rotationSpeeddAnimationParameter, _rotationSpeed, _character._animatorParameters,

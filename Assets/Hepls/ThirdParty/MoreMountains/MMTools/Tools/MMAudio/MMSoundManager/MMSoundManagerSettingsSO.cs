@@ -7,32 +7,23 @@ using UnityEngine.Audio;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A class to save sound settings (music on or off, sfx on or off)
-    /// </summary>
     [Serializable]
     [CreateAssetMenu(menuName = "MoreMountains/Audio/MMSoundManagerSettings")]
     public class MMSoundManagerSettingsSO : ScriptableObject
     {
-        [Header("Audio Mixer")] 
-        /// the audio mixer to use when playing sounds 
+        [Header("Audio Mixer")]
         [Tooltip("the audio mixer to use when playing sounds")]
         public AudioMixer TargetAudioMixer;
-        /// the master group
         [Tooltip("the master group")]
         public AudioMixerGroup MasterAudioMixerGroup;
-        /// the group on which to play all music sounds
         [Tooltip("the group on which to play all music sounds")]
         public AudioMixerGroup MusicAudioMixerGroup;
-        /// the group on which to play all sound effects
         [Tooltip("the group on which to play all sound effects")]
         public AudioMixerGroup SfxAudioMixerGroup;
-        /// the group on which to play all UI sounds
         [Tooltip("the group on which to play all UI sounds")]
         public AudioMixerGroup UIAudioMixerGroup;
         
         [Header("Settings Unfold")]
-        /// the full settings for this MMSoundManager
         [Tooltip("the full settings for this MMSoundManager")]
         public MMSoundManagerSettings Settings;
 
@@ -40,18 +31,10 @@ namespace MoreMountains.Tools
         protected const string _saveFileName = "mmsound.settings";
     
         #region SaveAndLoad
-        
-        /// <summary>
-        /// Saves the sound settings to file
-        /// </summary>
         public virtual void SaveSoundSettings()
         {
             MMSaveLoadManager.Save(this.Settings, _saveFileName, _saveFolderName);
         }
-
-        /// <summary>
-        /// Loads the sound settings from file (if found)
-        /// </summary>
         public virtual void LoadSoundSettings()
         {
             if (Settings.OverrideMixerSettings)
@@ -66,10 +49,6 @@ namespace MoreMountains.Tools
                 }
             }
         }
-
-        /// <summary>
-        /// Resets the sound settings by destroying the save file
-        /// </summary>
         public virtual void ResetSoundSettings()
         {
             MMSaveLoadManager.DeleteSave(_saveFileName, _saveFolderName);
@@ -78,12 +57,6 @@ namespace MoreMountains.Tools
         #endregion
         
         #region Volume
-
-        /// <summary>
-        /// sets the volume of the selected track to the value passed in parameters
-        /// </summary>
-        /// <param name="track"></param>
-        /// <param name="volume"></param>
         public virtual void SetTrackVolume(MMSoundManager.MMSoundManagerTracks track, float volume)
         {
             if (volume <= 0f)
@@ -116,12 +89,6 @@ namespace MoreMountains.Tools
                 SaveSoundSettings();
             }
         }
-
-        /// <summary>
-        /// Returns the volume of the specified track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <returns></returns>
         public virtual float GetTrackVolume(MMSoundManager.MMSoundManagerTracks track)
         {
             float volume = 1f;
@@ -143,10 +110,6 @@ namespace MoreMountains.Tools
 
             return MixerVolumeToNormalized(volume);
         }
-
-        /// <summary>
-        /// assigns the volume of each track to the settings values
-        /// </summary>
         public virtual void GetTrackVolumes()
         {
             Settings.MasterVolume = GetTrackVolume(MMSoundManager.MMSoundManagerTracks.Master);
@@ -154,10 +117,6 @@ namespace MoreMountains.Tools
             Settings.SfxVolume = GetTrackVolume(MMSoundManager.MMSoundManagerTracks.Sfx);
             Settings.UIVolume = GetTrackVolume(MMSoundManager.MMSoundManagerTracks.UI);
         }
-
-        /// <summary>
-        /// applies volume to all tracks and saves if needed
-        /// </summary>
         protected virtual void ApplyTrackVolumes()
         {
             if (Settings.OverrideMixerSettings)
@@ -178,22 +137,10 @@ namespace MoreMountains.Tools
                 }
             }
         }
-
-        /// <summary>
-        /// Converts a normalized volume to the mixer group db scale
-        /// </summary>
-        /// <param name="normalizedVolume"></param>
-        /// <returns></returns>
         public virtual float NormalizedToMixerVolume(float normalizedVolume)
         {
             return Mathf.Log10(normalizedVolume) * 20;
         }
-
-        /// <summary>
-        /// Converts mixer volume to a normalized value
-        /// </summary>
-        /// <param name="mixerVolume"></param>
-        /// <returns></returns>
         public virtual float MixerVolumeToNormalized(float mixerVolume)
         {
             return (float)Math.Pow(10, (mixerVolume / 20));

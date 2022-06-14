@@ -6,25 +6,15 @@ using UnityEngine.UI;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A class used to bind a checkbox to a MMDebugMenu
-    /// </summary>
     public class MMDebugMenuItemCheckbox : MonoBehaviour
     {
         [Header("Bindings")]
-        /// the switch used to display the checkbox
         public MMDebugMenuSwitch Switch;
-        /// the text used to display the checkbox's text
         public Text SwitchText;
-        /// the name of the checkbox event
         public string CheckboxEventName = "Checkbox";
 
         protected bool _valueSetThisFrame = false;
         protected bool _listening = false;
-
-        /// <summary>
-        /// Triggers an event when the checkbox gets pressed
-        /// </summary>
         public virtual void TriggerCheckboxEvent()
         {
             if (_valueSetThisFrame)
@@ -34,10 +24,6 @@ namespace MoreMountains.Tools
             }
             MMDebugMenuCheckboxEvent.Trigger(CheckboxEventName, Switch.SwitchState, MMDebugMenuCheckboxEvent.EventModes.FromCheckbox);
         }
-
-        /// <summary>
-        /// Triggers an event when the checkbox gets checked and becomes true
-        /// </summary>
         public virtual void TriggerCheckboxEventTrue()
         {
             if (_valueSetThisFrame)
@@ -47,10 +33,6 @@ namespace MoreMountains.Tools
             }
             MMDebugMenuCheckboxEvent.Trigger(CheckboxEventName, true, MMDebugMenuCheckboxEvent.EventModes.FromCheckbox);
         }
-
-        /// <summary>
-        /// Triggers an event when the checkbox gets unchecked and becomes false
-        /// </summary>
         public virtual void TriggerCheckboxEventFalse()
         {
             if (_valueSetThisFrame)
@@ -77,10 +59,6 @@ namespace MoreMountains.Tools
                 }
             }
         }
-
-        /// <summary>
-        /// Starts listening for events
-        /// </summary>
         public virtual void OnEnable()
         {
             if (!_listening)
@@ -89,10 +67,6 @@ namespace MoreMountains.Tools
                 MMDebugMenuCheckboxEvent.Register(OnMMDebugMenuCheckboxEvent);
             }            
         }
-
-        /// <summary>
-        /// Stops listening for events
-        /// </summary>
         public virtual void OnDestroy()
         {
             _listening = false;

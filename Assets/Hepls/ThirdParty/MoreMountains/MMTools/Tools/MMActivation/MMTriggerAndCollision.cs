@@ -30,8 +30,6 @@ namespace MoreMountains.Tools
 		public UnityEvent OnTrigger2DExitEvent;
 		public UnityEvent OnTrigger2DStayEvent;
 
-		// Collision 2D ------------------------------------------------------------------------------------
-
 		protected virtual void OnCollisionEnter2D (Collision2D collision)
 		{
 			if (Collision2DLayerMask.MMContains (collision.gameObject))
@@ -55,8 +53,6 @@ namespace MoreMountains.Tools
 				OnCollision2DStayEvent.Invoke();
 			}
 		}
-
-		// Trigger 2D ------------------------------------------------------------------------------------
 
 		protected virtual void OnTriggerEnter2D (Collider2D collider)
 		{
@@ -82,8 +78,6 @@ namespace MoreMountains.Tools
 			}
 		}
 
-		// Collision ------------------------------------------------------------------------------------
-
 		protected virtual void OnCollisionEnter(Collision c)
 		{
 			if (0 != (CollisionLayerMask.value & 1 << c.transform.gameObject.layer))
@@ -107,8 +101,6 @@ namespace MoreMountains.Tools
 				OnCollisionStayEvent.Invoke();
 			}
 		}
-
-		// Trigger  ------------------------------------------------------------------------------------
 
 		protected virtual void OnTriggerEnter (Collider collider)
 		{

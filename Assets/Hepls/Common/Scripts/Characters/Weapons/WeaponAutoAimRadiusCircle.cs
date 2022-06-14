@@ -5,19 +5,12 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This class will automatically draw a circle to match the radius of the auto aim weapon if there's one
-    /// </summary>
     [RequireComponent(typeof(LineRenderer))]
     [AddComponentMenu("TopDown Engine/Weapons/Weapon Auto Aim Radius Circle")]
     public class WeaponAutoAimRadiusCircle : MMLineRendererCircle
     {
         [Header("Weapon Radius")]
         public CharacterHandleWeapon TargetHandleWeaponAbility;
-
-        /// <summary>
-        /// On initialization, hooks itself to weapon changes
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -29,10 +22,6 @@ namespace MoreMountains.TopDownEngine
                 TargetHandleWeaponAbility.OnWeaponChange += OnWeaponChange;
             }
         }
-        
-        /// <summary>
-        /// When the weapon changes, if it has auto aim, draws a circle around it
-        /// </summary>
         void OnWeaponChange()
         {
             WeaponAutoAim autoAim = TargetHandleWeaponAbility.CurrentWeapon.GetComponent<WeaponAutoAim>();
@@ -45,10 +34,6 @@ namespace MoreMountains.TopDownEngine
             }
             DrawCircle();
         }
-
-        /// <summary>
-        /// On disables we unhook from our delegate
-        /// </summary>
         void OnDisable()
         {
             if (TargetHandleWeaponAbility != null)

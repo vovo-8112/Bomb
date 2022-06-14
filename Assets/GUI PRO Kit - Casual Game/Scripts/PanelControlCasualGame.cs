@@ -45,8 +45,6 @@ namespace LayerLab.CasualGame
             else if (Input.GetKeyDown(KeyCode.RightArrow))
                 Click_Next();
         }
-
-        //Click_Prev
         public void Click_Prev()
         {
 
@@ -57,8 +55,6 @@ namespace LayerLab.CasualGame
             textTitle.text = panels[page].name;
             CheckControl();
         }
-
-        //Click_Next
         public void Click_Next()
         {
             if (page >= panels.Count - 1) return;
@@ -73,8 +69,6 @@ namespace LayerLab.CasualGame
             buttonPrev.gameObject.SetActive(page > 0);
             buttonNext.gameObject.SetActive(page < panels.Count - 1);
         }
-
-        //SetTitle, SetArrow Active
         private void CheckControl()
         {
             textTitle.text = panels[page].name.Replace("_", " ");

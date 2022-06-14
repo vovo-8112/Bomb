@@ -10,63 +10,37 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace MoreMountains.InventoryEngine
 {	
 	[RequireComponent(typeof(InventoryDisplay))]
-	/// <summary>
-	/// A component that will handle the playing of songs when paired with an InventoryDisplay
-	/// </summary>
 	public class InventorySoundPlayer : MonoBehaviour, MMEventListener<MMInventoryEvent>
 	{
 		public enum Modes { Direct, Event }
 
-		[Header("Settings")] 
-		/// the mode to choose to play sounds. Direct will play an audiosource, event will call a MMSfxEvent,
-		/// meant to be caught by a MMSoundManager 
+		[Header("Settings")]
 		public Modes Mode = Modes.Direct;
 		
 		[Header("Sounds")]
 		[MMInformation("Here you can define the default sounds that will get played when interacting with this inventory.",MMInformationAttribute.InformationType.Info,false)]
-		/// the audioclip to play when the inventory opens
 		public AudioClip OpenFx;
-		/// the audioclip to play when the inventory closes
 		public AudioClip CloseFx;
-		/// the audioclip to play when moving from one slot to another
 		public AudioClip SelectionChangeFx;
-		/// the audioclip to play when moving from one slot to another
 		public AudioClip ClickFX;
-		/// the audioclip to play when moving an object successfully
 		public AudioClip MoveFX;
-		/// the audioclip to play when an error occurs (selecting an empty slot, etc)
 		public AudioClip ErrorFx;
-		/// the audioclip to play when an item is used, if no other sound has been defined for it
 		public AudioClip UseFx;
-		/// the audioclip to play when an item is dropped, if no other sound has been defined for it
 		public AudioClip DropFx;
-		/// the audioclip to play when an item is equipped, if no other sound has been defined for it
 		public AudioClip EquipFx;
 
 		protected string _targetInventoryName;
 		protected AudioSource _audioSource;
-
-		/// <summary>
-		/// On Start we setup our player and grab a few references for future use.
-		/// </summary>
 		protected virtual void Start()
 		{
 			SetupInventorySoundPlayer ();
 			_audioSource = GetComponent<AudioSource> ();
 			_targetInventoryName = this.gameObject.MMGetComponentNoAlloc<InventoryDisplay> ().TargetInventoryName;
 		}
-
-		/// <summary>
-		/// Setups the inventory sound player.
-		/// </summary>
 		public virtual void SetupInventorySoundPlayer()
 		{
 			AddAudioSource ();			
 		}
-
-		/// <summary>
-		/// Adds an audio source component if needed.
-		/// </summary>
 		protected virtual void AddAudioSource()
 		{
 			if (GetComponent<AudioSource>() == null)
@@ -74,11 +48,6 @@ namespace MoreMountains.InventoryEngine
 				this.gameObject.AddComponent<AudioSource>();
 			}
 		}
-
-		/// <summary>
-		/// Plays the sound specified in the parameter string
-		/// </summary>
-		/// <param name="soundFx">Sound fx.</param>
 		public virtual void PlaySound(string soundFx)
 		{
 			if (soundFx==null || soundFx=="")
@@ -140,13 +109,7 @@ namespace MoreMountains.InventoryEngine
 					MMSfxEvent.Trigger(soundToPlay, null, volume, 1);	
 				}
 			}
-		}		
-
-		/// <summary>
-		/// Plays the sound fx specified in parameters at the desired volume
-		/// </summary>
-		/// <param name="soundFx">Sound fx.</param>
-		/// <param name="volume">Volume.</param>
+		}
 		public virtual void PlaySound(AudioClip soundFx,float volume)
 		{
 			if (soundFx != null)
@@ -160,15 +123,9 @@ namespace MoreMountains.InventoryEngine
 					MMSfxEvent.Trigger(soundFx, null, volume, 1);
 				}
 			}
-		}	
-
-		/// <summary>
-		/// Catches MMInventoryEvents and acts on them, playing the corresponding sounds
-		/// </summary>
-		/// <param name="inventoryEvent">Inventory event.</param>
+		}
 		public virtual void OnMMEvent(MMInventoryEvent inventoryEvent)
 		{
-			// if this event doesn't concern our inventory display, we do nothing and exit
 			if (inventoryEvent.TargetInventoryName != _targetInventoryName)
 			{
 				return;
@@ -229,18 +186,10 @@ namespace MoreMountains.InventoryEngine
 					break;
 			}
 		}
-
-		/// <summary>
-		/// OnEnable, we start listening to MMInventoryEvents.
-		/// </summary>
 		protected virtual void OnEnable()
 		{
 			this.MMEventStartListening<MMInventoryEvent>();
 		}
-
-		/// <summary>
-		/// OnDisable, we stop listening to MMInventoryEvents.
-		/// </summary>
 		protected virtual void OnDisable()
 		{
 			this.MMEventStopListening<MMInventoryEvent>();

@@ -5,18 +5,8 @@ using Random = System.Random;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Generates a grid with a ground floor
-    /// </summary>
     public class MMGridGeneratorPerlinNoiseGround : MMGridGenerator
     {
-        /// <summary>
-        /// Generates a grid with a ground floor
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="seed"></param>
-        /// <returns></returns>
         public static int[,] Generate(int width, int height, float seed)
         {
             int[,] grid = PrepareGrid(ref width, ref height);

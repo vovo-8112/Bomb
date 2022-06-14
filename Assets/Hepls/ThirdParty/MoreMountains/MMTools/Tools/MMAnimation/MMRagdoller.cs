@@ -4,29 +4,15 @@ using System.Collections.Generic;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A class used to store ragdoll body parts informations
-    /// </summary>
     public class RagdollBodyPart
     {
         public Transform BodyPartTransform;
         public Vector3 StoredPosition;
         public Quaternion StoredRotation;
     }
-
-    /// <summary>
-    /// Use this class to pilot a ragdoll on a character that is usually driven by an animator and have it fall elegantly
-    /// If you have parts of your ragdoll that you don't want to be affected by this script (a weapon for example), just add a MMRagdollerIgnore component to them
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/Animation/MMRagdoller")]
     public class MMRagdoller : MonoBehaviour
     {
-        /// <summary>
-        /// The possible states of the ragdoll : 
-        /// - animated : driven by an animator controller, rigidbodies asleep
-        /// - ragdolling : full ragdoll mode, purely physics driven
-        /// - blending : transitioning between ragdolling and animated
-        /// </summary>
         public enum RagdollStates
         {
             Animated,
@@ -35,15 +21,11 @@ namespace MoreMountains.Tools
         }
 
         [Header("Ragdoll")]
-        /// the current state of the ragdoll
         public RagdollStates CurrentState = RagdollStates.Animated;
-        /// the duration in seconds it takes to blend from Ragdolling to Animated
         public float RagdollToMecanimBlendDuration = 0.5f;
 
         [Header("Rigidbodies")]
-        /// The rigidbody attached to the main body part of the ragdoll (usually the Pelvis) 
         public Rigidbody MainRigidbody;
-        /// if this is true, all rigidbodies will be forced to sleep every frame
         public bool ForceSleep = true;
 
         protected float _mecanimToGetUpTransitionTime = 0.05f;
@@ -61,22 +43,16 @@ namespace MoreMountains.Tools
         protected int _getUpFromBackAnimationParameter;
         protected const string _getUpFromBellyAnimationParameterName = "GetUpFromBelly";
         protected int _getUpFromBellyAnimationParameter;
-
-        /// <summary>
-        /// Use this to get the current state of the ragdoll or to set a new one
-        /// </summary>
         public bool Ragdolling
         {
             get
             {
-                // if we're not animated, we're ragdolling
                 return CurrentState != RagdollStates.Animated;
             }
             set
             {
                 if (value == true)
                 {
-                    // if we're 
                     if (CurrentState == RagdollStates.Animated)
                     {
                         SetIsKinematic(false);
@@ -117,21 +93,12 @@ namespace MoreMountains.Tools
                 }
             }
         }
-
-        /// <summary>
-        /// On start we initialize our ragdoller
-        /// </summary>
         protected virtual void Start()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// Grabs rigidbodies, adds body parts and stores the animator
-        /// </summary>
         protected virtual void Initialization()
         {
-            // we grab all rigidbodies and set them to kinematic
             _rigidbodies = GetComponentsInChildren(typeof(Rigidbody));
 
             _rigidbodiesTempList = new List<Component>();
@@ -155,8 +122,6 @@ namespace MoreMountains.Tools
             {
                 SetIsKinematic(false);
             }
-
-            // we grab all transforms and add a RagdollBodyPart to them
             Component[] transforms = GetComponentsInChildren(typeof(Transform));
             foreach (Component component in transforms)
             {
@@ -166,15 +131,9 @@ namespace MoreMountains.Tools
                     _bodyparts.Add(bodyPart);
                 }
             }
-
-            // we store our animator
             _animator = this.gameObject.GetComponent<Animator>();
             RegisterAnimatorParameters();
         }
-
-        /// <summary>
-        /// Registers our animation parameters
-        /// </summary>
         protected virtual void RegisterAnimatorParameters()
         {
             _animatorParameters = new HashSet<int>();
@@ -195,11 +154,6 @@ namespace MoreMountains.Tools
                 _animatorParameters.Add(_getUpFromBellyAnimationParameter);
             }
         }
-
-        /// <summary>
-        /// Sets all rigidbodies in the ragdoll to kinematic and stops them from detecting collisions (or the other way around)
-        /// </summary>
-        /// <param name="isKinematic"></param>
         protected virtual void SetIsKinematic(bool isKinematic)
         {
             foreach (Component rigidbody in _rigidbodies)
@@ -211,10 +165,6 @@ namespace MoreMountains.Tools
                 }
             }
         }
-
-        /// <summary>
-        /// Forces all rigidbodies in the ragdoll to sleep
-        /// </summary>
         public virtual void ForceRigidbodiesToSleep()
         {
             foreach (Component rigidbody in _rigidbodies)
@@ -225,10 +175,6 @@ namespace MoreMountains.Tools
                 }
             }
         }
-
-        /// <summary>
-        /// On late update, we force our ragdoll elements to sleep and handle blending
-        /// </summary>
         protected virtual void LateUpdate()
         {
             if ((CurrentState == RagdollStates.Animated) && ForceSleep)
@@ -238,10 +184,6 @@ namespace MoreMountains.Tools
 
             HandleBlending();
         }
-
-        /// <summary>
-        /// Blends between ragdolling and animated and switches to Animated at the end
-        /// </summary>
         protected virtual void HandleBlending()
         {
             if (CurrentState == RagdollStates.Blending)

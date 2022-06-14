@@ -1,5 +1,4 @@
 ﻿// Original FindMissingScriptsRecursively script by SimTex and Clement
-// http://wiki.unity3d.com/index.php?title=FindMissingScripts
 
 #if UNITY_EDITOR
 
@@ -61,7 +60,6 @@ namespace MoreMountains.Tools
 	                Debug.Log (s + " has an empty script attached in position: " + i, g);
 	            }
 	        }
-	        // Now recurse through each child GO (if there are any):
 	        foreach (Transform childT in g.transform)
 	        {
 	            FindInGO(childT.gameObject);

@@ -113,8 +113,6 @@ Shader "MoreMountains/MMBoilingLine"
 				
 				half4 color = ( ( tex2D( _MainTex, ( uv_MainTex + ( temp_output_20_0 * _Amount ) ) ) * _Color ) * IN.color );
 				
-				//color.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
-				
 				#ifdef UNITY_UI_ALPHACLIP
 				clip (color.a - 0.001);
 				#endif

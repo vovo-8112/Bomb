@@ -9,7 +9,6 @@ namespace MoreMountains.TopDownEngine
 {
     public class AutoBindAutoFocus : MonoBehaviour, MMEventListener<MMCameraEvent>
     {
-        /// the AutoFocus component on the camera
         public MMAutoFocus AutoFocus { get; set; }
 
         protected virtual void Start()

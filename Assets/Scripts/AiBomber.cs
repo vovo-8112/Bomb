@@ -488,8 +488,6 @@ public class AiBomber : MonoBehaviour
             nodesNeighbour.Add(new Node(vector2, startNode.TargetPosition, startNode, startNode.FromStartToTarget));
         }
     }
-
-    //Use for debug
     private void OnDrawGizmos()
     {
         if (CanMovePoints.Count != 0)

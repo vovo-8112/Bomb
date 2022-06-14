@@ -2,18 +2,10 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-	/// <summary>
-	/// Singleton pattern.
-	/// </summary>
 	public class MMSingleton<T> : MonoBehaviour	where T : Component
 	{
 		protected static T _instance;
 		public static bool HasInstance => _instance != null;
-
-		/// <summary>
-		/// Singleton design pattern
-		/// </summary>
-		/// <value>The instance.</value>
 		public static T Instance
 		{
 			get
@@ -30,10 +22,6 @@ namespace MoreMountains.Tools
 				return _instance;
 			}
 		}
-
-	    /// <summary>
-	    /// On awake, we initialize our instance. Make sure to call base.Awake() in override if you need awake.
-	    /// </summary>
 	    protected virtual void Awake ()
 		{
 			if (!Application.isPlaying)

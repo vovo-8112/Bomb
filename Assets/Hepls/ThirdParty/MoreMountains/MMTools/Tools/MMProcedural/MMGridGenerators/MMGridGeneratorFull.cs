@@ -4,18 +4,8 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Generates a grid of the specified size, either entirely full or empty
-    /// </summary>
     public class MMGridGeneratorFull : MMGridGenerator 
     {
-        /// <summary>
-        /// Generates a grid of the specified size, either entirely full or empty
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="full"></param>
-        /// <returns></returns>
         public static int[,] Generate(int width, int height, bool full)
         {
             int[,] grid = PrepareGrid(ref width, ref height);

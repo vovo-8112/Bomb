@@ -5,16 +5,9 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
 namespace MoreMountains.Tools
-{	
-    /// <summary>
-    /// Scene management helpers
-    /// </summary>
+{
     public class MMScene  
     {
-        /// <summary>
-        /// Returns an array filled with all the currently loaded scenes
-        /// </summary>
-        /// <returns></returns>
         public static Scene[] GetLoadedScenes()
         {
             int sceneCount = SceneManager.sceneCount;
@@ -27,11 +20,6 @@ namespace MoreMountains.Tools
 
             return loadedScenes;
         }
-
-        /// <summary>
-        /// Returns a list of all the scenes present in the build
-        /// </summary>
-        /// <returns></returns>
         public static List<string> GetScenesInBuild()
         {
             List<string> scenesInBuild = new List<string>();
@@ -45,12 +33,6 @@ namespace MoreMountains.Tools
 
             return scenesInBuild;
         }
-
-        /// <summary>
-        /// Returns true if a scene by the specified name is present in the build
-        /// </summary>
-        /// <param name="sceneName"></param>
-        /// <returns></returns>
         public static bool SceneInBuild(string sceneName)
         {
             return GetScenesInBuild().Contains(sceneName);

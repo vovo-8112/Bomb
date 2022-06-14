@@ -6,47 +6,30 @@ using UnityEngine.UI;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A debug menu helper, meant to help create quick mobile friendly debug menus
-    /// </summary>
     public class MMDebugMenu : MonoBehaviour
     {
-        /// the possible directions for the menu to appear
         public enum ToggleDirections { TopToBottom, LeftToRight, RightToLeft, BottomToTop }
 
         [Header("Data")]
-        /// the scriptable object containing the menu's data
         public MMDebugMenuData Data;
 
         [Header("Bindings")]
-        /// the container of the whole menu
         public CanvasGroup MenuContainer;
-        /// the scrolling contents
-        public RectTransform Contents;        
-        /// the menu's background image
+        public RectTransform Contents;
         public Image MenuBackground;
-        /// the icon used to close the menu
         public Image CloseIcon;
-        /// the tab bar (where the tab buttons go)
         public RectTransform TabBar;
-        /// the tab contents container (where the contents of the page will go)
         public RectTransform TabContainer;
-        /// the tab manager
         public MMDebugMenuTabManager TabManager;
-        /// the MoreMountains logo
         public Image MMLogo;
 
-        [Header("Events")] 
-        /// an event to call when the menu opens
+        [Header("Events")]
         public UnityEvent OnOpenEvent;
-        /// an event to call when the menu closes
         public UnityEvent OnCloseEvent;
 
         [Header("Test")]
-        /// whether or not this menu is active at this moment
         [MMReadOnly]
         public bool Active = false;
-        /// a test button to toggle the menu
         [MMInspectorButton("ToggleMenu")]
         public bool ToggleButton;
 
@@ -55,18 +38,10 @@ namespace MoreMountains.Tools
         protected Vector3 _offPosition;
         protected Vector3 _newPosition;
         protected bool _toggling = false;
-
-        /// <summary>
-        /// On Start we init our menu
-        /// </summary>
         protected virtual void Start()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// Prepares transitions and grabs components
-        /// </summary>
         protected virtual void Initialization()
         {
 
@@ -98,10 +73,6 @@ namespace MoreMountains.Tools
             _containerRect.localPosition = _offPosition;
 
         }
-
-        /// <summary>
-        /// Fills the menu based on the data's contents
-        /// </summary>
         public virtual void FillMenu(bool triggerEvents = false)
         {
             int tabCounter = 0;
@@ -127,8 +98,6 @@ namespace MoreMountains.Tools
                 {
                     continue;
                 }
-
-                // create tab in the menu
                 MMDebugMenuTab tabBarTab = Instantiate(Data.TabPrefab);
                 tabBarTab.SelectedBackgroundColor = Data.TextColor;
                 tabBarTab.SelectedTextColor = Data.BackgroundColor;
@@ -140,8 +109,6 @@ namespace MoreMountains.Tools
                 tabBarTab.Index = tabCounter;
                 tabBarTab.Manager = TabManager;
                 TabManager.Tabs.Add(tabBarTab);
-                
-                // create tab contents
                 MMDebugMenuTabContents contents = Instantiate(Data.TabContentsPrefab);
                 contents.transform.SetParent(TabContainer);
                 RectTransform rectTransform = contents.GetComponent<RectTransform>();
@@ -165,8 +132,6 @@ namespace MoreMountains.Tools
 
                 tabCounter++;
             }
-
-            // debug tab
             if (Data.DisplayDebugTab)
             {
                 MMDebugMenuTab tabBarTab = Instantiate(Data.TabPrefab);
@@ -212,8 +177,6 @@ namespace MoreMountains.Tools
                 }
                 tabCounter++;
             }
-
-            // fill with spacers 
             int spacerCount = Data.MaxTabs - tabCounter;
             for (int i = 0; i < spacerCount; i++)
             {
@@ -400,43 +363,23 @@ namespace MoreMountains.Tools
                         break;
                 }
             }
-
-            // we always add a spacer at the end because scrollviews are terrible
             GameObject finalSpacer = Instantiate(Data.SpacerBigPrefab);
             finalSpacer.name = "MMDebugMenuItemSpacer_FinalSpacer";
             finalSpacer.transform.SetParent(parent);
         }
-
-        /// <summary>
-        /// Makes the menu appear
-        /// </summary>
         public virtual void OpenMenu()
         {
             OnOpenEvent?.Invoke();
             StartCoroutine(ToggleCo(false));
         }
-
-        /// <summary>
-        /// Makes the menu disappear
-        /// </summary>
         public virtual void CloseMenu()
         {
             StartCoroutine(ToggleCo(true));
         }
-
-        /// <summary>
-        /// Closes or opens the menu depending on its current state
-        /// </summary>
         public virtual void ToggleMenu()
         {
             StartCoroutine(ToggleCo(Active));
         }
-
-        /// <summary>
-        /// A coroutine used to toggle the menu
-        /// </summary>
-        /// <param name="active"></param>
-        /// <returns></returns>
         protected virtual IEnumerator ToggleCo(bool active)
         {
             if (_toggling)
@@ -461,18 +404,10 @@ namespace MoreMountains.Tools
             Active = !active;
             _toggling = false;
         }
-
-        /// <summary>
-        /// On update we handle our input
-        /// </summary>
         protected virtual void Update()
         {
             HandleInput();
         }
-
-        /// <summary>
-        /// Looks for shortcut input
-        /// </summary>
         protected virtual void HandleInput()
         {
             if (Input.GetKeyDown(Data.ToggleShortcut))

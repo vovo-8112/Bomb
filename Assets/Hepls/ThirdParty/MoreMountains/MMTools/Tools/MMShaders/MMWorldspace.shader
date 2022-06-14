@@ -32,18 +32,18 @@
 
       if(abs(IN.worldNormal.x)>0.5)
       {
-        UV = IN.worldPos.yz; // side
-        c = tex2D(_MainTex, UV* _Scale); // use WALLSIDE texture
+        UV = IN.worldPos.yz;
+        c = tex2D(_MainTex, UV* _Scale);
       }
       else if(abs(IN.worldNormal.z)>0.5)
       {
-        UV = IN.worldPos.xy; // front
-        c = tex2D(_MainTex, UV* _Scale); // use WALL texture
+        UV = IN.worldPos.xy;
+        c = tex2D(_MainTex, UV* _Scale);
       }
       else
       {
-        UV = IN.worldPos.xz; // top
-        c = tex2D(_MainTex, UV* _Scale); // use FLR texture
+        UV = IN.worldPos.xz;
+        c = tex2D(_MainTex, UV* _Scale);
       }
 
       o.Albedo = c.rgb * _Color;

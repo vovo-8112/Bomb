@@ -13,13 +13,10 @@ namespace MoreMountains.Tools
 
         protected virtual void OnSceneGUI()
         {
-            // draws a circle around the character to represent the cone of vision's radius
             _coneOfVision = (MMConeOfVision2D)target;
 
             Handles.color = Color.yellow;
             Handles.DrawWireArc(_coneOfVision.transform.position, -Vector3.forward, Vector3.up, 360f, _coneOfVision.VisionRadius);
-
-            // draws two lines to mark the vision angle
             Vector3 visionAngleLeft = MMMaths.DirectionFromAngle2D(-_coneOfVision.VisionAngle / 2f, _coneOfVision.EulerAngles.y);
             Vector3 visionAngleRight = MMMaths.DirectionFromAngle2D(_coneOfVision.VisionAngle / 2f, _coneOfVision.EulerAngles.y);
 

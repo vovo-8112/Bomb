@@ -3,76 +3,50 @@ using System.Collections;
 using MoreMountains.Tools;
 
 namespace MoreMountains.TopDownEngine
-{	
-	/// <summary>
-	/// Add this ability to a Character to have it handle ground movement (walk, and potentially run, crawl, etc) in x and z direction for 3D, x and y for 2D
-	/// Animator parameters : Speed (float), Walking (bool)
-	/// </summary>
+{
 	[AddComponentMenu("TopDown Engine/Character/Abilities/Character Movement")] 
 	public class CharacterMovement : CharacterAbility 
 	{
-        /// the possible rotation modes for the character
         public enum Movements { Free, Strict2DirectionsHorizontal, Strict2DirectionsVertical, Strict4Directions, Strict8Directions }
-
-        /// the current reference movement speed
         public float MovementSpeed { get; set; }
-        /// if this is true, movement will be forbidden (as well as flip)
         public bool MovementForbidden { get; set; }
 
         [Header("Direction")]
-
-        /// whether the character can move freely, in 2D only, in 4 or 8 cardinal directions
         [Tooltip("whether the character can move freely, in 2D only, in 4 or 8 cardinal directions")]
         public Movements Movement = Movements.Free;
 
         [Header("Settings")]
-
-        /// whether or not movement input is authorized at that time
         [Tooltip("whether or not movement input is authorized at that time")]
         public bool InputAuthorized = true;
-        /// whether or not input should be analog
         [Tooltip("whether or not input should be analog")]
         public bool AnalogInput = false;
-        /// whether or not input should be set from another script
         [Tooltip("whether or not input should be set from another script")]
         public bool ScriptDrivenInput = false;
 
         [Header("Speed")]
-
-        /// the speed of the character when it's walking
         [Tooltip("the speed of the character when it's walking")]
         public float WalkSpeed = 6f;
-        /// whether or not this component should set the controller's movement
 		[Tooltip("whether or not this component should set the controller's movement")]
         public bool ShouldSetMovement = true;
-        /// the speed threshold after which the character is not considered idle anymore
         [Tooltip("the speed threshold after which the character is not considered idle anymore")]
         public float IdleThreshold = 0.05f;
 
 		[Header("Acceleration")]
-
-        /// the acceleration to apply to the current speed / 0f : no acceleration, instant full speed
         [Tooltip("the acceleration to apply to the current speed / 0f : no acceleration, instant full speed")]
         public float Acceleration = 10f;
-        /// the deceleration to apply to the current speed / 0f : no deceleration, instant stop
         [Tooltip("the deceleration to apply to the current speed / 0f : no deceleration, instant stop")]
         public float Deceleration = 10f;
-        /// whether or not to interpolate movement speed
         [Tooltip("whether or not to interpolate movement speed")]
         public bool InterpolateMovementSpeed = false;
-        /// the multiplier to apply to the horizontal movement
         public float MovementSpeedMultiplier { get; set; }
 
 		[Header("Walk Feedback")]
-        /// the particles to trigger while walking
         [Tooltip("the particles to trigger while walking")]
         public ParticleSystem[] WalkParticles;
 
 		[Header("Touch The Ground Feedback")]
-        /// the particles to trigger when touching the ground
         [Tooltip("the particles to trigger when touching the ground")]
         public ParticleSystem[] TouchTheGroundParticles;
-        /// the sfx to trigger when touching the ground
         [Tooltip("the sfx to trigger when touching the ground")]
         public AudioClip[] TouchTheGroundSfx;
 
@@ -92,10 +66,6 @@ namespace MoreMountains.TopDownEngine
         protected int _speedAnimationParameter;
         protected int _walkingAnimationParameter;
         protected int _idleAnimationParameter;
-
-        /// <summary>
-        /// On Initialization, we set our movement speed to WalkSpeed.
-        /// </summary>
         protected override void Initialization()
 		{
 			base.Initialization ();
@@ -118,11 +88,7 @@ namespace MoreMountains.TopDownEngine
                     system.Stop();
                 }				
 			}
-		} 
-
-	    /// <summary>
-	    /// The second of the 3 passes you can have in your ability. Think of it as Update()
-	    /// </summary>
+		}
 		public override void ProcessAbility()
 	    {
 			base.ProcessAbility();
@@ -137,11 +103,6 @@ namespace MoreMountains.TopDownEngine
 			HandleMovement();
 			Feedbacks ();
 	    }
-
-		/// <summary>
-		/// Called at the very start of the ability's cycle, and intended to be overridden, looks for input and calls
-		/// methods if conditions are met
-		/// </summary>
 		protected override void HandleInput()
 		{
 			if (ScriptDrivenInput)
@@ -160,44 +121,24 @@ namespace MoreMountains.TopDownEngine
                 _verticalMovement = 0f;
             }
 		}
-
-		/// <summary>
-		/// Sets the horizontal move value.
-		/// </summary>
-		/// <param name="value">Horizontal move value, between -1 and 1 - positive : will move to the right, negative : will move left </param>
 		public virtual void SetMovement(Vector2 value)
 		{
 			_horizontalMovement = value.x;
 			_verticalMovement = value.y;
         }
-
-        /// <summary>
-        /// Sets the horizontal part of the movement
-        /// </summary>
-        /// <param name="value"></param>
         public virtual void SetHorizontalMovement(float value)
         {
             _horizontalMovement = value;
         }
-
-        /// <summary>
-        /// Sets the vertical part of the movement
-        /// </summary>
-        /// <param name="value"></param>
         public virtual void SetVerticalMovement(float value)
         {
             _verticalMovement = value;
         }
-
-        /// <summary>
-        /// Modifies player input to account for the selected movement mode
-        /// </summary>
         protected virtual void HandleDirection()
         {
             switch (Movement)
             {
                 case Movements.Free:
-                    // do nothing
                     break;
                 case Movements.Strict2DirectionsHorizontal:
                     _verticalMovement = 0f;
@@ -221,19 +162,12 @@ namespace MoreMountains.TopDownEngine
                     break;
             }
         }
-
-        /// <summary>
-        /// Called at Update(), handles horizontal movement
-        /// </summary>
         protected virtual void HandleMovement()
 		{
-            // if we're not walking anymore, we stop our walking sound
             if ((_movement.CurrentState != CharacterStates.MovementStates.Walking) && _startFeedbackIsPlaying)
             {
                 StopStartFeedbacks();
             }
-
-            // if we're not walking anymore, we stop our walking sound
             if (_movement.CurrentState != CharacterStates.MovementStates.Walking && _abilityInProgressSfx != null)
 			{
 				StopAbilityUsedSfx();
@@ -243,8 +177,6 @@ namespace MoreMountains.TopDownEngine
 			{
 				PlayAbilityUsedSfx();
 			}
-
-			// if movement is prevented, or if the character is dead/frozen/can't move, we exit and do nothing
 			if ( !AbilityAuthorized
 				|| (_condition.CurrentState != CharacterStates.CharacterConditions.Normal) )
             {
@@ -258,8 +190,6 @@ namespace MoreMountains.TopDownEngine
                 _horizontalMovement = 0f;
                 _verticalMovement = 0f;
             }
-
-            // if the character is not grounded, but currently idle or walking, we change its state to Falling
             if (!_controller.Grounded
                 && (_condition.CurrentState == CharacterStates.CharacterConditions.Normal)
                 && (
@@ -284,8 +214,6 @@ namespace MoreMountains.TopDownEngine
 				PlayAbilityUsedSfx();
                 PlayAbilityStartFeedbacks();
             }
-            
-			// if we're walking and not moving anymore, we go back to the Idle state
 			if ((_movement.CurrentState == CharacterStates.MovementStates.Walking) 
 				&& (_controller.CurrentMovement.magnitude <= IdleThreshold))
 			{
@@ -299,10 +227,6 @@ namespace MoreMountains.TopDownEngine
                 SetMovement ();	
 			}
 		}
-
-        /// <summary>
-        /// Describes what happens when the character is in the frozen state
-        /// </summary>
         protected virtual void HandleFrozen()
         {
             if (_condition.CurrentState == CharacterStates.CharacterConditions.Frozen)
@@ -312,10 +236,6 @@ namespace MoreMountains.TopDownEngine
                 SetMovement();
             }
         }
-
-        /// <summary>
-        /// Moves the controller
-        /// </summary>
 		protected virtual void SetMovement()
 		{
             _movementVector = Vector3.zero;
@@ -377,23 +297,14 @@ namespace MoreMountains.TopDownEngine
             
 			_controller.SetMovement (_movementVector);
 
-		} 
-
-		/// <summary>
-		/// Every frame, checks if we just hit the ground, and if yes, changes the state and triggers a particle effect
-		/// </summary>
+		}
 		protected virtual void CheckJustGotGrounded()
 		{
-			// if the character just got grounded
 			if (_controller.JustGotGrounded)
 			{
                 _movement.ChangeState(CharacterStates.MovementStates.Idle);
 			}
 		}
-
-        /// <summary>
-        /// Plays particles when walking, and particles and sounds when landing
-        /// </summary>
 		protected virtual void Feedbacks ()
 		{
 			if (_controller.Grounded)
@@ -449,18 +360,10 @@ namespace MoreMountains.TopDownEngine
 				}
 			}
 		}
-
-        /// <summary>
-        /// Resets this character's speed
-        /// </summary>
 		public virtual void ResetSpeed()
 		{
 			MovementSpeed = WalkSpeed;
 		}
-
-        /// <summary>
-        /// On Respawn, resets the speed
-        /// </summary>
         protected override void OnRespawn()
         {
             ResetSpeed();
@@ -481,20 +384,12 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Adds required animator parameters to the animator parameters list if they exist
-        /// </summary>
         protected override void InitializeAnimatorParameters()
 		{
 			RegisterAnimatorParameter (_speedAnimationParameterName, AnimatorControllerParameterType.Float, out _speedAnimationParameter);
 			RegisterAnimatorParameter (_walkingAnimationParameterName, AnimatorControllerParameterType.Bool, out _walkingAnimationParameter);
 			RegisterAnimatorParameter (_idleAnimationParameterName, AnimatorControllerParameterType.Bool, out _idleAnimationParameter);
 		}
-
-		/// <summary>
-		/// Sends the current speed and the current value of the Walking state to the animator
-		/// </summary>
 		public override void UpdateAnimator()
 		{
             MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _speedAnimationParameter, Mathf.Abs(_controller.CurrentMovement.magnitude),_character._animatorParameters, _character.RunAnimatorSanityChecks);

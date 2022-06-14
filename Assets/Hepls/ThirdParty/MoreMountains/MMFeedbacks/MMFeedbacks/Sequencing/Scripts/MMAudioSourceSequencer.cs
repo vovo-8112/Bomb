@@ -6,19 +6,11 @@ using UnityEngine.Events;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// A MMSequencer with ready made slots to play AudioSources
-    /// </summary>
     [AddComponentMenu("More Mountains/Feedbacks/Sequencing/MMAudioSourceSequencer")]
     public class MMAudioSourceSequencer : MMSequencer
     {
-        /// the list of audio sources to play (one per track)
         [Tooltip("the list of audio sources to play (one per track)")]
         public List<AudioSource> AudioSources;
-                
-        /// <summary>
-        /// On beat we play our audio sources
-        /// </summary>
         protected override void OnBeat()
         {
             base.OnBeat();
@@ -33,11 +25,6 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        /// <summary>
-        /// When playing our event for control, we play our audiosource
-        /// </summary>
-        /// <param name="index"></param>
         public override void PlayTrackEvent(int index)
         {
             if (!Application.isPlaying)
@@ -47,26 +34,17 @@ namespace MoreMountains.Feedbacks
             base.PlayTrackEvent(index);
             AudioSources[index].Play();
         }
-
-        /// <summary>
-        /// When looking for changes we make sure we have enough audiosources in our array
-        /// </summary>
         public override void EditorMaintenance()
         {
             base.EditorMaintenance();
             SetupSounds();
         }
-
-        /// <summary>
-        /// Ensures the array is always the right length
-        /// </summary>
         public virtual void SetupSounds()
         {
             if (Sequence == null)
             {
                 return;
             }
-            // setup events
             if (AudioSources.Count < Sequence.SequenceTracks.Count)
             {
                 for (int i = 0; i < Sequence.SequenceTracks.Count; i++)

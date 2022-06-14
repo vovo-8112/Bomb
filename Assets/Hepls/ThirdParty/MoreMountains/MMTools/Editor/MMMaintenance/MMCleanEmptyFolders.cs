@@ -9,17 +9,10 @@ using System;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A maintenance class that removes all empty directories from a project via a menu item
-    /// </summary>
     public class MMCleanEmptyFolders : MonoBehaviour
     {
         static string _consoleLog = "";
         static List<DirectoryInfo> _listOfEmptyDirectories = new List<DirectoryInfo>();
-
-        /// <summary>
-        /// Parses the project for empty directories and removes them, as well as their associated meta file
-        /// </summary>
         [MenuItem("Tools/More Mountains/Cleanup empty folders", false, 504)]
         protected static void CleanupMissingScripts()
         {
@@ -43,13 +36,6 @@ namespace MoreMountains.Tools
                 AssetDatabase.Refresh();
             }
         }
-
-        /// <summary>
-        /// Returns true if a directory is empty and updates a list of empty directories
-        /// </summary>
-        /// <param name="directory"></param>
-        /// <param name="listOfEmptyDirectories"></param>
-        /// <returns></returns>
         static bool GetEmptyDirectories(DirectoryInfo directory, List<DirectoryInfo> listOfEmptyDirectories)
         {
             bool directoryIsEmpty = true;

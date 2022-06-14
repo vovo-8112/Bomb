@@ -6,7 +6,6 @@ using UnityEditor;
 
 namespace MoreMountains.Tools
 {
-    // original implementation by http://www.brechtos.com/hiding-or-disabling-inspector-properties-using-propertydrawers-within-unity-5/
     [CustomPropertyDrawer(typeof(MMEnumConditionAttribute))]
     public class MMEnumConditionAttributeDrawer : PropertyDrawer
     {

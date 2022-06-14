@@ -4,20 +4,8 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Generates a grid with a path carved by a drunkard walk algorithm
-    /// See http://pcg.wikidot.com/pcg-algorithm:drunkard-walk
-    /// </summary>
     public class MMGridGeneratorRandomWalk : MMGridGenerator
     {
-        /// <summary>
-        /// Generates a grid with a path carved by a drunkard walk algorithm
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="seed"></param>
-        /// <param name="fillPercentage"></param>
-        /// <returns></returns>
         public static int[,] Generate(int width, int height, int seed,  int fillPercentage, Vector2Int startingPoint, int maxIterations)
         {
             int[,] grid = PrepareGrid(ref width, ref height);
@@ -73,15 +61,6 @@ namespace MoreMountains.Tools
             }
             return grid; 
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="grid"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="fillCounter"></param>
-        /// <returns></returns>
         private static int[,] Carve(int[,] grid, int x, int y, ref int fillCounter)
         {
             if (grid[x, y] == 1) 

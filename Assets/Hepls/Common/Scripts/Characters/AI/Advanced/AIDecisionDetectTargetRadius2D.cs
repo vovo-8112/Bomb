@@ -5,29 +5,19 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This decision will return true if an object on its TargetLayer layermask is within its specified radius, false otherwise. It will also set the Brain's Target to that object.
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/AI/Decisions/AIDecisionDetectTargetRadius2D")]
-    //[RequireComponent(typeof(CharacterOrientation2D))]
     public class AIDecisionDetectTargetRadius2D : AIDecision
     {
-        /// the radius to search our target in
         [Tooltip("the radius to search our target in")]
         public float Radius = 3f;
-        /// the center of the search circle
         [Tooltip("the center of the search circle")]
         public Vector3 DetectionOriginOffset = new Vector3(0, 0, 0);
-        /// the layer(s) to search our target on
         [Tooltip("the layer(s) to search our target on")]
         public LayerMask TargetLayer;
-        /// whether or not to look for obstacles
         [Tooltip("whether or not to look for obstacles")]
         public bool ObstacleDetection = true;
-        /// the layer(s) to look for obstacles on
         [Tooltip("the layer(s) to look for obstacles on")]
         public LayerMask ObstacleMask = LayerManager.ObstaclesLayerMask;
-        /// if this is true, this AI will be able to consider itself (or its children) a target
         [Tooltip("if this is true, this AI will be able to consider itself (or its children) a target")] 
         public bool CanTargetSelf = false;
 
@@ -41,10 +31,6 @@ namespace MoreMountains.TopDownEngine
         protected Vector2 _boxcastDirection;
         protected Collider2D[] _results;
         protected Collider2D _hit;
-
-        /// <summary>
-        /// On init we grab our Character component
-        /// </summary>
         public override void Initialization()
         {
             _character = this.gameObject.GetComponentInParent<Character>();
@@ -54,20 +40,10 @@ namespace MoreMountains.TopDownEngine
             _init = true;
             _results = new Collider2D[10];
         }
-
-        /// <summary>
-        /// On Decide we check for our target
-        /// </summary>
-        /// <returns></returns>
         public override bool Decide()
         {
             return DetectTarget();
         }
-
-        /// <summary>
-        /// Returns true if a target is found within the circle
-        /// </summary>
-        /// <returns></returns>
         protected virtual bool DetectTarget()
         {
             _hit = null;
@@ -82,8 +58,6 @@ namespace MoreMountains.TopDownEngine
             {
                 _raycastOrigin = transform.position +  DetectionOriginOffset;
             }
-            
-            // we cast a ray to the left of the agent to check for a Player
 
             int numberOfResults = Physics2D.OverlapCircleNonAlloc(_raycastOrigin, Radius, _results, TargetLayer);     
             
@@ -119,7 +93,6 @@ namespace MoreMountains.TopDownEngine
                     _brain.Target = _hit.gameObject.transform;
                     return true;
                 }
-                // we cast a ray to make sure there's no obstacle
                 _boxcastDirection = (Vector2)(_hit.gameObject.MMGetComponentNoAlloc<Collider2D>().bounds.center - _collider.bounds.center);
                 RaycastHit2D hit = Physics2D.BoxCast(_collider.bounds.center, _collider.bounds.size, 0f, _boxcastDirection.normalized, _boxcastDirection.magnitude, ObstacleMask);
                 if (!hit)
@@ -133,10 +106,6 @@ namespace MoreMountains.TopDownEngine
                 }                
             }
         }
-
-        /// <summary>
-        /// Draws gizmos for the detection circle
-        /// </summary>
         protected virtual void OnDrawGizmosSelected()
         {
             _raycastOrigin.x = transform.position.x + _facingDirection.x * DetectionOriginOffset.x / 2;

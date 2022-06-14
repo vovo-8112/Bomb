@@ -5,16 +5,11 @@ using MoreMountains.InventoryEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// An item picker that instantiates an effect and plays a sound on pick
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Items/InventoryPickableItem")]
     public class InventoryPickableItem : ItemPicker 
 	{
-		/// The effect to instantiate when the coin is hit
 		[Tooltip("The effect to instantiate when the coin is hit")]
 		public GameObject Effect;
-		/// The sound effect to play when the object gets picked
 		[Tooltip("The sound effect to play when the object gets picked")]
 		public AudioClip PickSfx;
 
@@ -23,10 +18,6 @@ namespace MoreMountains.TopDownEngine
 			base.PickSuccess ();
 			Effects ();
 		}
-
-		/// <summary>
-		/// Triggers the various pick effects
-		/// </summary>
 		protected virtual void Effects()
 		{
 			if (!Application.isPlaying)
@@ -42,7 +33,6 @@ namespace MoreMountains.TopDownEngine
 
 				if (Effect != null)
 				{
-					// adds an instance of the effect at the coin's position
 					Instantiate(Effect, transform.position, transform.rotation);				
 				}	
 			}

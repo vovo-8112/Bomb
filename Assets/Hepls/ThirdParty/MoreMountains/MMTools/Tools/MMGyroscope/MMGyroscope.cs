@@ -15,15 +15,11 @@ namespace MoreMountains.Tools
         public static bool TestMode;
         
         [Header("Debug")]
-        /// turn this on if you want to use the inspector to test this camera
         public bool _TestMode = false;
-        /// the rotation to apply on the x axiswhen in test mode
         [Range(-1f, 1f)]
         public float TestXAcceleration = 0f;
-        /// the rotation to apply on the y axis while in test mode
         [Range(-1f, 1f)]
         public float TestYAcceleration = 0f;
-        /// the rotation to apply on the y axis while in test mode
         [Range(-1f, 1f)]
         public float TestZAcceleration = 0f;
 
@@ -61,13 +57,10 @@ namespace MoreMountains.Tools
         private static Vector3 m_LerpedCalibratedGyroscopeGravity;
 
         [Header("Settings")]
-        /// whether this rig should move in scaled or unscaled time
         [SerializeField]
         private TimeScales _TimeScale = TimeScales.Scaled;
-        /// the clamps to apply to the values
         [SerializeField]
         private Vector2 _Clamps = new Vector2(-1f, 1f);
-        /// the speed at which to move towards the new position
         [SerializeField]
         private float _LerpSpeed = 1f;
 

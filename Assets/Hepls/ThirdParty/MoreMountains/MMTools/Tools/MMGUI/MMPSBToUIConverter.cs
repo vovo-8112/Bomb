@@ -32,8 +32,6 @@ namespace MoreMountains.Tools
             Screen.SetResolution((int)TargetWidth, (int)TargetHeight, true);
 
             _sortingOrders = new Dictionary<Transform, int>();
-
-            // remove existing canvas if found
             foreach (Transform child in TargetCanvas.transform)
             {
                 if (child.name == this.name)
@@ -42,15 +40,11 @@ namespace MoreMountains.Tools
                     DestroyImmediate(child.gameObject);
                 }
             }
-
-            // force size on canvas scaler
             CanvasScaler canvasScaler = TargetCanvas.GetComponent<CanvasScaler>();
             if (canvasScaler != null)
             {
                 canvasScaler.referenceResolution = new Vector2(TargetWidth, TargetHeight);
             }
-
-            // create a parent in the target canvas
             GameObject newRoot = new GameObject(this.name, typeof(RectTransform));
             newRoot.transform.SetParent(TargetCanvas.transform);
             RectTransform newRootRect = newRoot.GetComponent<RectTransform>();
@@ -58,19 +52,11 @@ namespace MoreMountains.Tools
 
             _topLevel = newRoot.transform;
             CreateImageForChildren(this.transform, newRoot.transform);
-
-            // apply sorting orders
             foreach (KeyValuePair<Transform, int> pair in _sortingOrders)
             {
                 pair.Key.SetSiblingIndex(pair.Value);
             }
         }
-
-        /// <summary>
-        /// Recursively goes through the children of the specified "root" Transform, and parents them to the specified "parent" 
-        /// </summary>
-        /// <param name="root"></param>
-        /// <param name="parent"></param>
         protected virtual void CreateImageForChildren(Transform root, Transform parent)
         {
             foreach (Transform child in root)

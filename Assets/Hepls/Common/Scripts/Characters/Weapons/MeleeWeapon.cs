@@ -5,60 +5,40 @@ using MoreMountains.Feedbacks;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// A basic melee weapon class, that will activate a "hurt zone" when the weapon is used
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Weapons/Melee Weapon")]
     public class MeleeWeapon : Weapon
     {
-        /// the possible shapes for the melee weapon's damage area
         public enum MeleeDamageAreaShapes { Rectangle, Circle, Box, Sphere }
 
         [MMInspectorGroup("Damage Area", true, 22)]
-        
-        /// the shape of the damage area (rectangle or circle)
         [Tooltip("the shape of the damage area (rectangle or circle)")]
         public MeleeDamageAreaShapes DamageAreaShape = MeleeDamageAreaShapes.Rectangle;
-        /// the size of the damage area
         [Tooltip("the size of the damage area")]
         public Vector3 AreaSize = new Vector3(1, 1);
-        /// the offset to apply to the damage area (from the weapon's attachment position
         [Tooltip("the offset to apply to the damage area (from the weapon's attachment position")]
         public Vector3 AreaOffset = new Vector3(1, 0);
-        /// the feedback to play when hitting a Damageable
         [Tooltip("the feedback to play when hitting a Damageable")]
         public MMFeedbacks HitDamageableFeedback;
-        /// the feedback to play when hitting a non Damageable
         [Tooltip("the feedback to play when hitting a non Damageable")]
         public MMFeedbacks HitNonDamageableFeedback;
 
         [MMInspectorGroup("Damage Area Timing", true, 23)]
-        
-        /// the initial delay to apply before triggering the damage area
         [Tooltip("the initial delay to apply before triggering the damage area")]
         public float InitialDelay = 0f;
-        /// the duration during which the damage area is active
         [Tooltip("the duration during which the damage area is active")]
         public float ActiveDuration = 1f;
 
         [MMInspectorGroup("Damage Caused", true, 24)]
-
-        /// the layers that will be damaged by this object
         [Tooltip("the layers that will be damaged by this object")]
         public LayerMask TargetLayerMask;
-        /// The amount of health to remove from the player's health
         [Tooltip("The amount of health to remove from the player's health")]
         public int DamageCaused = 10;
-        /// the kind of knockback to apply
         [Tooltip("the kind of knockback to apply")]
         public DamageOnTouch.KnockbackStyles Knockback;
-        /// The force to apply to the object that gets damaged
         [Tooltip("The force to apply to the object that gets damaged")]
         public Vector3 KnockbackForce = new Vector3(10, 2, 0);
-        /// The duration of the invincibility frames after the hit (in seconds)
         [Tooltip("The duration of the invincibility frames after the hit (in seconds)")]
         public float InvincibilityDuration = 0.5f;
-        /// if this is true, the owner can be damaged by its own weapon's damage area (usually false)
         [Tooltip("if this is true, the owner can be damaged by its own weapon's damage area (usually false)")]
         public bool CanDamageOwner = false;
 
@@ -74,10 +54,6 @@ namespace MoreMountains.TopDownEngine
         protected Vector3 _gizmoOffset;
         protected DamageOnTouch _damageOnTouch;
         protected GameObject _damageArea;
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
         public override void Initialization()
         {
             base.Initialization();
@@ -92,10 +68,6 @@ namespace MoreMountains.TopDownEngine
                 _damageOnTouch.Owner = Owner.gameObject;
             }            
         }
-
-        /// <summary>
-        /// Creates the damage area.
-        /// </summary>
         protected virtual void CreateDamageArea()
         {
             _damageArea = new GameObject();
@@ -168,20 +140,11 @@ namespace MoreMountains.TopDownEngine
                 _damageOnTouch.IgnoreGameObject(Owner.gameObject);    
             }
         }
-
-        /// <summary>
-        /// When the weapon is used, we trigger our attack routine
-        /// </summary>
         public override void WeaponUse()
         {
             base.WeaponUse();
             StartCoroutine(MeleeWeaponAttack());
         }
-
-        /// <summary>
-        /// Triggers an attack, turning the damage area on and then off
-        /// </summary>
-        /// <returns>The weapon attack.</returns>
         protected virtual IEnumerator MeleeWeaponAttack()
         {
             if (_attackInProgress) { yield break; }
@@ -193,10 +156,6 @@ namespace MoreMountains.TopDownEngine
             DisableDamageArea();
             _attackInProgress = false;
         }
-
-        /// <summary>
-        /// Enables the damage area.
-        /// </summary>
         protected virtual void EnableDamageArea()
         {
             if (_damageAreaCollider2D != null)
@@ -208,11 +167,6 @@ namespace MoreMountains.TopDownEngine
                 _damageAreaCollider.enabled = true;
             }
         }
-
-
-        /// <summary>
-        /// Disables the damage area.
-        /// </summary>
         protected virtual void DisableDamageArea()
         {
             if (_damageAreaCollider2D != null)
@@ -224,10 +178,6 @@ namespace MoreMountains.TopDownEngine
                 _damageAreaCollider.enabled = false;
             }
         }
-
-        /// <summary>
-        /// When selected, we draw a bunch of gizmos
-        /// </summary>
         protected virtual void OnDrawGizmosSelected()
         {
             if (!Application.isPlaying)

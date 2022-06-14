@@ -2,9 +2,6 @@
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// An event used to broadcast button events from a MMDebugMenu
-    /// </summary>
     public struct MMDebugMenuButtonEvent
     {
         public enum EventModes { FromButton, SetButton }

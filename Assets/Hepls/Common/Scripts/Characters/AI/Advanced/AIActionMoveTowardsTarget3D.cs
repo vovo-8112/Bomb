@@ -5,14 +5,9 @@ using MoreMountains.Tools;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// Requires a CharacterMovement ability. Makes the character move up to the specified MinimumDistance in the direction of the target. 
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/AI/Actions/AIActionMoveTowardsTarget3D")]
-    //[RequireComponent(typeof(CharacterMovement))]
     public class AIActionMoveTowardsTarget3D : AIAction
     {
-        /// the minimum distance from the target this Character can reach.
         [Tooltip("the minimum distance from the target this Character can reach.")]
         public float MinimumDistance = 1f;
 
@@ -20,26 +15,14 @@ namespace MoreMountains.TopDownEngine
         protected CharacterMovement _characterMovement;
         protected int _numberOfJumps = 0;
         protected Vector2 _movementVector;
-
-        /// <summary>
-        /// On init we grab our CharacterMovement ability
-        /// </summary>
         protected override void Initialization()
         {
             _characterMovement = this.gameObject.GetComponentInParent<Character>()?.FindAbility<CharacterMovement>();
         }
-
-        /// <summary>
-        /// On PerformAction we move
-        /// </summary>
         public override void PerformAction()
         {
             Move();
         }
-
-        /// <summary>
-        /// Moves the character towards the target if needed
-        /// </summary>
         protected virtual void Move()
         {
             if (_brain.Target == null)
@@ -63,10 +46,6 @@ namespace MoreMountains.TopDownEngine
                 _characterMovement.SetVerticalMovement(0f);
             }
         }
-
-        /// <summary>
-        /// On exit state we stop our movement
-        /// </summary>
         public override void OnExitState()
         {
             base.OnExitState();

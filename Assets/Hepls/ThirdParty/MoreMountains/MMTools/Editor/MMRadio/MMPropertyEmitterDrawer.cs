@@ -28,13 +28,6 @@ namespace MoreMountains.Tools
                     typeof(bool)
             };
         }
-
-        /// <summary>
-        /// Defines the height of the drawer
-        /// </summary>
-        /// <param name="property"></param>
-        /// <param name="label"></param>
-        /// <returns></returns>
         public override float AdditionalHeight()
         {
             int additionalLines = 0;
@@ -82,13 +75,6 @@ namespace MoreMountains.Tools
 
             return _lineHeight * additionalLines + _lineMargin * additionalLines - 1;
         }
-
-        /// <summary>
-        /// Draws the inspector
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="property"></param>
-        /// <param name="label"></param>
         protected override void DisplayAdditionalProperties(Rect position, SerializedProperty property, GUIContent label)
         {
             Rect additional1Rect = new Rect(position.x, position.y + (_lineHeight + _lineMargin) * 4, position.width, _lineHeight);
@@ -101,8 +87,6 @@ namespace MoreMountains.Tools
             Rect additional8Rect = new Rect(position.x, position.y + (_lineHeight + _lineMargin) * 11, position.width, _lineHeight);
             Rect additional9Rect = new Rect(position.x, position.y + (_lineHeight + _lineMargin) * 12, position.width, _lineHeight);
             Rect additional10Rect = new Rect(position.x, position.y + (_lineHeight + _lineMargin) * 13, position.width, _lineHeight);
-
-            // displays the related properties
             if ((_selectedPropertyIndex != 0) && (_propertyType != null))
             {                
                 if (_propertyType == typeof(bool))
@@ -166,7 +150,6 @@ namespace MoreMountains.Tools
 
             if ((_TargetObject != null) && (_selectedPropertyIndex != 0) && (_propertyType != null) && (Application.isPlaying))
             {
-                // if the application is playing, we display a progress bar
 
                 float level = property.FindPropertyRelative("Level").floatValue;
                 DrawLevelProgressBar(position, level, _mmBlue, _mmRed);

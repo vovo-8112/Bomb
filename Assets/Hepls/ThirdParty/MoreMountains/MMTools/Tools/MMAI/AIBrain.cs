@@ -4,40 +4,25 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// the AI brain is responsible from going from one state to the other based on the defined transitions. It's basically just a collection of states, and it's where you'll link all the actions, decisions, states and transitions together.
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/AI/AIBrain")]
     public class AIBrain : MonoBehaviour
     {
-        /// the collection of states
         public List<AIState> States;
-        /// whether or not this brain is active
         public bool BrainActive = true;
-        /// this brain's current state
         public AIState CurrentState { get; protected set; }
-        /// the time we've spent in the current state
         [MMReadOnly]
         public float TimeInThisState;
-        /// the current target
         [MMReadOnly]
         public Transform Target;
-        /// the last known world position of the target
         [MMReadOnly]
         public Vector3 _lastKnownTargetPosition = Vector3.zero;
 
         [Header("Frequencies")]
-        /// the frequency (in seconds) at which to perform actions (lower values : higher frequency, high values : lower frequency but better performance)
         public float ActionsFrequency = 0f;
-        /// the frequency (in seconds) at which to evaluate decisions
         public float DecisionFrequency = 0f;
-        
-        /// whether or not to randomize the action and decision frequencies
         public bool RandomizeFrequencies = false;
-        /// the min and max values between which to randomize the action frequency
         [MMVector("min","max")]
         public Vector2 RandomActionFrequency = new Vector2(0.5f, 1f);
-        /// the min and max values between which to randomize the decision frequency
         [MMVector("min","max")]
         public Vector2 RandomDecisionFrequency = new Vector2(0.5f, 1f);
 
@@ -57,10 +42,6 @@ namespace MoreMountains.Tools
             AIDecision[] decisions = this.gameObject.GetComponentsInChildren<AIDecision>();
             return decisions;
         }
-
-        /// <summary>
-        /// On awake we set our brain for all states
-        /// </summary>
         protected virtual void Awake()
         {
             foreach (AIState state in States)
@@ -74,18 +55,10 @@ namespace MoreMountains.Tools
                 DecisionFrequency = Random.Range(RandomDecisionFrequency.x, RandomDecisionFrequency.y);
             }
         }
-
-        /// <summary>
-        /// On Start we set our first state
-        /// </summary>
         protected virtual void Start()
         {
             ResetBrain();
         }
-
-        /// <summary>
-        /// Every frame we update our current state
-        /// </summary>
         protected virtual void Update()
         {
             if (!BrainActive || (CurrentState == null) || (Time.timeScale == 0f))
@@ -109,11 +82,6 @@ namespace MoreMountains.Tools
 
             StoreLastKnownPosition();
         }
-        
-        /// <summary>
-        /// Transitions to the specified state, trigger exit and enter states events
-        /// </summary>
-        /// <param name="newStateName"></param>
         public virtual void TransitionToState(string newStateName)
         {
             if (CurrentState == null)
@@ -137,18 +105,10 @@ namespace MoreMountains.Tools
                 }                
             }
         }
-        
-        /// <summary>
-        /// When exiting a state we reset our time counter
-        /// </summary>
         protected virtual void OnExitState()
         {
             TimeInThisState = 0f;
         }
-
-        /// <summary>
-        /// Initializes all decisions
-        /// </summary>
         protected virtual void InitializeDecisions()
         {
             if (_decisions == null)
@@ -160,12 +120,6 @@ namespace MoreMountains.Tools
                 decision.Initialization();
             }
         }
-
-        /// <summary>
-        /// Returns a state based on the specified state name
-        /// </summary>
-        /// <param name="stateName"></param>
-        /// <returns></returns>
         protected AIState FindState(string stateName)
         {
             foreach (AIState state in States)
@@ -181,10 +135,6 @@ namespace MoreMountains.Tools
             }            
             return null;
         }
-
-        /// <summary>
-        /// Stores the last known position of the target
-        /// </summary>
         protected virtual void StoreLastKnownPosition()
         {
             if (Target != null)
@@ -192,10 +142,6 @@ namespace MoreMountains.Tools
                 _lastKnownTargetPosition = Target.transform.position;
             }
         }
-
-        /// <summary>
-        /// Resets the brain, forcing it to enter its first state
-        /// </summary>
         public virtual void ResetBrain()
         {
             InitializeDecisions();

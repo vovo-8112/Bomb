@@ -6,9 +6,6 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Custom editor for the MMSoundManager, used to display custom track controls
-    /// </summary>
     #if UNITY_EDITOR
     [CustomEditor(typeof(MMSoundManager))]
     [CanEditMultipleObjects]
@@ -64,10 +61,6 @@ namespace MoreMountains.Tools
         protected Color _uiColorFree;
 
         protected MMColors.ColoringMode _coloringMode = MMColors.ColoringMode.Add;
-
-        /// <summary>
-        /// On Enable, we initialize our button colors. Why? Because we can.
-        /// </summary>
         protected void OnEnable()
         {
             _masterColorMute = MMColors.MMColorize(_baseColor, _masterColorBase, _coloringMode, 1f);
@@ -98,10 +91,6 @@ namespace MoreMountains.Tools
             _uiColorPlay = MMColors.MMColorize(_baseColor, _uiColorBase, _coloringMode, 0.5f);
             _uiColorFree = MMColors.MMColorize(_baseColor, _uiColorBase, _coloringMode, 0.4f);
         }
-
-        /// <summary>
-        /// On GUI, draws the base inspector and track controls
-        /// </summary>
         public override void OnInspectorGUI()
         {
             _settingsSO = (target as MMSoundManager).settingsSo;
@@ -128,27 +117,12 @@ namespace MoreMountains.Tools
                 DrawSaveLoadButtons();
             }
         }
-
-        /// <summary>
-        /// Draws track controls for the specified track
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="mute"></param>
-        /// <param name="track"></param>
-        /// <param name="muteColor"></param>
-        /// <param name="unmuteColor"></param>
-        /// <param name="pauseColor"></param>
-        /// <param name="stopColor"></param>
-        /// <param name="playColor"></param>
-        /// <param name="freeColor"></param>
         protected virtual void DrawTrack(string title, bool mute, MMSoundManager.MMSoundManagerTracks track, Color muteColor, Color unmuteColor, Color pauseColor, Color stopColor, Color playColor, Color freeColor)
         {
             GUILayout.Space(10);
             GUILayout.Label(title, EditorStyles.boldLabel);
             
             EditorGUI.BeginDisabledGroup(!Application.isPlaying);
-
-            // we draw the volume slider
             EditorGUILayout.BeginHorizontal();
             
             GUILayout.Label("Volume");
@@ -174,8 +148,6 @@ namespace MoreMountains.Tools
                     break;
             }
             EditorGUILayout.EndHorizontal();
-
-            // we draw the buttons
             EditorGUILayout.BeginHorizontal();
             {
                 if (mute)
@@ -196,10 +168,6 @@ namespace MoreMountains.Tools
             
             EditorGUI.EndDisabledGroup();
         }
-        
-        /// <summary>
-        /// Draws save related buttons
-        /// </summary>
         protected virtual void DrawSaveLoadButtons()
         {
             EditorGUI.BeginDisabledGroup(!Application.isPlaying);
@@ -217,15 +185,6 @@ namespace MoreMountains.Tools
             
             EditorGUI.EndDisabledGroup();
         }
-
-        /// <summary>
-        /// Draws a button
-        /// </summary>
-        /// <param name="buttonLabel"></param>
-        /// <param name="buttonColor"></param>
-        /// <param name="track"></param>
-        /// <param name="action"></param>
-        /// <param name="styles"></param>
         public void DrawColoredButton(string buttonLabel, Color buttonColor, MMSoundManager.MMSoundManagerTracks track, System.Action<MMSoundManager.MMSoundManagerTracks> action, GUIStyle styles)
         {
             _originalBackgroundColor = GUI.backgroundColor;
@@ -236,14 +195,6 @@ namespace MoreMountains.Tools
             }
             GUI.backgroundColor = _originalBackgroundColor;
         }
-
-        /// <summary>
-        /// Draws a button
-        /// </summary>
-        /// <param name="buttonLabel"></param>
-        /// <param name="buttonColor"></param>
-        /// <param name="action"></param>
-        /// <param name="styles"></param>
         protected virtual void DrawColoredButton(string buttonLabel, Color buttonColor, Action action, GUIStyle styles)
         {
             _originalBackgroundColor = GUI.backgroundColor;

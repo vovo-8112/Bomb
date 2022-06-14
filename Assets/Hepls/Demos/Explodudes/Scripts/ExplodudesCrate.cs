@@ -4,9 +4,6 @@ using Random = UnityEngine.Random;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// A class that modifies the y scale of crates in the Explodudes demo scene
-    /// </summary>
     public class ExplodudesCrate : MonoBehaviour
     {
         protected const float MinHeight = 0.8f;
@@ -25,10 +22,6 @@ namespace MoreMountains.TopDownEngine
         {
             IsEnable = false;
         }
-
-        /// <summary>
-        /// On Start we randomize our y scale for aesthetic considerations only
-        /// </summary>
         protected virtual void Start()
         {
             _newScale.y = Random.Range(MinHeight, MaxHeight);

@@ -11,24 +11,18 @@ namespace MoreMountains.TopDownEngine
     public class ButtonPrompt : MonoBehaviour
     {
         [Header("Bindings")]
-        /// the image to use as the prompt's border
         [Tooltip("the image to use as the prompt's border")]
         public Image Border;
-        /// the image to use as background
         [Tooltip("the image to use as background")]
         public Image Background;
-        /// the canvas group of the prompt's container
         [Tooltip("the canvas group of the prompt's container")]
         public CanvasGroup ContainerCanvasGroup;
-        /// the Text component of the prompt
         [Tooltip("the Text component of the prompt")]
         public Text PromptText;
 
         [Header("Durations")]
-        /// the duration of the fade in, in seconds
         [Tooltip("the duration of the fade in, in seconds")]
         public float FadeInDuration = 0.2f;
-        /// the duration of the fade out, in seconds
         [Tooltip("the duration of the fade out, in seconds")]
         public float FadeOutDuration = 0.2f;
         

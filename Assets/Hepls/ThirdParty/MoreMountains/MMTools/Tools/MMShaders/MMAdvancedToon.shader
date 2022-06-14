@@ -221,11 +221,11 @@ Shader "MoreMountains/MMAdvancedToon"
 			#endif
 			float3 normalizeResult81 = normalize( i.vertexToFrag80 );
 			float3 ase_worldPos = i.worldPos;
-			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
+			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560
 			float3 ase_worldlightDir = 0;
-			#else //aseld
+			#else
 			float3 ase_worldlightDir = Unity_SafeNormalize( UnityWorldSpaceLightDir( ase_worldPos ) );
-			#endif //aseld
+			#endif
 			float dotResult34 = dot( normalizeResult81 , ase_worldlightDir );
 			float NdotL31 = dotResult34;
 			float4 lerpResult277 = lerp( _RampDark , _RampLight , saturate( (( floor( ( NdotL31 / _StepWidth ) ) / _StepAmount )*0.5 + _RampOffset) ));
@@ -238,9 +238,9 @@ Shader "MoreMountains/MMAdvancedToon"
 			float4 ramp51 = staticSwitch3;
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
 			float4 ase_lightColor = 0;
-			#else //aselc
+			#else
 			float4 ase_lightColor = _LightColor0;
-			#endif //aselc
+			#endif
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
 			float4 temp_cast_3 = (1.0).xxxx;
 			#ifdef _USEVERTEXCOLORS_ON

@@ -4,9 +4,6 @@ using UnityEditor;
 using UnityEngine;
 
 namespace MoreMountains.Feedbacks {
-  /// <summary>
-  /// Custom editor for sequence recorder
-  /// </summary>
   [CustomEditor(typeof(MMInputSequenceRecorder), true)]
   [CanEditMultipleObjects]
   public class MMInputSequenceRecorderEditor : Editor {
@@ -21,18 +18,9 @@ namespace MoreMountains.Feedbacks {
     protected GUIStyle _recordingStyle;
     protected MMInputSequenceRecorder _targetRecorder;
     protected Event _currentEvent;
-
-    /// <summary>
-    /// Forces constant inspector repaints
-    /// </summary>
-    /// <returns></returns>
     public override bool RequiresConstantRepaint() {
       return true;
     }
-
-    /// <summary>
-    /// On enable we initialize our styles and listen for input in editor mode
-    /// </summary>
     protected virtual void OnEnable() {
       _Recording = serializedObject.FindProperty("Recording");
 
@@ -48,10 +36,6 @@ namespace MoreMountains.Feedbacks {
       value += EditorGlobalKeyPress;
       info.SetValue(null, value);
     }
-
-    /// <summary>
-    /// Looks for input
-    /// </summary>
     protected virtual void EditorGlobalKeyPress() {
       if (Application.isPlaying) {
         return;
@@ -67,10 +51,6 @@ namespace MoreMountains.Feedbacks {
       DetectStartAndEnd();
       EditorDetectRecording();
     }
-
-    /// <summary>
-    /// Detects presses on the start or end keys
-    /// </summary>
     protected virtual void DetectStartAndEnd() {
       if (_currentEvent.isKey) {
         if (!_targetRecorder.Recording) {
@@ -86,10 +66,6 @@ namespace MoreMountains.Feedbacks {
         }
       }
     }
-
-    /// <summary>
-    /// Looks for key presses on sequence key bindings
-    /// </summary>
     protected virtual void EditorDetectRecording() {
       if (_targetRecorder.Recording && (_targetRecorder.SequenceScriptableObject != null)) {
         if (_currentEvent.isKey) {
@@ -101,7 +77,6 @@ namespace MoreMountains.Feedbacks {
 
               if (_currentEvent.type == EventType.KeyDown) {
                 if (track.State != MMSequenceTrackStates.Down) {
-                  // key is down for the first time
                   _targetRecorder.AddNoteToTrack(track);
                 }
 
@@ -109,7 +84,6 @@ namespace MoreMountains.Feedbacks {
               }
 
               if (_currentEvent.type == EventType.KeyUp) {
-                // key is up
                 track.State = MMSequenceTrackStates.Up;
               }
             }
@@ -117,17 +91,11 @@ namespace MoreMountains.Feedbacks {
         }
       }
     }
-
-    /// <summary>
-    /// Draws the custom inspector
-    /// </summary>
     public override void OnInspectorGUI() {
       serializedObject.Update();
       Undo.RecordObject(target, "Modified Sequence Recorder");
 
       _inspectorWidth = EditorGUIUtility.currentViewWidth - 24;
-
-      // display recording label
       if (_Recording.boolValue) {
         GUILayout.Box("", GUILayout.Width(_inspectorWidth - _externalMargin), GUILayout.Height(50));
         _boxPosition = GUILayoutUtility.GetLastRect().position;
@@ -142,18 +110,14 @@ namespace MoreMountains.Feedbacks {
       }
 
       DrawDefaultInspector();
-
-      // separator
       EditorGUILayout.Space();
       EditorGUILayout.LabelField("Controls", EditorStyles.boldLabel);
 
       if (!_Recording.boolValue) {
-        // display start recording button
         if (GUILayout.Button("Start Recording")) {
           _targetRecorder.StartRecording();
         }
       } else {
-        // display stop recording button
         if (GUILayout.Button("Stop Recording")) {
           _targetRecorder.StopRecording();
         }

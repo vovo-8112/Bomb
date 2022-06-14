@@ -6,26 +6,15 @@ using UnityEngine.EventSystems;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Add this component to a GUI Image to have it act as a button. 
-    /// Bind pressed down, pressed continually and released actions to it from the inspector
-    /// Handles mouse and multi touch
-    /// </summary>
     [RequireComponent(typeof(Rect))]
     [RequireComponent(typeof(CanvasGroup))]
     [AddComponentMenu("More Mountains/Tools/Controls/MMTouchButton")]
     public class MMTouchButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler, ISubmitHandler
 	{
-		/// The different possible states for the button : 
-		/// Off (default idle state), ButtonDown (button pressed for the first time), ButtonPressed (button being pressed), ButtonUp (button being released), Disabled (unclickable but still present on screen)
-		/// ButtonDown and ButtonUp will only last one frame, the others will last however long you press them / disable them / do nothing
 		public enum ButtonStates { Off, ButtonDown, ButtonPressed, ButtonUp, Disabled }
 		[Header("Binding")]
-		/// The method(s) to call when the button gets pressed down
 		public UnityEvent ButtonPressedFirstTime;
-		/// The method(s) to call when the button gets released
 		public UnityEvent ButtonReleased;
-		/// The method(s) to call while the button is being pressed
 		public UnityEvent ButtonPressed;
 
 		[Header("Sprite Swap")]
@@ -42,7 +31,6 @@ namespace MoreMountains.Tools
 
 		[Header("Opacity")]
 		[MMInformation("Here you can set different opacities for the button when it's pressed, idle, or disabled. Useful for visual feedback.",MMInformationAttribute.InformationType.Info,false)]
-		/// the new opacity to apply to the canvas group when the button is pressed
 		public float PressedOpacity = 1f;
 		public float IdleOpacity = 1f;
 		public float DisabledOpacity = 1f;
@@ -64,12 +52,9 @@ namespace MoreMountains.Tools
 
 		[Header("Mouse Mode")]
 		[MMInformation("If you set this to true, you'll need to actually press the button for it to be triggered, otherwise a simple hover will trigger it (better to leave it unchecked if you're going for touch input).", MMInformationAttribute.InformationType.Info,false)]
-		/// If you set this to true, you'll need to actually press the button for it to be triggered, otherwise a simple hover will trigger it (better for touch input).
 		public bool MouseMode = false;
 
 		public bool ReturnToInitialSpriteAutomatically { get; set; }
-
-		/// the current state of the button (off, down, pressed or up)
 		public ButtonStates CurrentState { get; protected set; }
 
 		protected bool _zonePressed = false;
@@ -81,10 +66,6 @@ namespace MoreMountains.Tools
 		protected Color _initialColor;
 		protected float _lastClickTimestamp = 0f;
 		protected Selectable _selectable;
-
-		/// <summary>
-		/// On Start, we get our canvasgroup and set our initial alpha
-		/// </summary>
 		protected virtual void Awake()
 		{
 			Initialization ();
@@ -118,10 +99,6 @@ namespace MoreMountains.Tools
 			}
 			ResetButton();
 		}
-
-		/// <summary>
-		/// Every frame, if the touch zone is pressed, we trigger the OnPointerPressed method, to detect continuous press
-		/// </summary>
 		protected virtual void Update()
 		{
 			switch (CurrentState)
@@ -195,10 +172,6 @@ namespace MoreMountains.Tools
 			}
 			UpdateAnimatorStates ();
 		}
-
-		/// <summary>
-		/// At the end of every frame, we change our button's state if needed
-		/// </summary>
 		protected virtual void LateUpdate()
 		{
 			if (CurrentState == ButtonStates.ButtonUp)
@@ -212,10 +185,6 @@ namespace MoreMountains.Tools
 		}
 
 		public event System.Action<PointerEventData.FramePressState, PointerEventData> ButtonStateChange;
-			
-		/// <summary>
-		/// Triggers the bound pointer down action
-		/// </summary>
 		public virtual void OnPointerDown(PointerEventData data)
 		{
 			if (Time.time - _lastClickTimestamp < BufferDuration)
@@ -247,10 +216,6 @@ namespace MoreMountains.Tools
 				ButtonPressedFirstTime.Invoke();
 			}
 		}
-
-		/// <summary>
-		/// Triggers the bound pointer up action
-		/// </summary>
 		public virtual void OnPointerUp(PointerEventData data)
 		{
 			if (CurrentState != ButtonStates.ButtonPressed && CurrentState != ButtonStates.ButtonDown)
@@ -277,10 +242,6 @@ namespace MoreMountains.Tools
 				ButtonReleased.Invoke();
 			}			
 		}
-
-		/// <summary>
-		/// Triggers the bound pointer pressed action
-		/// </summary>
 		public virtual void OnPointerPressed()
 		{
 			CurrentState = ButtonStates.ButtonPressed;
@@ -289,19 +250,11 @@ namespace MoreMountains.Tools
 				ButtonPressed.Invoke();
 			}
 		}
-
-		/// <summary>
-		/// Resets the button's state and opacity
-		/// </summary>
 		protected virtual void ResetButton()
 		{
 			SetOpacity(_initialOpacity);
 			CurrentState = ButtonStates.Off;
 		}
-
-		/// <summary>
-		/// Triggers the bound pointer enter action when touch enters zone
-		/// </summary>
 		public virtual void OnPointerEnter(PointerEventData data)
 		{
 			if (!MouseMode)
@@ -309,10 +262,6 @@ namespace MoreMountains.Tools
 				OnPointerDown (data);
 			}
 		}
-
-		/// <summary>
-		/// Triggers the bound pointer exit action when touch is out of zone
-		/// </summary>
 		public virtual void OnPointerExit(PointerEventData data)
 		{
 			if (!MouseMode)
@@ -320,9 +269,6 @@ namespace MoreMountains.Tools
 				OnPointerUp(data);	
 			}
 		}
-		/// <summary>
-		/// OnEnable, we reset our button state
-		/// </summary>
 		protected virtual void OnEnable()
 		{
 			ResetButton();
@@ -332,7 +278,7 @@ namespace MoreMountains.Tools
 		{
 			bool wasActive = CurrentState != ButtonStates.Off && CurrentState != ButtonStates.Disabled;
 			DisableButton();
-			CurrentState = ButtonStates.Off; // cause it's what is tested to StopInput (for weapon by example)
+			CurrentState = ButtonStates.Off;
 			if (wasActive)
 			{
 				ButtonStateChange?.Invoke(PointerEventData.FramePressState.Released, null);

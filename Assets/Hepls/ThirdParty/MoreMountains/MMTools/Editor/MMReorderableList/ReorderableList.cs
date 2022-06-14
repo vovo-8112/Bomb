@@ -112,8 +112,6 @@ namespace MoreMountains.Tools
 			}
 			else if (!list.isArray) {
 
-				//check if user passed in a ReorderableArray, if so, that becomes the list object
-
 				SerializedProperty array = list.FindPropertyRelative("array");
 
 				if (array == null || !array.isArray) {
@@ -158,10 +156,6 @@ namespace MoreMountains.Tools
 			elementRects = new Rect[0];
 		}
 
-		//
-		// -- PROPERTIES --
-		//
-
 		public SerializedProperty List {
 
 			get { return list; }
@@ -194,10 +188,6 @@ namespace MoreMountains.Tools
 
 			get { return dragging; }
 		}
-
-		//
-		// -- PUBLIC --
-		//
 
 		public float GetHeight() {
 
@@ -254,8 +244,6 @@ namespace MoreMountains.Tools
 					}
 
 					if (list.arraySize > 0) {
-
-						//update element rects if not dragging. Dragging caches draw rects so no need to update
 
 						if (!dragging) {
 
@@ -401,10 +389,6 @@ namespace MoreMountains.Tools
 			}
 		}
 
-		//
-		// -- PRIVATE --
-		//
-
 		private float GetElementsHeight() {
 
 			if (getElementsHeightCallback != null) {
@@ -450,22 +434,9 @@ namespace MoreMountains.Tools
 			}
 			else {
 
-				//lerp the drag easing toward slide easing, this creates a stronger easing at the start then slower at the end
-				//when dealing with large lists, we can
-
 				return dragging ? slideGroup.GetRect(dragList[index].startIndex, desiredRect, slideEasing) : slideGroup.SetRect(index, desiredRect);
 			}
 		}
-
-		/*
-		private Rect GetElementHeaderRect(SerializedProperty element, Rect elementRect) {
-
-			Rect rect = elementRect;
-			rect.height = EditorGUIUtility.singleLineHeight + verticalSpacing;
-
-			return rect;
-		}
-		*/
 
 		private Rect GetElementRenderRect(SerializedProperty element, Rect elementRect) {
 
@@ -566,9 +537,7 @@ namespace MoreMountains.Tools
 			EditorGUI.LabelField(rect, label, labelStyle);
 		}
 
-		private void UpdateElementRects(Rect rect, Event evt) {			
-
-			//resize array if elements changed
+		private void UpdateElementRects(Rect rect, Event evt) {
 
 			int i, len = list.arraySize;
 
@@ -579,8 +548,6 @@ namespace MoreMountains.Tools
 
 			if (evt.type == EventType.Repaint) {
 
-				//start rect
-
 				Rect elementRect = rect;
 				elementRect.yMin = elementRect.yMax = rect.yMin + 2;
 
@@ -589,8 +556,6 @@ namespace MoreMountains.Tools
 				for (i = 0; i < len; i++) {
 
 					SerializedProperty element = list.GetArrayElementAtIndex(i);
-
-					//update the elementRects value for this object. Grab the last elementRect for startPosition
 
 					elementRect.y = elementRect.yMax;
 					elementRect.height = GetElementHeight(element);
@@ -603,14 +568,10 @@ namespace MoreMountains.Tools
 
 		private void DrawElements(Rect rect, Event evt) {
 
-			//draw list background
-
 			if (showDefaultBackground && evt.type == EventType.Repaint) {
 
 				Style.boxBackground.Draw(rect, false, false, false, false);
 			}
-			
-			//if not dragging, draw elements as usual
 
 			if (!dragging) {
 
@@ -625,42 +586,28 @@ namespace MoreMountains.Tools
 			}
 			else if (evt.type == EventType.Repaint) {
 
-				//draw dragging elements only when repainting
-
 				int i, s, len = dragList.Length;
 				int sLen = selection.Length;
-
-				//first, find the rects of the selected elements, we need to use them for overlap queries
 
 				for (i = 0; i < sLen; i++) {
 
 					DragElement element = dragList[i];
 
-					//update the element desiredRect if selected. Selected elements appear first in the dragList, so other elements later in iteration will have rects to compare
-
 					element.desiredRect.y = dragPosition - element.dragOffset;
 					dragList[i] = element;
 				}
-
-				//draw elements, start from the bottom of the list as first elements are the ones selected, so should be drawn last
 
 				i = len;
 
 				while (--i > -1) {
 
-					DragElement element = dragList[i];					
-
-					//draw dragging elements last as the loop is backwards
+					DragElement element = dragList[i];
 
 					if (element.selected) {
 
 						DrawElement(element.property, element.desiredRect, true, true);
 						continue;
 					}
-
-					//loop over selection and see what overlaps
-					//if dragging down we start from the bottom of the selection
-					//otherwise we start from the top. This helps to cover multiple selected objects
 
 					Rect elementRect = element.rect;
 					int elementIndex = element.startIndex;
@@ -679,11 +626,7 @@ namespace MoreMountains.Tools
 						}
 					}
 
-					//draw the element with the new rect
-
 					DrawElement(element.property, GetElementDrawRect(i, elementRect), false, false);
-
-					//reassign the element back into the dragList
 
 					element.desiredRect = elementRect;
 					dragList[i] = element;
@@ -721,8 +664,6 @@ namespace MoreMountains.Tools
 
 				EditorGUI.PropertyField(renderRect, element, label, true);
 			}
-
-			//handle context click
 
 			int controlId = GUIUtility.GetControlID(label, FocusType.Passive, rect);
 
@@ -1056,47 +997,6 @@ namespace MoreMountains.Tools
 
 				evt.Use();
 			}
-
-			/* This is buggy. The reason for this is to allow selection and dragging of an element using the header, or top row (if any)
-			 * The main issue here is determining whether the element has an "expandable" drop down arrow, which if it does, will capture the mouse event *without* the code below
-			 * Because of property drawers and certain property types, it's impossible to know this automatically (without dirty reflection)
-			 * So if the below code is active and we determine that the property is expandable but isn't actually. Then we'll accidently capture the mouse focus and prevent anything else from receiving it :(
-			 * So for now, in order to drag or select a row, the user must select empty space on the row. Not a huge deal, and doesn't break functionality.
-			 * What needs to happen is the drag event needs to occur independent of the event type. But that's messy too, as some controls have horizontal drag sliders :(
-			if (evt.type == EventType.MouseDown) {
-
-				//check if we contain the mouse press
-				//we also need to check what has current focus. If nothing we can assume control
-				//if there's something, check if the header has been pressed if the element is expandable
-				//if we did press the header, then override the control
-
-				if (rect.Contains(evt.mousePosition) && IsSelectionButton(evt)) {
-
-					int index = GetSelectionIndex(evt.mousePosition);
-
-					if (CanSelect(index)) {
-
-						SerializedProperty element = list.GetArrayElementAtIndex(index);
-
-						if (IsElementExpandable(element)) {
-
-							Rect elementHeaderRect = GetElementHeaderRect(element, elementRects[index]);
-							Rect elementRenderRect = GetElementRenderRect(element, elementRects[index]);
-
-							Rect elementExpandRect = elementHeaderRect;
-							elementExpandRect.xMin = elementRenderRect.xMin - 10;
-							elementExpandRect.xMax = elementRenderRect.xMin;
-
-							if (elementHeaderRect.Contains(evt.mousePosition) && !elementExpandRect.Contains(evt.mousePosition)) {
-
-								DoSelection(index, true, evt);
-								HandleUtility.Repaint();
-							}
-						}
-					}
-				}
-			}
-			*/
 		}
 
 		private void HandlePostSelection(Rect rect, Event evt) {
@@ -1127,8 +1027,6 @@ namespace MoreMountains.Tools
 
 					if (!draggable) {
 
-						//select the single object if no selection modifier is being performed
-
 						selection.SelectWhenNoAction(pressIndex, evt);
 
 						if (onMouseUpCallback != null && IsPositionWithinElement(evt.mousePosition, selection.Last)) {
@@ -1144,12 +1042,7 @@ namespace MoreMountains.Tools
 
 							dragging = false;
 
-							//move elements in list
-							//sort the drag list
-
 							ReorderDraggedElements(dragList);
-
-							//apply changes
 
 							list.serializedObject.ApplyModifiedProperties();
 							list.serializedObject.Update();
@@ -1162,8 +1055,6 @@ namespace MoreMountains.Tools
 							DispatchChange();
 						}
 						else {
-
-							//if we didn't drag, then select the original pressed object
 
 							selection.SelectWhenNoAction(pressIndex, evt);
 
@@ -1218,8 +1109,6 @@ namespace MoreMountains.Tools
 		}
 
 		private void DoSelection(int index, bool setKeyboardControl, Event evt) {
-
-			//append selections based on action, this may be a additive (ctrl) or range (shift) selection
 
 			if (multipleSelection) {
 
@@ -1284,9 +1173,6 @@ namespace MoreMountains.Tools
 				dragList[i] = dragElement;
 			}
 
-			//finally, sort the dragList by selection, selected objects appear first in the list
-			//selection order is preserved as well
-
 			System.Array.Sort(dragList, (a, b) => {
 
 				if (b.selected) {
@@ -1305,8 +1191,6 @@ namespace MoreMountains.Tools
 		}
 
 		private bool UpdateDragPosition(Vector2 position, Rect bounds, DragElement[] dragList) {
-
-			//find new drag position
 
 			int startIndex = 0;
 			int endIndex = selection.Length - 1;
@@ -1327,15 +1211,10 @@ namespace MoreMountains.Tools
 
 		private void ReorderDraggedElements(DragElement[] dragList) {
 
-			//save the current expanded states on all elements. I don't see any other way to do this
-			//MoveArrayElement does not move the foldout states, so... fun.
-
 			for (int i = 0; i < dragList.Length; i++) {
 
 				dragList[i].RecordState();
 			}
-
-			//sort list based on positions
 
 			System.Array.Sort(dragList, (a, b) => a.desiredRect.center.y.CompareTo(b.desiredRect.center.y));
 
@@ -1347,8 +1226,6 @@ namespace MoreMountains.Tools
 				return dragDirection > 0 ? d1.CompareTo(d2) : d2.CompareTo(d1);
 			});
 
-			//swap the selected elements in the List
-
 			int s = selection.Length;
 
 			while (--s > -1) { 
@@ -1359,8 +1236,6 @@ namespace MoreMountains.Tools
 
 				list.MoveArrayElement(dragList[newIndex].startIndex, newIndex);
 			}
-
-			//restore expanded states on items
 
 			for (int i = 0; i < dragList.Length; i++) {
 
@@ -1442,10 +1317,6 @@ namespace MoreMountains.Tools
 			}
 		}
 
-		//
-		// -- LIST STYLE --
-		//
-
 		static class Style {
 			
 			public static GUIContent iconToolbarPlus;
@@ -1481,10 +1352,6 @@ namespace MoreMountains.Tools
 				collapseButton = EditorGUIUtility.IconContent("winbtn_win_min");
 			}
 		}
-
-		//
-		// -- DRAG ELEMENT --
-		//
 
 		struct DragElement {
 
@@ -1545,10 +1412,6 @@ namespace MoreMountains.Tools
 			}
 		}
 
-		//
-		// -- SLIDE GROUP --
-		//
-
 		class SlideGroup {
 
 			private Dictionary<int, Rect> animIDs;
@@ -1578,8 +1441,6 @@ namespace MoreMountains.Tools
 
 						float delta = r.y - rect.y;
 						float absDelta = Mathf.Abs(delta);
-
-						//if the distance between current rect and target is too large, then move the element towards the target rect so it reaches the destination faster
 
 						if (absDelta > (rect.height * 2)) {
 
@@ -1612,10 +1473,6 @@ namespace MoreMountains.Tools
 				return rect;
 			}
 		}
-
-		//
-		// -- SELECTION --
-		//
 
 		class ListSelection : IEnumerable<int> {
 
@@ -1861,10 +1718,6 @@ namespace MoreMountains.Tools
 			}
 		}
 
-		//
-		// -- EXCEPTIONS --
-		//
-
 		class InvalidListException : System.InvalidOperationException {
 
 			public InvalidListException() : base("ReorderableList serializedProperty must be an array") {
@@ -1876,10 +1729,6 @@ namespace MoreMountains.Tools
 			public MissingListExeption() : base("ReorderableList serializedProperty is null") {
 			}
 		}
-
-		//
-		// -- INTERNAL --
-		//
 
 		static class Internals {
 

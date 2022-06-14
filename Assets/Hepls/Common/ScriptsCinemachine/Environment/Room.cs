@@ -7,18 +7,9 @@ using UnityEngine.Events;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This class lets you define the boundaries of rooms in your level.
-    /// Rooms are useful if you want to cut your level into portions (think Super Metroid or Hollow Knight for example).
-    /// These rooms will require their own virtual camera, and a confiner to define their size. 
-    /// Note that the confiner is different from the collider that defines the room.
-    /// You can see an example of rooms in action in the RetroVania demo scene.
-    /// </summary>
     public class Room : MonoBehaviour, MMEventListener<TopDownEngineEvent>
     {
         public enum Modes { TwoD, ThreeD }
-
-        /// the collider for this room
         public Vector3 RoomColliderCenter
         {
             get
@@ -65,52 +56,39 @@ namespace MoreMountains.TopDownEngine
         }
 
         [Header("Mode")]
-        /// whether this room is intended to work in 2D or 3D mode
         [Tooltip("whether this room is intended to work in 2D or 3D mode")]
         public Modes Mode = Modes.TwoD;
 
         [Header("Camera")]
-        /// the virtual camera associated to this room
         [Tooltip("the virtual camera associated to this room")]
         public CinemachineVirtualCamera VirtualCamera;
-        /// the confiner for this room, that will constrain the virtual camera, usually placed on a child object of the Room
         [Tooltip("the confiner for this room, that will constrain the virtual camera, usually placed on a child object of the Room")]
         public BoxCollider Confiner;
-        /// the confiner component of the virtual camera
         [Tooltip("the confiner component of the virtual camera")]
         public CinemachineConfiner CinemachineCameraConfiner;
-        /// whether or not the confiner should be auto resized on start to match the camera's size and ratio
         [Tooltip("whether or not the confiner should be auto resized on start to match the camera's size and ratio")]
         public bool ResizeConfinerAutomatically = true;
-        /// whether or not this Room should look at the level's start position and declare itself the current room on start or not
         [Tooltip("whether or not this Room should look at the level's start position and declare itself the current room on start or not")]
         public bool AutoDetectFirstRoomOnStart = true;
-        /// the depth of the room (used to resize the z value of the confiner
         [MMEnumCondition("Mode", (int)Modes.TwoD)]
         [Tooltip("the depth of the room (used to resize the z value of the confiner")]
         public float RoomDepth = 100f;
 
         [Header("State")]
-        /// whether this room is the current room or not
         [Tooltip("whether this room is the current room or not")]
         public bool CurrentRoom = false;
-        /// whether this room has already been visited or not
         [Tooltip("whether this room has already been visited or not")]
         public bool RoomVisited = false;
 
         [Header("Actions")]
-        /// the event to trigger when the player enters the room for the first time
         [Tooltip("the event to trigger when the player enters the room for the first time")]
         public UnityEvent OnPlayerEntersRoomForTheFirstTime;
-        /// the event to trigger everytime the player enters the room
         [Tooltip("the event to trigger everytime the player enters the room")]
         public UnityEvent OnPlayerEntersRoom;
-        /// the event to trigger everytime the player exits the room
         [Tooltip("the event to trigger everytime the player exits the room")]
         public UnityEvent OnPlayerExitsRoom;
 
         [Header("Activation")]
-        /// a list of gameobjects to enable when entering the room, and disable when exiting it
         [Tooltip("a list of gameobjects to enable when entering the room, and disable when exiting it")]
         public List<GameObject> ActivationList;
 
@@ -119,26 +97,14 @@ namespace MoreMountains.TopDownEngine
         protected Camera _mainCamera;
         protected Vector2 _cameraSize;
         protected bool _initialized = false;
-
-        /// <summary>
-        /// On Awake we reset our camera's priority
-        /// </summary>
         protected virtual void Awake()
         {
             VirtualCamera.Priority = 0;
         }
-        
-        /// <summary>
-        /// On Start we initialize our room
-        /// </summary>
         protected virtual void Start()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// Grabs our Room collider, our main camera, and starts the confiner resize
-        /// </summary>
         protected virtual void Initialization()
         {
             if (_initialized)
@@ -151,19 +117,12 @@ namespace MoreMountains.TopDownEngine
             StartCoroutine(ResizeConfiner());
             _initialized = true;
         }
-
-        /// <summary>
-        /// Resizes the confiner 
-        /// </summary>
-        /// <returns></returns>
         protected virtual IEnumerator ResizeConfiner()
         {
             if ((VirtualCamera == null) || (Confiner == null) || !ResizeConfinerAutomatically)
             {
                 yield break;
             }
-
-            // we wait two more frame for Unity's pixel perfect camera component to be ready because apparently sending events is not a thing.
             yield return null;
             yield return null;
 
@@ -197,13 +156,7 @@ namespace MoreMountains.TopDownEngine
             }
             
             CinemachineCameraConfiner.InvalidatePathCache();
-
-            //HandleLevelStartDetection();
-        }   
-        
-        /// <summary>
-        /// Looks for the level start position and if it's inside the room, makes this room the current one
-        /// </summary>
+        }
         protected virtual void HandleLevelStartDetection()
         {
             if (!_initialized)
@@ -237,10 +190,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Call this to let the room know a player entered
-        /// </summary>
         public virtual void PlayerEntersRoom()
         {
             CurrentRoom = true;
@@ -258,10 +207,6 @@ namespace MoreMountains.TopDownEngine
                 go.SetActive(true);
             }
         }
-
-        /// <summary>
-        /// Call this to let this room know a player exited
-        /// </summary>
         public virtual void PlayerExitsRoom()
         {
             CurrentRoom = false;
@@ -271,11 +216,6 @@ namespace MoreMountains.TopDownEngine
                 go.SetActive(false);
             }
         }
-
-        /// <summary>
-        /// When we get a respawn event, we ask for a camera reposition
-        /// </summary>
-        /// <param name="topDownEngineEvent"></param>
         public virtual void OnMMEvent(TopDownEngineEvent topDownEngineEvent)
         {
             if ((topDownEngineEvent.EventType == TopDownEngineEventTypes.RespawnComplete)
@@ -284,18 +224,10 @@ namespace MoreMountains.TopDownEngine
                 HandleLevelStartDetection();
             }
         }
-
-        /// <summary>
-        /// On enable we start listening for events
-        /// </summary>
         protected virtual void OnEnable()
         {
             this.MMEventStartListening<TopDownEngineEvent>();
         }
-
-        /// <summary>
-        /// On enable we stop listening for events
-        /// </summary>
         protected virtual void OnDisable()
         {
             this.MMEventStopListening<TopDownEngineEvent>();

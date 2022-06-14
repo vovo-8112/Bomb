@@ -10,10 +10,6 @@ namespace MoreMountains.Feedbacks
     public class MMFeedbacksShaker : MMShaker
     {
         protected MMFeedbacks _mmFeedbacks;
-
-        /// <summary>
-        /// On init we initialize our values
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -33,27 +29,15 @@ namespace MoreMountains.Feedbacks
         {
             _mmFeedbacks.PlayFeedbacks();
         }
-
-        /// <summary>
-        /// When that shaker gets added, we initialize its shake duration
-        /// </summary>
         protected virtual void Reset()
         {
             ShakeDuration = 0.01f;
         }
-
-        /// <summary>
-        /// Starts listening for events
-        /// </summary>
         public override void StartListening()
         {
             base.StartListening();
             MMFeedbacksShakeEvent.Register(OnMMFeedbacksShakeEvent);
         }
-
-        /// <summary>
-        /// Stops listening for events
-        /// </summary>
         public override void StopListening()
         {
             base.StopListening();

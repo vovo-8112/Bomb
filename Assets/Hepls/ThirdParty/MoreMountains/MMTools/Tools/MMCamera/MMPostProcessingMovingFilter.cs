@@ -3,9 +3,6 @@ using System.Collections;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// An event used to move filters on and off a camera
-    /// </summary>
     public struct MMPostProcessingMovingFilterEvent
     {
         public delegate void Delegate(MMTweenType curve, bool active, bool toggle, float duration, int channel = 0, bool stop = false);
@@ -26,49 +23,27 @@ namespace MoreMountains.Tools
             OnEvent?.Invoke(curve, active, toggle, duration, channel, stop);
         }
     }
-
-    /// <summary>
-    /// 
-    /// This class lets you create moving filters, very much like the old gelatin camera filters, that will move to connect to your camera
-    /// Typically a moving filter should be made of a MMPostProcessingMovingFilter component, 
-    /// a PostProcessing volume, and a BoxCollider (recommended size is 1,1,1 if you want to use the default offset)
-    /// The filter will move on the y axis.
-    /// 
-    /// Use : 
-    /// MMPostProcessingMovingFilterEvent.Trigger(MMTween.MMTweenCurve.EaseInOutCubic, TrueOrFalse, Duration, ChannelID);
-    /// 
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/Camera/MMPostProcessingMovingFilter")]
     public class MMPostProcessingMovingFilter : MonoBehaviour
     {
         public enum TimeScales { Unscaled, Scaled }
 
         [Header("Settings")]
-        /// the channel ID for this filter. Any event with a different channel ID will be ignored
         public int Channel = 0;
-        /// whether this should use scaled or unscaled time
         public TimeScales TimeScale = TimeScales.Unscaled;
-        /// the curve to use for this movement
         public MMTweenType Curve = new MMTweenType(MMTween.MMTweenCurve.EaseInCubic);
-        /// whether the filter is active at start or not
         public bool Active = false;
 
         [MMVector("On","Off")]
-        /// the vertical offsets to apply when the filter is on or off
         public Vector2 FilterOffset = new Vector2(0f, 5f);
-        /// whether or not to add the initial position
         public bool AddToInitialPosition = true;
 
         [Header("Tests")]
-        /// the duration to apply to the test methods
         public float TestDuration = 0.5f;
-        /// a test button to toggle the filter on or off
         [MMInspectorButton("PostProcessingToggle")]
         public bool PostProcessingToggleButton;
-        /// a test button to turn the filter off
         [MMInspectorButton("PostProcessingTriggerOff")]
         public bool PostProcessingTriggerOffButton;
-        /// a test button to turn the filter on
         [MMInspectorButton("PostProcessingTriggerOn")]
         public bool PostProcessingTriggerOnButton;
 
@@ -77,18 +52,10 @@ namespace MoreMountains.Tools
         protected float _lastMovementStartedAt = 0f;
         protected Vector3 _initialPosition;
         protected Vector3 _newPosition;
-
-        /// <summary>
-        /// On Start we initialize our filter
-        /// </summary>
         protected virtual void Start()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// Sets the filter at the right initial position
-        /// </summary>
         protected virtual void Initialization()
         {
             _lastMovementStartedAt = 0f;
@@ -107,23 +74,14 @@ namespace MoreMountains.Tools
             this.transform.localPosition = _newPosition;
             _lastReachedState = Active;
         }
-
-        /// <summary>
-        /// On update we move if needed
-        /// </summary>
         protected virtual void Update()
         {
-            // if we're already at destination, we do nothing and exit
             if (_lastReachedState == Active)
             {
                 return;
             }
             MoveTowardsCurrentTarget();
         }
-
-        /// <summary>
-        /// Moves the filter towards its current target position
-        /// </summary>
         protected virtual void MoveTowardsCurrentTarget()
         {
             if (_newPosition != this.transform.localPosition)
@@ -145,14 +103,6 @@ namespace MoreMountains.Tools
                 _lastReachedState = Active;
             }
         }
-
-        /// <summary>
-        /// if we get a PostProcessingTriggerEvent
-        /// </summary>
-        /// <param name="curve"></param>
-        /// <param name="active"></param>
-        /// <param name="duration"></param>
-        /// <param name="channel"></param>
         public virtual void OnMMPostProcessingMovingFilterEvent(MMTweenType curve, bool active, bool toggle, float duration, int channel = 0, bool stop = false)
         {
             if ((channel != Channel) && (channel != -1) && (Channel != -1))
@@ -181,43 +131,22 @@ namespace MoreMountains.Tools
             float currentTime = (TimeScale == TimeScales.Unscaled) ? Time.unscaledTime : Time.time;
             _lastMovementStartedAt = currentTime;
         }
-
-        /// <summary>
-        /// On enable, we start listening to MMPostProcessingTriggerEvents
-        /// </summary>
         protected virtual void OnEnable()
         {
             MMPostProcessingMovingFilterEvent.Register(OnMMPostProcessingMovingFilterEvent);
         }
-
-        /// <summary>
-        /// On disable, we stop listening to MMPostProcessingTriggerEvents
-        /// </summary>
         protected virtual void OnDisable()
         {
             MMPostProcessingMovingFilterEvent.Unregister(OnMMPostProcessingMovingFilterEvent);
         }
-
-        // TEST METHODS --------------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Toggles the post processing effect on or off
-        /// </summary>
         protected virtual void PostProcessingToggle()
         {
             MMPostProcessingMovingFilterEvent.Trigger(new MMTweenType(MMTween.MMTweenCurve.EaseInOutCubic), false, true, TestDuration, 0);
         }
-        /// <summary>
-        /// Turns the post processing effect off
-        /// </summary>
         protected virtual void PostProcessingTriggerOff()
         {
             MMPostProcessingMovingFilterEvent.Trigger(new MMTweenType(MMTween.MMTweenCurve.EaseInOutCubic), false, false, TestDuration, 0);
         }
-
-        /// <summary>
-        /// Turns the post processing effect on
-        /// </summary>
         protected virtual void PostProcessingTriggerOn()
         {
             MMPostProcessingMovingFilterEvent.Trigger(new MMTweenType(MMTween.MMTweenCurve.EaseInOutCubic), true, false, TestDuration, 0);

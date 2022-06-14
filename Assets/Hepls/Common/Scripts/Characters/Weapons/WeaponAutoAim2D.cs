@@ -5,10 +5,6 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// The 2D version of the WeaponAutoAim, meant to be used on objects equipped with a WeaponAim2D.
-    /// It'll detect targets within the defined radius, pick the closest, and force the WeaponAim component to aim at them if a target is found
-    /// </summary>
     [RequireComponent(typeof(WeaponAim2D))]
     [AddComponentMenu("TopDown Engine/Weapons/Weapon Auto Aim 2D")]
     public class WeaponAutoAim2D : WeaponAutoAim
@@ -21,10 +17,6 @@ namespace MoreMountains.TopDownEngine
         protected ContactFilter2D _contactFilter;
         protected Collider2D _potentialHit;
         protected bool _initialized = false;
-
-        /// <summary>
-        /// On init we grab our orientation to be able to detect facing direction
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -35,11 +27,6 @@ namespace MoreMountains.TopDownEngine
             _detectionColliders = new List<Collider2D>();
             _initialized = true;
         }
-
-        /// <summary>
-        /// Scans for targets by performing an overlap detection, then verifying line of fire with a boxcast
-        /// </summary>
-        /// <returns></returns>
         protected override bool ScanForTargets()
         {
             if (!_initialized)
@@ -81,19 +68,11 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Sets the aim to the relative direction of the target
-        /// </summary>
         protected override void SetAim()
         {
             _aimDirection = (Target.transform.position - _raycastOrigin).normalized;
             _weaponAim.SetCurrentAim(_aimDirection);
         }
-
-        /// <summary>
-        /// To determine our raycast origin we apply an offset
-        /// </summary>
         protected override void DetermineRaycastOrigin()
         {
             if (_orientation2D != null)

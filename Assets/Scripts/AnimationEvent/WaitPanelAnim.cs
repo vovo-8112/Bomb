@@ -27,8 +27,6 @@ namespace AnimationEvent
         {
             m_Animation.Play();
         }
-
-        //Use in animation
         public void DisablePanel()
         {
             gameObject.SetActive(false);

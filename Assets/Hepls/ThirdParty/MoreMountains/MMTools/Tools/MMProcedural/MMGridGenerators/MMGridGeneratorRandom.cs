@@ -5,19 +5,8 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Generates a simple grid filled with random points 
-    /// </summary>
     public class MMGridGeneratorRandom : MMGridGenerator
     {
-        /// <summary>
-        /// Generates a simple grid filled with random points 
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="seed"></param>
-        /// <param name="fillPercentage"></param>
-        /// <returns></returns>
         public static int[,] Generate(int width, int height, int seed, int fillPercentage)
         {
             int[,] grid = PrepareGrid(ref width, ref height);

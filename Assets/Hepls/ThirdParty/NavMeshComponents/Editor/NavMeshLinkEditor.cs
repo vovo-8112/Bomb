@@ -58,8 +58,6 @@ namespace UnityEditor.AI
 
             var forward = worldEndPt - worldStartPt;
             var up = navLink.transform.up;
-
-            // Flatten
             forward -= Vector3.Dot(up, forward) * up;
 
             var transform = navLink.transform;

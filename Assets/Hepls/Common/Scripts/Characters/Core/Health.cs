@@ -6,27 +6,17 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This class manages the health of an object, pilots its potential health bar, handles what happens when it takes damage,
-    /// and what happens when it dies.
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/Core/Health")]
     public class Health : MonoBehaviour
     {
         [Header("Bindings")]
-
-        /// the model to disable (if set so)
         [Tooltip("the model to disable (if set so)")]
         public GameObject Model;
 
         [Header("Status")]
-
-        /// the current health of the character
         [MMReadOnly]
         [Tooltip("the current health of the character")]
         public int CurrentHealth;
-
-        /// If this is true, this object can't take damage at this time
         [MMReadOnly]
         [Tooltip("If this is true, this object can't take damage at this time")]
         public bool Invulnerable = false;
@@ -34,12 +24,8 @@ namespace MoreMountains.TopDownEngine
         [Header("Health")]
         [MMInformation("Add this component to an object and it'll have health, will be able to get damaged and potentially die.",
             MMInformationAttribute.InformationType.Info, false)]
-
-        /// the initial amount of health of the object
         [Tooltip("the initial amount of health of the object")]
         public int InitialHealth = 10;
-
-        /// the maximum amount of health of the object
         [Tooltip("the maximum amount of health of the object")]
         public int MaximumHealth = 10;
 
@@ -47,20 +33,12 @@ namespace MoreMountains.TopDownEngine
         [MMInformation(
             "Here you can specify an effect and a sound FX to instantiate when the object gets damaged, and also how long the object should flicker when hit (only works for sprites).",
             MMInformationAttribute.InformationType.Info, false)]
-
-        /// whether or not this Health object can be damaged 
         [Tooltip("whether or not this Health object can be damaged")]
         public bool ImmuneToDamage = false;
-
-        /// whether or not this object is immune to damage knockback
         [Tooltip("whether or not this object is immune to damage knockback")]
         public bool ImmuneToKnockback = false;
-
-        /// the feedback to play when getting damage
         [Tooltip("the feedback to play when getting damage")]
         public MMFeedbacks DamageMMFeedbacks;
-
-        /// if this is true, the damage value will be passed to the MMFeedbacks as its Intensity parameter, letting you trigger more intense feedbacks as damage increases
         [Tooltip(
             "if this is true, the damage value will be passed to the MMFeedbacks as its Intensity parameter, letting you trigger more intense feedbacks as damage increases")]
         public bool FeedbackIsProportionalToDamage = false;
@@ -69,78 +47,44 @@ namespace MoreMountains.TopDownEngine
         [MMInformation(
             "Here you can set an effect to instantiate when the object dies, a force to apply to it (topdown controller required), how many points to add to the game score, and where the character should respawn (for non-player characters only).",
             MMInformationAttribute.InformationType.Info, false)]
-
-        /// whether or not this object should get destroyed on death
         [Tooltip("whether or not this object should get destroyed on death")]
         public bool DestroyOnDeath = true;
-
-        /// the time (in seconds) before the character is destroyed or disabled
         [Tooltip("the time (in seconds) before the character is destroyed or disabled")]
         public float DelayBeforeDestruction = 0f;
-
-        /// the points the player gets when the object's health reaches zero
         [Tooltip("the points the player gets when the object's health reaches zero")]
         public int PointsWhenDestroyed;
-
-        /// if this is set to false, the character will respawn at the location of its death, otherwise it'll be moved to its initial position (when the scene started)
         [Tooltip(
             "if this is set to false, the character will respawn at the location of its death, otherwise it'll be moved to its initial position (when the scene started)")]
         public bool RespawnAtInitialLocation = false;
-
-        /// if this is true, the controller will be disabled on death
         [Tooltip("if this is true, the controller will be disabled on death")]
         public bool DisableControllerOnDeath = true;
-
-        /// if this is true, the model will be disabled instantly on death (if a model has been set)
         [Tooltip("if this is true, the model will be disabled instantly on death (if a model has been set)")]
         public bool DisableModelOnDeath = true;
-
-        /// if this is true, collisions will be turned off when the character dies
         [Tooltip("if this is true, collisions will be turned off when the character dies")]
         public bool DisableCollisionsOnDeath = true;
-
-        /// if this is true, collisions will also be turned off on child colliders when the character dies
         [Tooltip("if this is true, collisions will also be turned off on child colliders when the character dies")]
         public bool DisableChildCollisionsOnDeath = false;
-
-        /// whether or not this object should change layer on death
         [Tooltip("whether or not this object should change layer on death")]
         public bool ChangeLayerOnDeath = false;
-
-        /// whether or not this object should change layer on death
         [Tooltip("whether or not this object should change layer on death")]
         public bool ChangeLayersRecursivelyOnDeath = false;
-
-        /// the layer we should move this character to on death
         [Tooltip("the layer we should move this character to on death")]
         public MMLayer LayerOnDeath;
-
-        /// the feedback to play when dying
         [Tooltip("the feedback to play when dying")]
         public MMFeedbacks DeathMMFeedbacks;
-
-        /// if this is true, color will be reset on revive
         [Tooltip("if this is true, color will be reset on revive")]
         public bool ResetColorOnRevive = true;
-
-        /// the name of the property on your renderer's shader that defines its color 
         [Tooltip("the name of the property on your renderer's shader that defines its color")]
         [MMCondition("ResetColorOnRevive", true)]
         public string ColorMaterialPropertyName = "_Color";
-
-        /// if this is true, this component will use material property blocks instead of working on an instance of the material.
         [Tooltip("if this is true, this component will use material property blocks instead of working on an instance of the material.")]
         public bool UseMaterialPropertyBlocks = false;
 
         [Header("Shared Health")]
-
-        /// another Health component (usually on another character) towards which all health will be redirected
         [Tooltip("another Health component (usually on another character) towards which all health will be redirected")]
         public Health MasterHealth;
 
         [Header("Settings")]
-
-        /// if this is true, animator logs for the associated animator will be turned off to avoid potential spam
         [Tooltip("if this is true, animator logs for the associated animator will be turned off to avoid potential spam")]
         public bool DisableAnimatorLogs = true;
 
@@ -150,18 +94,12 @@ namespace MoreMountains.TopDownEngine
 
         public int LastDamage { get; set; }
         public Vector3 LastDamageDirection { get; set; }
-
-        // hit delegate
         public delegate void OnHitDelegate();
 
         public OnHitDelegate OnHit;
-
-        // respawn delegate
         public delegate void OnReviveDelegate();
 
         public OnReviveDelegate OnRevive;
-
-        // death delegate
         public delegate void OnDeathDelegate();
 
         public OnDeathDelegate OnDeath;
@@ -181,10 +119,6 @@ namespace MoreMountains.TopDownEngine
         protected int _initialLayer;
         protected MaterialPropertyBlock _propertyBlock;
         protected bool _hasColorProperty = false;
-
-        /// <summary>
-        /// On Start, we initialize our health
-        /// </summary>
         protected virtual void Awake()
         {
             Initialization();
@@ -202,10 +136,6 @@ namespace MoreMountains.TopDownEngine
                 CurrentHealth = MasterHealth.CurrentHealth;
             }
         }
-
-        /// <summary>
-        /// Grabs useful components, enables damage and gets the inital color
-        /// </summary>
         public virtual void Initialization()
         {
             _character = this.gameObject.GetComponent<Character>();
@@ -258,8 +188,6 @@ namespace MoreMountains.TopDownEngine
                     }
                 }
             }
-
-            // we grab our animator
             if (_character != null)
             {
                 if (_character.CharacterAnimator != null)
@@ -298,18 +226,10 @@ namespace MoreMountains.TopDownEngine
 
             DamageEnabled();
         }
-
-        /// <summary>
-        /// Stores the initial position for further use
-        /// </summary>
         public virtual void StoreInitialPosition()
         {
             _initialPosition = this.transform.position;
         }
-
-        /// <summary>
-        /// When the object is enabled (on respawn for example), we restore its initial health levels
-        /// </summary>
         protected virtual void OnEnable()
         {
             SetInitialHealth();
@@ -321,17 +241,8 @@ namespace MoreMountains.TopDownEngine
 
             DamageEnabled();
         }
-
-        /// <summary>
-        /// Called when the object takes damage
-        /// </summary>
-        /// <param name="damage">The amount of health points that will get lost.</param>
-        /// <param name="instigator">The object that caused the damage.</param>
-        /// <param name="flickerDuration">The time (in seconds) the object should flicker after taking the damage.</param>
-        /// <param name="invincibilityDuration">The duration of the short invincibility following the hit.</param>
         public virtual void Damage(int damage, GameObject instigator, float flickerDuration, float invincibilityDuration, Vector3 damageDirection)
         {
-            // if the object is invulnerable, we do nothing and exit
             if (Invulnerable || ImmuneToDamage)
             {
                 return;
@@ -341,14 +252,10 @@ namespace MoreMountains.TopDownEngine
             {
                 return;
             }
-
-            // if we're already below zero, we do nothing and exit
             if ((CurrentHealth <= 0) && (InitialHealth != 0))
             {
                 return;
             }
-
-            // we decrease the character's health by the damage
             float previousHealth = CurrentHealth;
 
             if (MasterHealth != null)
@@ -368,15 +275,11 @@ namespace MoreMountains.TopDownEngine
             {
                 OnHit();
             }
-
-            // we prevent the character from colliding with Projectiles, Player and Enemies
             if (invincibilityDuration > 0)
             {
                 DamageDisabled();
                 StartCoroutine(DamageEnabled(invincibilityDuration));
             }
-
-            // we trigger a damage taken event
             MMDamageTakenEvent.Trigger(_character, instigator, CurrentHealth, damage, previousHealth);
 
             if (_animator != null)
@@ -392,11 +295,7 @@ namespace MoreMountains.TopDownEngine
             {
                 DamageMMFeedbacks?.PlayFeedbacks(this.transform.position);
             }
-
-            // we update the health bar
             UpdateHealthBar(true);
-
-            // if health has reached zero we set its health to zero (useful for the healthbar)
             if (MasterHealth != null)
             {
                 if (MasterHealth.CurrentHealth <= 0)
@@ -414,10 +313,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Kills the character, instantiates death effects, handles points, etc
-        /// </summary>
         public virtual void Kill()
         {
             if (ImmuneToDamage)
@@ -427,7 +322,6 @@ namespace MoreMountains.TopDownEngine
 
             if (_character != null)
             {
-                // we set its dead state to true
                 _character.ConditionState.ChangeState(CharacterStates.CharacterConditions.Dead);
                 _character.Reset();
 
@@ -445,16 +339,11 @@ namespace MoreMountains.TopDownEngine
             }
 
             SetHealth(0);
-
-            // we prevent further damage
             DamageDisabled();
 
             DeathMMFeedbacks?.PlayFeedbacks(this.transform.position);
-
-            // Adds points if needed.
             if (PointsWhenDestroyed != 0)
             {
-                // we send a new points event for the GameManager to catch (and other classes that may listen to it too)
                 TopDownEnginePointEvent.Trigger(PointsMethods.Add, PointsWhenDestroyed);
             }
 
@@ -462,8 +351,6 @@ namespace MoreMountains.TopDownEngine
             {
                 _animator.SetTrigger("Death");
             }
-
-            // we make it ignore the collisions from now on
             if (DisableCollisionsOnDeath)
             {
                 if (_collider2D != null)
@@ -475,8 +362,6 @@ namespace MoreMountains.TopDownEngine
                 {
                     _collider3D.enabled = false;
                 }
-
-                // if we have a controller, removes collisions, restores parameters for a potential respawn, and applies a death force
                 if (_controller != null)
                 {
                     _controller.CollisionsOff();
@@ -529,14 +414,9 @@ namespace MoreMountains.TopDownEngine
             }
             else
             {
-                // finally we destroy the object
                 DestroyObject();
             }
         }
-
-        /// <summary>
-        /// Revive this object.
-        /// </summary>
         public virtual void Revive()
         {
             if (!_initialized)
@@ -622,10 +502,6 @@ namespace MoreMountains.TopDownEngine
             SetInitialHealth();
             OnRevive?.Invoke();
         }
-
-        /// <summary>
-        /// Destroys the object, or tries to, depending on the character's settings
-        /// </summary>
         protected virtual void DestroyObject()
         {
             if (_autoRespawn == null)
@@ -640,15 +516,8 @@ namespace MoreMountains.TopDownEngine
                 _autoRespawn.Kill();
             }
         }
-
-        /// <summary>
-        /// Called when the character gets health (from a stimpack for example)
-        /// </summary>
-        /// <param name="health">The health the character gets.</param>
-        /// <param name="instigator">The thing that gives the character health.</param>
         public virtual void GetHealth(int health, GameObject instigator)
         {
-            // this function adds health to the character's Health and prevents it to go above MaxHealth.
             if (MasterHealth != null)
             {
                 MasterHealth.SetHealth(Mathf.Min(CurrentHealth + health, MaximumHealth));
@@ -660,28 +529,15 @@ namespace MoreMountains.TopDownEngine
 
             UpdateHealthBar(true);
         }
-
-        /// <summary>
-        /// Resets the character's health to its max value
-        /// </summary>
         public virtual void ResetHealthToMaxHealth()
         {
             SetHealth(MaximumHealth);
         }
-
-        /// <summary>
-        /// Sets the current health to the specified new value, and updates the health bar
-        /// </summary>
-        /// <param name="newValue"></param>
         public virtual void SetHealth(int newValue)
         {
             CurrentHealth = newValue;
             UpdateHealthBar(false);
         }
-
-        /// <summary>
-        /// Updates the character's health bar progress.
-        /// </summary>
         public virtual void UpdateHealthBar(bool show)
         {
             if (_healthBar != null)
@@ -695,7 +551,6 @@ namespace MoreMountains.TopDownEngine
                 {
                     if (_character.CharacterType == Character.CharacterTypes.Player)
                     {
-                        // We update the health bar
                         if (GUIManager.Instance != null)
                         {
                             GUIManager.Instance.UpdateHealthBar(CurrentHealth, 0f, MaximumHealth, _character.PlayerID);
@@ -704,37 +559,20 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Prevents the character from taking any damage
-        /// </summary>
         public virtual void DamageDisabled()
         {
             Invulnerable = true;
         }
-
-        /// <summary>
-        /// Allows the character to take damage
-        /// </summary>
         public virtual void DamageEnabled()
         {
             Invulnerable = false;
         }
-
-        /// <summary>
-        /// makes the character able to take damage again after the specified delay
-        /// </summary>
-        /// <returns>The layer collision.</returns>
         public virtual IEnumerator DamageEnabled(float delay)
         {
             yield return new WaitForSeconds(delay);
 
             Invulnerable = false;
         }
-
-        /// <summary>
-        /// On Disable, we prevent any delayed destruction from running
-        /// </summary>
         protected virtual void OnDisable()
         {
             CancelInvoke();

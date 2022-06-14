@@ -6,22 +6,15 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This ability, used on a Player character, will let you click on the ground and have the character move to the click's position
-    /// You'll find a demo of this ability on the LoftSuspendersMouseDriven demo character. You can drag it in the Loft3D demo scene's LevelManager's PlayerPrefabs slot to give it a try.
-    /// For AIs, look at the MousePathfinderAI3D script instead, and its demo in the MinimalPathfinding3D demo scene
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/Abilities/Character Pathfind To Mouse")]
     [RequireComponent(typeof(CharacterPathfinder3D))]
     public class CharacterPathfindToMouse3D : CharacterAbility
     {
         [Header("Mouse")]
-        /// the index of the mouse button to read input on
         [Tooltip("the index of the mouse button to read input on")]
         public int MouseButtonIndex = 1;
 
-        [Header("OnClick")] 
-        /// a feedback to play at the position of the click
+        [Header("OnClick")]
         [Tooltip("a feedback to play at the position of the click")]
         public MMFeedbacks OnClickFeedbacks; 
         
@@ -31,10 +24,6 @@ namespace MoreMountains.TopDownEngine
         protected Plane _playerPlane;
         protected bool _destinationSet = false;
         protected Camera _mainCamera;
-
-        /// <summary>
-        /// On awake we create a plane to catch our ray
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -50,10 +39,6 @@ namespace MoreMountains.TopDownEngine
                 Destination.name = this.name + "PathfindToMouseDestination";
             }
         }
-        
-        /// <summary>
-        /// Every frame we make sure we shouldn't be exiting our run state
-        /// </summary>
         public override void ProcessAbility()
         {
             base.ProcessAbility();
@@ -63,10 +48,6 @@ namespace MoreMountains.TopDownEngine
             }
             DetectMouse();
         }
-
-        /// <summary>
-        /// If the mouse is clicked, we cast a ray and if that ray hits the plane we make it the pathfinding target
-        /// </summary>
         protected virtual void DetectMouse()
         {
             if (Input.GetMouseButtonDown(MouseButtonIndex))

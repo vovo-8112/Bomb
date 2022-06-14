@@ -5,39 +5,24 @@ using Cinemachine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// A class that handles camera follow for Cinemachine powered cameras
-    /// </summary>
     public class CinemachineCameraController : MonoBehaviour, MMEventListener<MMCameraEvent>, MMEventListener<TopDownEngineEvent>
     {
-        /// True if the camera should follow the player
         public bool FollowsPlayer { get; set; }
-        /// Whether or not this camera should follow a player
         [Tooltip("Whether or not this camera should follow a player")]
         public bool FollowsAPlayer = true;
-        /// Whether to confine this camera to the level bounds, as defined in the LevelManager
         [Tooltip("Whether to confine this camera to the level bounds, as defined in the LevelManager")]
         public bool ConfineCameraToLevelBounds = true;
         [MMReadOnly]
-        /// the target character this camera should follow
         [Tooltip("the target character this camera should follow")]
         public Character TargetCharacter;
 
         protected CinemachineVirtualCamera _virtualCamera;
         protected CinemachineConfiner _confiner;
-
-        /// <summary>
-        /// On Awake we grab our components
-        /// </summary>
         protected virtual void Awake()
         {
             _virtualCamera = GetComponent<CinemachineVirtualCamera>();
             _confiner = GetComponent<CinemachineConfiner>();
         }
-
-        /// <summary>
-        /// On Start we assign our bounding volume
-        /// </summary>
         protected virtual void Start()
         {
             if ((_confiner != null) && ConfineCameraToLevelBounds)
@@ -50,10 +35,6 @@ namespace MoreMountains.TopDownEngine
         {
             TargetCharacter = character;
         }
-
-        /// <summary>
-        /// Starts following the LevelManager's main player
-        /// </summary>
         public virtual void StartFollowing()
         {
             if (!FollowsAPlayer) { return; }
@@ -61,10 +42,6 @@ namespace MoreMountains.TopDownEngine
             _virtualCamera.Follow = TargetCharacter.CameraTarget.transform;
             _virtualCamera.enabled = true;
         }
-
-        /// <summary>
-        /// Stops following any target
-        /// </summary>
         public virtual void StopFollowing()
         {
             if (!FollowsAPlayer) { return; }

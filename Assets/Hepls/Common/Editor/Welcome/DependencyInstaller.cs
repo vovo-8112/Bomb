@@ -21,7 +21,6 @@ namespace MoreMountains.TopDownEngine
                 {
                     if (importedAsset.Contains("DependencyInstaller.cs"))
                     {
-                        //WelcomeWindow.ShowWindow(); 
                     }
                 }
             }

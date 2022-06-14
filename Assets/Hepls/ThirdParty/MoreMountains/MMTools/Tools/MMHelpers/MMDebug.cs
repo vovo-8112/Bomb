@@ -13,17 +13,11 @@ using UnityEditor;
 #endif
 
 namespace MoreMountains.Tools
-{	
-	/// <summary>
-	/// Debug helpers
-	/// </summary>
+{
 	public static class MMDebug 
 	{
         #region Commands
-
-        // the cached list of debug log commands
         private static MethodInfo[] _commands;
-        // the max length of the log
         private static readonly int _logHistoryMaxLength = 256;
 
 #if UNITY_EDITOR
@@ -32,10 +26,6 @@ namespace MoreMountains.Tools
         private static bool _debugDrawEnabled = false;
         private static bool _debugLogEnabled = false;
         private static bool _debugLogEnabledSet = false;
-
-        /// <summary>
-        /// Returns a list of all the debug command lines found in the project's assemblies
-        /// </summary>
         public static MethodInfo[] Commands
         {
             get
@@ -52,29 +42,19 @@ namespace MoreMountains.Tools
                 return _commands;
             }
         }
-
-        /// <summary>
-        /// Tries to input a command
-        /// </summary>
-        /// <param name="command"></param>
         public static void DebugLogCommand(string command)
         {
-            // if the command is empty we output an empty line
             if (command == string.Empty || command == null)
             {
                 LogCommand("", "#ff2a00");
                 return; 
             }
-
-            // we split around spaces
             string[] splitCommand = command.Split(new char[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
             if (splitCommand == null || splitCommand.Length == 0)
             {
                 LogCommand("Empty command", "#ff2a00");
                 return;
             }
-            
-            // we check if the first command exists
             string commandFirst = MMString.UppercaseFirst(splitCommand[0]);
             MethodInfo[] methods = Commands.Where(m => m.Name == commandFirst).ToArray();
             if (methods.Length == 0)
@@ -87,8 +67,7 @@ namespace MoreMountains.Tools
             object[] parameters = null;
 
             if (splitCommand.Length > 1)
-            { 
-                // if there are arguments
+            {
                 commandInfo = methods.Where(m => m.GetParameters().Length > 0).FirstOrDefault();
 
                 if (commandInfo == null)
@@ -107,8 +86,7 @@ namespace MoreMountains.Tools
                 parameters = new object[] { splitCommand };
             }
             else
-            { 
-                // if there are no arguments 
+            {
                 commandInfo = methods.Where(m => m.GetParameters().Length == 0).FirstOrDefault();
 
                 if (commandInfo == null)
@@ -121,12 +99,6 @@ namespace MoreMountains.Tools
             LogCommand(command, "#FFC400");
             methods[0].Invoke(null, parameters);
         }
-
-        /// <summary>
-        /// Logs the command, adding it to the log history and triggers an event
-        /// </summary>
-        /// <param name="command"></param>
-        /// <param name="color"></param>
         private static void LogCommand(string command, string color)
         {
             DebugLogItem item = new DebugLogItem(command, color, Time.frameCount, Time.time, 3, true);
@@ -137,10 +109,6 @@ namespace MoreMountains.Tools
         #endregion
 
         #region DebugLog
-
-        /// <summary>
-        /// A struct used to store log items
-        /// </summary>
         public struct DebugLogItem
         {
             public object Message;
@@ -160,15 +128,7 @@ namespace MoreMountains.Tools
                 DisplayFrameCount = displayFrameCount;
             }
         }
-
-        /// <summary>
-        /// A list of all the debug logs (up to DebugLogMaxLength entries)
-        /// </summary>
         public static List<DebugLogItem> LogHistory = new List<DebugLogItem>(_logHistoryMaxLength);
-
-        /// <summary>
-        /// Returns a string with all log history condensed
-        /// </summary>
         public static string LogHistoryText
         {
             get
@@ -179,14 +139,11 @@ namespace MoreMountains.Tools
                 StringBuilder log = new StringBuilder();
                 for (int i = 0; i < LogHistory.Count; i++)
                 {
-                    // colors
                     if (!string.IsNullOrEmpty(LogHistory[i].Color))
                     {
                         colorPrefix = "<color=" + LogHistory[i].Color + ">";
                         colorSuffix = "</color>";
                     }
-
-                    // build output
                     if (LogHistory[i].DisplayFrameCount)
                     {
                         log.Append("<color=#82d3f9>[" + LogHistory[i].Framecount + "]</color> ");
@@ -198,20 +155,11 @@ namespace MoreMountains.Tools
                 return log.ToString();
             }
         }
-
-        /// <summary>
-        /// Clears the debug log
-        /// </summary>
         public static void DebugLogClear()
         {
             LogHistory.Clear();
             MMDebugLogEvent.Trigger(new DebugLogItem(null, "", Time.frameCount, Time.time, 0, false));
         }
-
-        /// <summary>
-        /// Outputs the message object to the console, prefixed with the current timestamp
-        /// </summary>
-        /// <param name="message">Message.</param>
         public static void DebugLogTime(object message, string color = "", int timePrecision = 3, bool displayFrameCount = true)
         {
             if (!DebugLogsEnabled)
@@ -221,8 +169,6 @@ namespace MoreMountains.Tools
 
             string callerObjectName = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Name;
             color = (color == "") ? "#00FFFF" : color;
-            
-            // colors
             string colorPrefix = "";
             string colorSuffix = "";
             if (!string.IsNullOrEmpty(color))
@@ -230,8 +176,6 @@ namespace MoreMountains.Tools
                 colorPrefix = "<color=" + color + ">";
                 colorSuffix = "</color>";
             }
-
-            // build output
             string output = "";
             if (displayFrameCount)
             {
@@ -240,28 +184,18 @@ namespace MoreMountains.Tools
             output += "<color=#f9a682>[" + MMTime.FloatToTimeString(Time.time, false, true, true, true) + "]</color> ";
             output += callerObjectName + " : ";
             output += colorPrefix + message + colorSuffix;
-
-            // we output to the console
             Debug.Log(output);
 
             DebugLogItem item = new DebugLogItem(message, color, Time.frameCount, Time.time, timePrecision, displayFrameCount);
-
-            // we add to our DebugLog 
             if (LogHistory.Count > _logHistoryMaxLength)
             {
                 LogHistory.RemoveAt(0);
             }
 
             LogHistory.Add(item);
-
-            // we trigger an event
             MMDebugLogEvent.Trigger(item);
 
         }
-
-        /// <summary>
-        /// An event used to broadcast debug logs
-        /// </summary>
         public struct MMDebugLogEvent
         {
             public delegate void Delegate(DebugLogItem item);
@@ -286,10 +220,6 @@ namespace MoreMountains.Tools
         #endregion
 
         #region EnableDisableDebugs
-
-        /// <summary>
-        /// whether or not debug logs (MMDebug.DebugLogTime, MMDebug.DebugOnScreen) should be displayed
-        /// </summary>
         public static bool DebugLogsEnabled
         {
             get
@@ -317,10 +247,6 @@ namespace MoreMountains.Tools
 	            _debugLogEnabled = value;
             }
         }
-
-        /// <summary>
-        /// whether or not debug draws should be executed
-        /// </summary>
         public static bool DebugDrawEnabled
         {
             get
@@ -350,11 +276,6 @@ namespace MoreMountains.Tools
 
         private const string _editorPrefsDebugLogs = "DebugLogsEnabled";
         private const string _editorPrefsDebugDraws = "DebugDrawsEnabled";
-
-        /// <summary>
-        /// Enables or disables debug logs 
-        /// </summary>
-        /// <param name="status"></param>
         public static void SetDebugLogsEnabled(bool status)
         {
             DebugLogsEnabled = status;
@@ -364,11 +285,6 @@ namespace MoreMountains.Tools
                 PlayerPrefs.SetInt(_editorPrefsDebugLogs, newStatus);
             #endif
         }
-
-        /// <summary>
-        /// Enables or disables debug draws
-        /// </summary>
-        /// <param name="status"></param>
         public static void SetDebugDrawEnabled(bool status)
         {
             DebugDrawEnabled = status;
@@ -382,17 +298,6 @@ namespace MoreMountains.Tools
         #endregion
 
         #region Casts
-
-        /// <summary>
-        /// Draws a debug ray in 2D and does the actual raycast
-        /// </summary>
-        /// <returns>The raycast hit.</returns>
-        /// <param name="rayOriginPoint">Ray origin point.</param>
-        /// <param name="rayDirection">Ray direction.</param>
-        /// <param name="rayDistance">Ray distance.</param>
-        /// <param name="mask">Mask.</param>
-        /// <param name="debug">If set to <c>true</c> debug.</param>
-        /// <param name="color">Color.</param>
         public static RaycastHit2D RayCast(Vector2 rayOriginPoint, Vector2 rayDirection, float rayDistance, LayerMask mask, Color color,bool drawGizmo=false)
 		{	
 			if (drawGizmo && DebugDrawEnabled) 
@@ -401,19 +306,6 @@ namespace MoreMountains.Tools
 			}
 			return Physics2D.Raycast(rayOriginPoint,rayDirection,rayDistance,mask);		
 		}
-
-        /// <summary>
-        /// Does a boxcast and draws a box gizmo
-        /// </summary>
-        /// <param name="origin"></param>
-        /// <param name="size"></param>
-        /// <param name="angle"></param>
-        /// <param name="direction"></param>
-        /// <param name="length"></param>
-        /// <param name="mask"></param>
-        /// <param name="color"></param>
-        /// <param name="drawGizmo"></param>
-        /// <returns></returns>
         public static RaycastHit2D BoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float length, LayerMask mask, Color color, bool drawGizmo = false)
         {
             if (drawGizmo && DebugDrawEnabled)
@@ -425,15 +317,15 @@ namespace MoreMountains.Tools
                 float halfSizeX = size.x / 2f;
                 float halfSizeY = size.y / 2f;
 
-                points[0] = rotation * (origin + (Vector2.left * halfSizeX) + (Vector2.up * halfSizeY)); // top left
-                points[1] = rotation * (origin + (Vector2.right * halfSizeX) + (Vector2.up * halfSizeY)); // top right
-                points[2] = rotation * (origin + (Vector2.right * halfSizeX) - (Vector2.up * halfSizeY)); // bottom right
-                points[3] = rotation * (origin + (Vector2.left * halfSizeX) - (Vector2.up * halfSizeY)); // bottom left
+                points[0] = rotation * (origin + (Vector2.left * halfSizeX) + (Vector2.up * halfSizeY));
+                points[1] = rotation * (origin + (Vector2.right * halfSizeX) + (Vector2.up * halfSizeY));
+                points[2] = rotation * (origin + (Vector2.right * halfSizeX) - (Vector2.up * halfSizeY));
+                points[3] = rotation * (origin + (Vector2.left * halfSizeX) - (Vector2.up * halfSizeY));
                 
-                points[4] = rotation * ((origin + Vector2.left * halfSizeX + Vector2.up * halfSizeY) + length * direction); // top left
-                points[5] = rotation * ((origin + Vector2.right * halfSizeX + Vector2.up * halfSizeY) + length * direction); // top right
-                points[6] = rotation * ((origin + Vector2.right * halfSizeX - Vector2.up * halfSizeY) + length * direction); // bottom right
-                points[7] = rotation * ((origin + Vector2.left * halfSizeX - Vector2.up * halfSizeY) + length * direction); // bottom left
+                points[4] = rotation * ((origin + Vector2.left * halfSizeX + Vector2.up * halfSizeY) + length * direction);
+                points[5] = rotation * ((origin + Vector2.right * halfSizeX + Vector2.up * halfSizeY) + length * direction);
+                points[6] = rotation * ((origin + Vector2.right * halfSizeX - Vector2.up * halfSizeY) + length * direction);
+                points[7] = rotation * ((origin + Vector2.left * halfSizeX - Vector2.up * halfSizeY) + length * direction);
                                 
                 Debug.DrawLine(points[0], points[1], color);
                 Debug.DrawLine(points[1], points[2], color);
@@ -453,18 +345,6 @@ namespace MoreMountains.Tools
             }
             return Physics2D.BoxCast(origin, size, angle, direction, length, mask);
         }
-
-        /// <summary>
-        /// Draws a debug ray without allocating memory
-        /// </summary>
-        /// <returns>The ray cast non alloc.</returns>
-        /// <param name="array">Array.</param>
-        /// <param name="rayOriginPoint">Ray origin point.</param>
-        /// <param name="rayDirection">Ray direction.</param>
-        /// <param name="rayDistance">Ray distance.</param>
-        /// <param name="mask">Mask.</param>
-        /// <param name="color">Color.</param>
-        /// <param name="drawGizmo">If set to <c>true</c> draw gizmo.</param>
         public static RaycastHit2D MonoRayCastNonAlloc(RaycastHit2D[] array, Vector2 rayOriginPoint, Vector2 rayDirection, float rayDistance, LayerMask mask, Color color,bool drawGizmo=false)
 		{	
 			if (drawGizmo && DebugDrawEnabled) 
@@ -477,18 +357,6 @@ namespace MoreMountains.Tools
 			}
 			return new RaycastHit2D();        	
 		}
-
-		/// <summary>
-		/// Draws a debug ray in 3D and does the actual raycast
-		/// </summary>
-		/// <returns>The raycast hit.</returns>
-		/// <param name="rayOriginPoint">Ray origin point.</param>
-		/// <param name="rayDirection">Ray direction.</param>
-		/// <param name="rayDistance">Ray distance.</param>
-		/// <param name="mask">Mask.</param>
-		/// <param name="debug">If set to <c>true</c> debug.</param>
-		/// <param name="color">Color.</param>
-		/// <param name="drawGizmo">If set to <c>true</c> draw gizmo.</param>
 		public static RaycastHit Raycast3D(Vector3 rayOriginPoint, Vector3 rayDirection, float rayDistance, LayerMask mask, Color color,bool drawGizmo=false)
 		{
 			if (drawGizmo && DebugDrawEnabled) 
@@ -503,15 +371,8 @@ namespace MoreMountains.Tools
         #endregion
 
         #region DebugOnScreen
-        
-        //public static MMConsole _console;
         public static MMDebugOnScreenConsole _console;
         private const string _debugConsolePrefabPath = "MMDebugOnScreenConsole";
-                
-        /// <summary>
-        /// Instantiates a MMConsole if there isn't one already, and adds the message in parameter to it.
-        /// </summary>
-        /// <param name="message">Message.</param>
         public static void DebugOnScreen(string message)
         {
             if (!DebugLogsEnabled)
@@ -522,13 +383,6 @@ namespace MoreMountains.Tools
             InstantiateOnScreenConsole();
 			_console.AddMessage(message, "", 30);
 		}
-
-		/// <summary>
-		/// Instantiates a MMConsole if there isn't one already, and displays the label in bold and its value next to it.
-		/// </summary>
-		/// <param name="label">Label.</param>
-		/// <param name="value">Value.</param>
-		/// <param name="fontSize">The optional font size.</param>
 		public static void DebugOnScreen(string label, object value, int fontSize=25)
         {
             if (!DebugLogsEnabled)
@@ -539,10 +393,6 @@ namespace MoreMountains.Tools
             InstantiateOnScreenConsole(fontSize);
 			_console.AddMessage(label, value, fontSize);
 		}
-
-		/// <summary>
-		/// Instantiates the on screen console if there isn't one already
-		/// </summary>
 		public static void InstantiateOnScreenConsole(int fontSize=25)
 		{
             if (!DebugLogsEnabled)
@@ -552,24 +402,17 @@ namespace MoreMountains.Tools
 
             if (_console == null)
             {
-	            // we try to find one in the scene
 	            _console = (MMDebugOnScreenConsole) GameObject.FindObjectOfType(typeof(MMDebugOnScreenConsole));
             }
 
 
             if (_console == null)
-			{	
-                // we instantiate the console
+			{
                 GameObject loaded = UnityEngine.Object.Instantiate(Resources.Load(_debugConsolePrefabPath) as GameObject);
                 loaded.name = "MMDebugOnScreenConsole";
                 _console = loaded.GetComponent<MMDebugOnScreenConsole>();                
             }
 		}
-
-		/// <summary>
-		/// Use this method to specify what console to use
-		/// </summary>
-		/// <param name="newConsole"></param>
 		public static void SetOnScreenConsole(MMDebugOnScreenConsole newConsole)
 		{
 			_console = newConsole;
@@ -578,13 +421,6 @@ namespace MoreMountains.Tools
         #endregion
 
         #region DebugDraw
-
-        /// <summary>
-        /// Draws a gizmo arrow going from the origin position and along the direction Vector3
-        /// </summary>
-        /// <param name="origin">Origin.</param>
-        /// <param name="direction">Direction.</param>
-        /// <param name="color">Color.</param>
         public static void DrawGizmoArrow(Vector3 origin, Vector3 direction, Color color, float arrowHeadLength = 3f, float arrowHeadAngle = 25f)
 	    {
             if (!DebugDrawEnabled)
@@ -597,13 +433,6 @@ namespace MoreMountains.Tools
 	       
 			DrawArrowEnd(true, origin, direction, color, arrowHeadLength, arrowHeadAngle);
 	    }
-
-	    /// <summary>
-		/// Draws a debug arrow going from the origin position and along the direction Vector3
-	    /// </summary>
-	    /// <param name="origin">Origin.</param>
-	    /// <param name="direction">Direction.</param>
-	    /// <param name="color">Color.</param>
 	    public static void DebugDrawArrow(Vector3 origin, Vector3 direction, Color color, float arrowHeadLength = 0.2f, float arrowHeadAngle = 35f)
         {
             if (!DebugDrawEnabled)
@@ -615,16 +444,6 @@ namespace MoreMountains.Tools
 	       
 			DrawArrowEnd(false,origin,direction,color,arrowHeadLength,arrowHeadAngle);
 	    }
-
-		/// <summary>
-		/// Draws a debug arrow going from the origin position and along the direction Vector3
-		/// </summary>
-		/// <param name="origin">Origin.</param>
-		/// <param name="direction">Direction.</param>
-		/// <param name="color">Color.</param>
-		/// <param name="arrowLength">Arrow length.</param>
-		/// <param name="arrowHeadLength">Arrow head length.</param>
-		/// <param name="arrowHeadAngle">Arrow head angle.</param>
 		public static void DebugDrawArrow(Vector3 origin, Vector3 direction, Color color, float arrowLength, float arrowHeadLength = 0.20f, float arrowHeadAngle = 35.0f)
         {
             if (!DebugDrawEnabled)
@@ -636,13 +455,6 @@ namespace MoreMountains.Tools
 
 			DrawArrowEnd(false,origin,direction * arrowLength,color,arrowHeadLength,arrowHeadAngle);
 		}
-
-		/// <summary>
-		/// Draws a debug cross of the specified size and color at the specified point
-		/// </summary>
-		/// <param name="spot">Spot.</param>
-		/// <param name="crossSize">Cross size.</param>
-		/// <param name="color">Color.</param>
 		public static void DebugDrawCross (Vector3 spot, float crossSize, Color color)
         {
             if (!DebugDrawEnabled)
@@ -669,16 +481,6 @@ namespace MoreMountains.Tools
             tempDirection.z = 0;
             Debug.DrawRay (tempOrigin, tempDirection * crossSize, color);
 		}
-
-		/// <summary>
-		/// Draws the arrow end for DebugDrawArrow
-		/// </summary>
-		/// <param name="drawGizmos">If set to <c>true</c> draw gizmos.</param>
-		/// <param name="arrowEndPosition">Arrow end position.</param>
-		/// <param name="direction">Direction.</param>
-		/// <param name="color">Color.</param>
-		/// <param name="arrowHeadLength">Arrow head length.</param>
-		/// <param name="arrowHeadAngle">Arrow head angle.</param>
 		private static void DrawArrowEnd (bool drawGizmos, Vector3 arrowEndPosition, Vector3 direction, Color color, float arrowHeadLength = 0.25f, float arrowHeadAngle = 40.0f)
         {
             if (!DebugDrawEnabled)
@@ -710,12 +512,6 @@ namespace MoreMountains.Tools
 	            Debug.DrawRay (arrowEndPosition + direction, down * arrowHeadLength, color);
 	        }
 	    }
-
-		/// <summary>
-		/// Draws handles to materialize the bounds of an object on screen.
-		/// </summary>
-		/// <param name="bounds">Bounds.</param>
-		/// <param name="color">Color.</param>
 		public static void DrawHandlesBounds(Bounds bounds, Color color)
         {
             if (!DebugDrawEnabled)
@@ -727,14 +523,14 @@ namespace MoreMountains.Tools
             Vector3 boundsCenter = bounds.center;
 		    Vector3 boundsExtents = bounds.extents;
 		  
-			Vector3 v3FrontTopLeft     = new Vector3(boundsCenter.x - boundsExtents.x, boundsCenter.y + boundsExtents.y, boundsCenter.z - boundsExtents.z);  // Front top left corner
-			Vector3 v3FrontTopRight    = new Vector3(boundsCenter.x + boundsExtents.x, boundsCenter.y + boundsExtents.y, boundsCenter.z - boundsExtents.z);  // Front top right corner
-			Vector3 v3FrontBottomLeft  = new Vector3(boundsCenter.x - boundsExtents.x, boundsCenter.y - boundsExtents.y, boundsCenter.z - boundsExtents.z);  // Front bottom left corner
-			Vector3 v3FrontBottomRight = new Vector3(boundsCenter.x + boundsExtents.x, boundsCenter.y - boundsExtents.y, boundsCenter.z - boundsExtents.z);  // Front bottom right corner
-			Vector3 v3BackTopLeft      = new Vector3(boundsCenter.x - boundsExtents.x, boundsCenter.y + boundsExtents.y, boundsCenter.z + boundsExtents.z);  // Back top left corner
-			Vector3 v3BackTopRight     = new Vector3(boundsCenter.x + boundsExtents.x, boundsCenter.y + boundsExtents.y, boundsCenter.z + boundsExtents.z);  // Back top right corner
-			Vector3 v3BackBottomLeft   = new Vector3(boundsCenter.x - boundsExtents.x, boundsCenter.y - boundsExtents.y, boundsCenter.z + boundsExtents.z);  // Back bottom left corner
-			Vector3 v3BackBottomRight  = new Vector3(boundsCenter.x + boundsExtents.x, boundsCenter.y - boundsExtents.y, boundsCenter.z + boundsExtents.z);  // Back bottom right corner
+			Vector3 v3FrontTopLeft     = new Vector3(boundsCenter.x - boundsExtents.x, boundsCenter.y + boundsExtents.y, boundsCenter.z - boundsExtents.z);
+			Vector3 v3FrontTopRight    = new Vector3(boundsCenter.x + boundsExtents.x, boundsCenter.y + boundsExtents.y, boundsCenter.z - boundsExtents.z);
+			Vector3 v3FrontBottomLeft  = new Vector3(boundsCenter.x - boundsExtents.x, boundsCenter.y - boundsExtents.y, boundsCenter.z - boundsExtents.z);
+			Vector3 v3FrontBottomRight = new Vector3(boundsCenter.x + boundsExtents.x, boundsCenter.y - boundsExtents.y, boundsCenter.z - boundsExtents.z);
+			Vector3 v3BackTopLeft      = new Vector3(boundsCenter.x - boundsExtents.x, boundsCenter.y + boundsExtents.y, boundsCenter.z + boundsExtents.z);
+			Vector3 v3BackTopRight     = new Vector3(boundsCenter.x + boundsExtents.x, boundsCenter.y + boundsExtents.y, boundsCenter.z + boundsExtents.z);
+			Vector3 v3BackBottomLeft   = new Vector3(boundsCenter.x - boundsExtents.x, boundsCenter.y - boundsExtents.y, boundsCenter.z + boundsExtents.z);
+			Vector3 v3BackBottomRight  = new Vector3(boundsCenter.x + boundsExtents.x, boundsCenter.y - boundsExtents.y, boundsCenter.z + boundsExtents.z);
 
 
 			Handles.color = color;
@@ -755,14 +551,6 @@ namespace MoreMountains.Tools
 			Handles.DrawLine (v3FrontBottomLeft, v3BackBottomLeft);  
 #endif
 		}
-
-        /// <summary>
-        /// Draws a solid rectangle at the specified position and size, and of the specified colors
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="size"></param>
-        /// <param name="borderColor"></param>
-        /// <param name="solidColor"></param>
         public static void DrawSolidRectangle(Vector3 position, Vector3 size, Color borderColor, Color solidColor)
         {
             if (!DebugDrawEnabled)
@@ -783,13 +571,6 @@ namespace MoreMountains.Tools
             
 #endif
         }
-        
-        /// <summary>
-        /// Draws a gizmo sphere of the specified size and color at a position
-        /// </summary>
-        /// <param name="position">Position.</param>
-        /// <param name="size">Size.</param>
-        /// <param name="color">Color.</param>
         public static void DrawGizmoPoint(Vector3 position, float size, Color color)
         {
             if (!DebugDrawEnabled)
@@ -799,13 +580,6 @@ namespace MoreMountains.Tools
             Gizmos.color = color;
 			Gizmos.DrawWireSphere(position,size);
 		}
-
-		/// <summary>
-		/// Draws a cube at the specified position, and of the specified color and size
-		/// </summary>
-		/// <param name="position">Position.</param>
-		/// <param name="color">Color.</param>
-		/// <param name="size">Size.</param>
 		public static void DrawCube (Vector3 position, Color color, Vector3 size)
         {
             if (!DebugDrawEnabled)
@@ -832,14 +606,6 @@ namespace MoreMountains.Tools
 			Debug.DrawLine (points[2], points[3], color ); 
 			Debug.DrawLine (points[3], points[0], color ); 
 		}
-
-        /// <summary>
-        /// Draws a cube at the specified position, offset, and of the specified size
-        /// </summary>
-        /// <param name="transform"></param>
-        /// <param name="offset"></param>
-        /// <param name="cubeSize"></param>
-        /// <param name="wireOnly"></param>
         public static void DrawGizmoCube(Transform transform, Vector3 offset, Vector3 cubeSize, bool wireOnly)
         {
             if (!DebugDrawEnabled)
@@ -858,13 +624,6 @@ namespace MoreMountains.Tools
                 Gizmos.DrawCube(offset, cubeSize);
             }
         }
-
-		/// <summary>
-		/// Draws a gizmo rectangle
-		/// </summary>
-		/// <param name="center">Center.</param>
-		/// <param name="size">Size.</param>
-		/// <param name="color">Color.</param>
 		public static void DrawGizmoRectangle(Vector2 center, Vector2 size, Color color)
         {
             if (!DebugDrawEnabled)
@@ -884,13 +643,6 @@ namespace MoreMountains.Tools
 			Gizmos.DrawLine(v3BottomRight,v3BottomLeft);
 			Gizmos.DrawLine(v3BottomLeft,v3TopLeft);
         }
-
-        /// <summary>
-        /// Draws a gizmo rectangle
-        /// </summary>
-        /// <param name="center">Center.</param>
-        /// <param name="size">Size.</param>
-        /// <param name="color">Color.</param>
         public static void DrawGizmoRectangle(Vector2 center, Vector2 size, Matrix4x4 rotationMatrix, Color color)
         {
             if (!DebugDrawEnabled)
@@ -914,12 +666,6 @@ namespace MoreMountains.Tools
             Gizmos.DrawLine(v3BottomLeft, v3TopLeft);
             GL.PopMatrix();
         }
-
-        /// <summary>
-        /// Draws a rectangle based on a Rect and color
-        /// </summary>
-        /// <param name="rectangle">Rectangle.</param>
-        /// <param name="color">Color.</param>
         public static void DrawRectangle (Rect rectangle, Color color)
         {
             if (!DebugDrawEnabled)
@@ -931,14 +677,7 @@ namespace MoreMountains.Tools
 			Vector3 scale = new Vector3 (rectangle.width, rectangle.height, 0.0f );
 
 			MMDebug.DrawRectangle (pos, color, scale); 
-		}	
-
-		/// <summary>
-		/// Draws a rectangle of the specified color and size at the specified position
-		/// </summary>
-		/// <param name="position">Position.</param>
-		/// <param name="color">Color.</param>
-		/// <param name="size">Size.</param>
+		}
 		public static void DrawRectangle  (Vector3 position, Color color, Vector3 size)
         {
             if (!DebugDrawEnabled)
@@ -961,13 +700,6 @@ namespace MoreMountains.Tools
 			Debug.DrawLine (points[2], points[3], color ); 
 			Debug.DrawLine (points[3], points[0], color ); 
 		}
-        
-        /// <summary>
-        /// Draws a point of the specified color and size at the specified position
-        /// </summary>
-        /// <param name="pos">Position.</param>
-        /// <param name="col">Col.</param>
-        /// <param name="scale">Scale.</param>
         public static void DrawPoint (Vector3 position, Color color, float size)
         {
             if (!DebugDrawEnabled)

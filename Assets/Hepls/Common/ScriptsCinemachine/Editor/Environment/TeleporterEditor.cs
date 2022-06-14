@@ -5,9 +5,6 @@ using UnityEditor;
 using MoreMountains.Tools;
 
 namespace MoreMountains.TopDownEngine {
-  /// <summary>
-  /// Custom editor for Teleporters that draws their name in scene view
-  /// </summary>
   [CanEditMultipleObjects]
   [CustomEditor(typeof(Teleporter), true)]
   [InitializeOnLoad]
@@ -17,8 +14,6 @@ namespace MoreMountains.TopDownEngine {
       Teleporter t = (teleporter as Teleporter);
 
       GUIStyle style = new GUIStyle();
-
-      // draws the path item number
       style.normal.textColor = Color.cyan;
       style.alignment = TextAnchor.UpperCenter;
       float verticalOffset = (t.transform.lossyScale.x > 0) ? 1f : 2f;

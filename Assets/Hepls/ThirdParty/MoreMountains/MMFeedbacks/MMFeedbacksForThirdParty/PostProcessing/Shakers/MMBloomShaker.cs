@@ -6,35 +6,25 @@ using MoreMountains.Feedbacks;
 
 namespace MoreMountains.FeedbacksForThirdParty
 {
-    /// <summary>
-    /// Add this class to a Camera with a bloom post processing and it'll be able to "shake" its values by getting events
-    /// </summary>
     [AddComponentMenu("More Mountains/Feedbacks/Shakers/PostProcessing/MMBloomShaker")]
     [RequireComponent(typeof(PostProcessVolume))]
     public class MMBloomShaker : MMShaker
     {
-        /// whether or not to add to the initial value
         public bool RelativeValues = true;
 
         [Header("Intensity")]
-        /// the curve used to animate the intensity value on
         [Tooltip("the curve used to animate the intensity value on")]
         public AnimationCurve ShakeIntensity = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-        /// the value to remap the curve's 0 to
         [Tooltip("the value to remap the curve's 0 to")]
         public float RemapIntensityZero = 0f;
-        /// the value to remap the curve's 1 to
         [Tooltip("the value to remap the curve's 1 to")]
         public float RemapIntensityOne = 10f;
 
         [Header("Threshold")]
-        /// the curve used to animate the threshold value on
         [Tooltip("the curve used to animate the threshold value on")]
         public AnimationCurve ShakeThreshold = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-        /// the value to remap the curve's 0 to
         [Tooltip("the value to remap the curve's 0 to")]
         public float RemapThresholdZero = 0f;
-        /// the value to remap the curve's 1 to
         [Tooltip("the value to remap the curve's 1 to")]
         public float RemapThresholdOne = 0f;
 
@@ -50,20 +40,12 @@ namespace MoreMountains.FeedbacksForThirdParty
         protected AnimationCurve _originalShakeThreshold;
         protected float _originalRemapThresholdZero;
         protected float _originalRemapThresholdOne;
-
-        /// <summary>
-        /// On init we initialize our values
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
             _volume = this.gameObject.GetComponent<PostProcessVolume>();
             _volume.profile.TryGetSettings(out _bloom);
         }
-
-        /// <summary>
-        /// Shakes values over time
-        /// </summary>
         protected override void Shake()
         {
             float newIntensity = ShakeFloat(ShakeIntensity, RemapIntensityZero, RemapIntensityOne, RelativeValues, _initialIntensity);
@@ -71,25 +53,11 @@ namespace MoreMountains.FeedbacksForThirdParty
             float newThreshold = ShakeFloat(ShakeThreshold, RemapThresholdZero, RemapThresholdOne, RelativeValues, _initialThreshold);
             _bloom.threshold.Override(newThreshold);
         }
-
-        /// <summary>
-        /// Collects initial values on the target
-        /// </summary>
         protected override void GrabInitialValues()
         {
             _initialIntensity = _bloom.intensity;
             _initialThreshold = _bloom.threshold;
         }
-
-        /// <summary>
-        /// When we get the appropriate event, we trigger a shake
-        /// </summary>
-        /// <param name="intensity"></param>
-        /// <param name="duration"></param>
-        /// <param name="amplitude"></param>
-        /// <param name="relativeIntensity"></param>
-        /// <param name="feedbacksIntensity"></param>
-        /// <param name="channel"></param>
         public virtual void OnBloomShakeEvent(AnimationCurve intensity, float duration, float remapMin, float remapMax,
             AnimationCurve threshold, float remapThresholdMin, float remapThresholdMax, bool relativeIntensity = false,
             float feedbacksIntensity = 1.0f, int channel = 0, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true, bool forwardDirection = true, TimescaleModes timescaleMode = TimescaleModes.Scaled, bool stop = false)
@@ -133,20 +101,12 @@ namespace MoreMountains.FeedbacksForThirdParty
 
             Play();
         }
-
-        /// <summary>
-        /// Resets the target's values
-        /// </summary>
         protected override void ResetTargetValues()
         {
             base.ResetTargetValues();
             _bloom.intensity.Override(_initialIntensity);
             _bloom.threshold.Override(_initialThreshold);
         }
-
-        /// <summary>
-        /// Resets the shaker's values
-        /// </summary>
         protected override void ResetShakerValues()
         {
             base.ResetShakerValues();
@@ -159,29 +119,17 @@ namespace MoreMountains.FeedbacksForThirdParty
             RemapThresholdZero = _originalRemapThresholdZero;
             RemapThresholdOne = _originalRemapThresholdOne;
         }
-
-        /// <summary>
-        /// Starts listening for events
-        /// </summary>
         public override void StartListening()
         {
             base.StartListening();
             MMBloomShakeEvent.Register(OnBloomShakeEvent);
         }
-
-        /// <summary>
-        /// Stops listening for events
-        /// </summary>
         public override void StopListening()
         {
             base.StopListening();
             MMBloomShakeEvent.Unregister(OnBloomShakeEvent);
         }
     }
-
-    /// <summary>
-    /// An event used to trigger vignette shakes
-    /// </summary>
     public struct MMBloomShakeEvent
     {
         public delegate void Delegate(AnimationCurve intensity, float duration, float remapMin, float remapMax,

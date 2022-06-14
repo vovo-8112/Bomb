@@ -10,64 +10,39 @@ using UnityEditor;
 
 namespace MoreMountains.Tools 
 {
-    /// <summary>
-    /// Add this class to a camera and you'll be able to pilot it using the horizontal/vertical axis, and up/down controls set via its inspector. 
-    /// It's got an activation button, a run button, and an option to slow down time (this will require a MMTimeManager present in the scene)
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/Camera/MMGhostCamera")]
     public class MMGhostCamera : MonoBehaviour
     {
         [Header("Speed")]
-        /// the camera's movement speed
         public float MovementSpeed = 10f;
-        /// the factor by which to multiply the speed when "running"
         public float RunFactor = 4f;
-        /// the movement's acceleration
         public float Acceleration = 5f;
-        /// the movement's deceleration
         public float Deceleration = 5f;
-        /// the speed at which the camera rotates
         public float RotationSpeed = 40f;
 
         [Header("Controls")]
-        /// the button used to toggle the camera on/off
         public KeyCode ActivateButton = KeyCode.RightShift;
-        /// the name of the InputManager's horizontal axis
         public string HorizontalAxisName = "Horizontal";
-        /// the name of the InputManager's vertical axis
         public string VerticalAxisName = "Vertical";
-        /// the button to use to go up
         public KeyCode UpButton = KeyCode.Space;
-        /// the button to use to go down
         public KeyCode DownButton = KeyCode.C;
-        /// the button to use to switch between mobile and desktop control mode
         public KeyCode ControlsModeSwitch = KeyCode.M;
-        /// the button used to modify the timescale
         public KeyCode TimescaleModificationButton = KeyCode.F;
-        /// the button used to run while it's pressed
         public KeyCode RunButton = KeyCode.LeftShift;
-        /// the mouse's sensitivity
         public float MouseSensitivity = 0.02f;
-        /// the right stick sensitivity
         public float MobileStickSensitivity = 2f;
 
         [Header("Timescale Modification")]
-        /// the amount to modify the timescale by when pressing the timescale button
         public float TimescaleModifier = 0.5f;
 
 
         [Header("Settings")]
-        /// whether or not this camera should activate on start
         public bool AutoActivation = true;
-        /// whether or not movement (up/down/left/right/forward/backward) is enabled
         public bool MovementEnabled = true;
-        // whether or not rotation is enabled
         public bool RotationEnabled = true;
         [MMReadOnly]
-        /// whether this camera is active or not right now
         public bool Active = false;
         [MMReadOnly]
-        /// whether time is being altered right now or not
         public bool TimeAltered = false;
 
         [Header("Virtual Joysticks")]
@@ -89,10 +64,6 @@ namespace MoreMountains.Tools
         protected Vector3 _movementVector = Vector3.zero;
         protected float _speedMultiplier;
         protected Vector3 _newEulerAngles;
-
-        /// <summary>
-        /// On start, activate our camera if needed
-        /// </summary>
         protected virtual void Start()
         {
             if (AutoActivation)
@@ -100,10 +71,6 @@ namespace MoreMountains.Tools
                 ToggleFreeCamera();
             }
         }
-
-        /// <summary>
-        /// On Update we grab our input and move accordingly
-        /// </summary>
         protected virtual void Update()
         {
             if (Input.GetKeyDown(ActivateButton))
@@ -123,10 +90,6 @@ namespace MoreMountains.Tools
 
             HandleMobileControls();
         }
-
-        /// <summary>
-        /// Grabs and stores the various input values
-        /// </summary>
         protected virtual void GetInput()
         {
             if (!UseMobileControls || (LeftStick == null))
@@ -159,10 +122,6 @@ namespace MoreMountains.Tools
                 ToggleSlowMotion();
             }
         }
-
-        /// <summary>
-        /// Turns controls to mobile if needed
-        /// </summary>
         protected virtual void HandleMobileControls()
         {
             if (Input.GetKeyDown(ControlsModeSwitch))
@@ -188,10 +147,6 @@ namespace MoreMountains.Tools
                 RightStickContainer?.SetActive(UseMobileControls);
             }
         }
-
-        /// <summary>
-        /// Computes the new position
-        /// </summary>
         protected virtual void Translate()
         {
             if (!MovementEnabled)
@@ -225,10 +180,6 @@ namespace MoreMountains.Tools
                 _movementVector = Vector3.ClampMagnitude(_movementVector, MovementSpeed * _speedMultiplier);
             }
         }
-
-        /// <summary>
-        /// Computes the new rotation
-        /// </summary>
         protected virtual void Rotate()
         {
             if (!RotationEnabled)
@@ -250,19 +201,11 @@ namespace MoreMountains.Tools
 
             _newEulerAngles = Vector3.Lerp(this.transform.eulerAngles, _newEulerAngles, Time.deltaTime * RotationSpeed);
         }
-
-        /// <summary>
-        /// Modifies the camera's transform's position and rotation
-        /// </summary>
         protected virtual void Move()
         {
             transform.eulerAngles = _newEulerAngles;
             transform.position += transform.rotation * _movementVector * Time.deltaTime;
         }
-
-        /// <summary>
-        /// Toggles the timescale modification
-        /// </summary>
         protected virtual void ToggleSlowMotion()
         {
             TimeAltered = !TimeAltered;
@@ -276,10 +219,6 @@ namespace MoreMountains.Tools
 
             }
         }
-
-        /// <summary>
-        /// Toggles the camera's active state
-        /// </summary>
         protected virtual void ToggleFreeCamera()
         {
             Active = !Active;

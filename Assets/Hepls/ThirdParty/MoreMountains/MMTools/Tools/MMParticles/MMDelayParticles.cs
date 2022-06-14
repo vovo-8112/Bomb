@@ -5,18 +5,12 @@ using UnityEngine;
 namespace MoreMountains.Tools
 {
 	[ExecuteAlways]
-    /// <summary>
-    /// MM delay particles.
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/Particles/MMDelayParticles")]
     public class MMDelayParticles : MonoBehaviour 
 	{
 		[Header("Delay")]
-		/// the duration of the delay, in seconds
 		public float Delay;
-		/// if this is true, this will delay by the same amount all children particle systems of this object
 		public bool DelayChildren = true;
-		/// if this is true, the delay will be applied on Start
 		public bool ApplyDelayOnStart = false;
 
 		[MMInspectorButtonAttribute("ApplyDelay")]

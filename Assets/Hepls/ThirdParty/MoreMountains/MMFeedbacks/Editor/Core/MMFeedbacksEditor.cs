@@ -5,24 +5,13 @@ using UnityEditor;
 using UnityEngine;
 
 namespace MoreMountains.Feedbacks {
-  /// <summary>
-  /// A custom editor displaying a foldable list of MMFeedbacks, a dropdown to add more, as well as test buttons to test your feedbacks at runtime
-  /// </summary>
   [CustomEditor(typeof(MMFeedbacks))]
   public class MMFeedbacksEditor : Editor {
-    /// <summary>
-    /// A data structure to store types and names
-    /// </summary>
     public class FeedbackTypePair {
       public System.Type FeedbackType;
       public string FeedbackName;
     }
-
-    /// <summary>
-    /// A helper class to copy and paste feedback properties
-    /// </summary>
     static class FeedbackCopy {
-      // Single Copy --------------------------------------------------------------------
 
       static public System.Type Type { get; private set; }
       static List<SerializedProperty> Properties = new List<SerializedProperty>();
@@ -64,8 +53,6 @@ namespace MoreMountains.Feedbacks {
       static public bool HasCopy() {
         return Properties != null && Properties.Count > 0;
       }
-
-      // Multiple Copy ----------------------------------------------------------
 
       static public void CopyAll(MMFeedbacks sourceFeedbacks) {
         MMFeedbacksConfiguration.Instance._mmFeedbacks = sourceFeedbacks;
@@ -126,12 +113,7 @@ namespace MoreMountains.Feedbacks {
     private static bool _eventsMenuDropdown;
     protected GUIStyle _directionButtonStyle;
     protected GUIStyle _playingStyle;
-
-    /// <summary>
-    /// On Enable, grabs properties and initializes the add feedback dropdown's contents
-    /// </summary>
     void OnEnable() {
-      // Get properties
       _targetMMFeedbacks = target as MMFeedbacks;
       _mmfeedbacks = serializedObject.FindProperty("Feedbacks");
       _mmfeedbacksInitializationMode = serializedObject.FindProperty("InitializationMode");
@@ -148,26 +130,16 @@ namespace MoreMountains.Feedbacks {
       _mmfeedbacksFeedbacksIntensity = serializedObject.FindProperty("FeedbacksIntensity");
 
       _mmfeedbacksEvents = serializedObject.FindProperty("Events");
-
-      // store GUI bg color
       _originalBackgroundColor = GUI.backgroundColor;
-
-      // Repair routine to catch feedbacks that may have escaped due to Unity's serialization issues
       RepairRoutine();
-
-      // Create editors
       _editors = new Dictionary<MMFeedback, Editor>();
       for (int i = 0; i < _mmfeedbacks.arraySize; i++) {
         AddEditor(_mmfeedbacks.GetArrayElementAtIndex(i).objectReferenceValue as MMFeedback);
       }
-
-      // Retrieve available feedbacks
       List<System.Type> types = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
         from assemblyType in domainAssembly.GetTypes()
         where assemblyType.IsSubclassOf(typeof(MMFeedback))
         select assemblyType).ToList();
-
-      // Create display list from types
       List<string> typeNames = new List<string>();
       for (int i = 0; i < types.Count; i++) {
         FeedbackTypePair newType = new FeedbackTypePair();
@@ -198,10 +170,6 @@ namespace MoreMountains.Feedbacks {
       _playingStyle = new GUIStyle();
       _playingStyle.normal.textColor = Color.yellow;
     }
-
-    /// <summary>
-    /// Calls the repair routine if needed
-    /// </summary>
     protected virtual void RepairRoutine() {
       _targetMMFeedbacks = target as MMFeedbacks;
       if ((_targetMMFeedbacks.SafeMode == MMFeedbacks.SafeModes.EditorOnly) ||
@@ -211,10 +179,6 @@ namespace MoreMountains.Feedbacks {
 
       serializedObject.ApplyModifiedProperties();
     }
-
-    /// <summary>
-    /// Draws the inspector, complete with helpbox, init mode selection, list of feedbacks, feedback selection and test buttons 
-    /// </summary>
     public override void OnInspectorGUI() {
       var e = Event.current;
       serializedObject.Update();
@@ -239,8 +203,6 @@ namespace MoreMountains.Feedbacks {
       }
 
       Rect helpBoxRect = GUILayoutUtility.GetLastRect();
-
-      // Settings dropdown -------------------------------------------------------------------------------------
 
       _settingsMenuDropdown = EditorGUILayout.Foldout(_settingsMenuDropdown, "Settings", true, EditorStyles.foldout);
       if (_settingsMenuDropdown) {
@@ -276,8 +238,6 @@ namespace MoreMountains.Feedbacks {
         EditorGUILayout.PropertyField(_mmfeedbacksEvents);
       }
 
-      // Duration ----------------------------------------------------------------------------------------------
-
       float durationRectWidth = 70f;
       Rect durationRect = new Rect(helpBoxRect.xMax - durationRectWidth, helpBoxRect.yMax + 6, durationRectWidth, 17f);
       durationRect.xMin = helpBoxRect.xMax - durationRectWidth;
@@ -288,8 +248,6 @@ namespace MoreMountains.Feedbacks {
         playingRectWidth, 17f);
       playingRect.xMin = helpBoxRect.xMax - durationRectWidth - playingRectWidth;
       playingRect.xMax = helpBoxRect.xMax;
-
-      // Direction ----------------------------------------------------------------------------------------------
 
       float directionRectWidth = 16f;
       Rect directionRect =
@@ -319,28 +277,20 @@ namespace MoreMountains.Feedbacks {
         }
       }
 
-      // Draw list ------------------------------------------------------------------------------------------
-
       MMFeedbackStyling.DrawSection("Feedbacks");
 
       for (int i = 0; i < _mmfeedbacks.arraySize; i++) {
         MMFeedbackStyling.DrawSplitter();
 
         SerializedProperty property = _mmfeedbacks.GetArrayElementAtIndex(i);
-
-        // Failsafe but should not happen
         if (property.objectReferenceValue == null) {
           continue;
         }
-
-        // Retrieve feedback
 
         MMFeedback feedback = property.objectReferenceValue as MMFeedback;
         feedback.hideFlags = _debugView ? HideFlags.None : HideFlags.HideInInspector;
 
         Undo.RecordObject(feedback, "Modified Feedback");
-
-        // Draw header
 
         int id = i;
         bool isExpanded = property.isExpanded;
@@ -370,7 +320,6 @@ namespace MoreMountains.Feedbacks {
             else
               menu.AddDisabledItem(new GUIContent("Play"));
             menu.AddSeparator(null);
-            //menu.AddItem(new GUIContent("Reset"), false, () => ResetFeedback(id));
             menu.AddItem(new GUIContent("Remove"), false, () => RemoveFeedback(id));
             menu.AddSeparator(null);
             menu.AddItem(new GUIContent("Copy"), false, () => CopyFeedback(id));
@@ -387,8 +336,6 @@ namespace MoreMountains.Feedbacks {
           _targetMMFeedbacks
         );
 
-        // Check if we start dragging this feedback
-
         switch (e.type) {
           case EventType.MouseDown:
             if (headerRect.Contains(e.mousePosition)) {
@@ -401,14 +348,10 @@ namespace MoreMountains.Feedbacks {
             break;
         }
 
-        // Draw blue rect if feedback is being dragged
-
         if (_draggedStartID == i && headerRect != Rect.zero) {
           Color color = new Color(0, 1, 1, 0.2f);
           EditorGUI.DrawRect(headerRect, color);
         }
-
-        // If hovering at the top of the feedback while dragging one, check where the feedback should be dropped : top or bottom
 
         if (headerRect.Contains(e.mousePosition)) {
           if (_draggedStartID >= 0) {
@@ -421,8 +364,6 @@ namespace MoreMountains.Feedbacks {
               _draggedEndID = i + 1;
           }
         }
-
-        // If expanded, draw feedback editor
 
         property.isExpanded = isExpanded;
         if (isExpanded) {
@@ -471,8 +412,6 @@ namespace MoreMountains.Feedbacks {
         }
       }
 
-      // Draw add new item
-
       if (_mmfeedbacks.arraySize > 0) {
         MMFeedbackStyling.DrawSplitter();
       }
@@ -481,14 +420,11 @@ namespace MoreMountains.Feedbacks {
 
       EditorGUILayout.BeginHorizontal();
       {
-        // Feedback list
 
         int newItem = EditorGUILayout.Popup(0, _typeDisplays) - 1;
         if (newItem >= 0) {
           AddFeedback(_typesAndNames[newItem].FeedbackType);
         }
-
-        // Paste feedback copy as new
 
         if (FeedbackCopy.HasCopy()) {
           if (GUILayout.Button("Paste as new", EditorStyles.miniButton,
@@ -514,8 +450,6 @@ namespace MoreMountains.Feedbacks {
 
       EditorGUILayout.EndHorizontal();
 
-      // Reorder
-
       if (_draggedStartID >= 0 && _draggedEndID >= 0) {
         if (_draggedEndID != _draggedStartID) {
           if (_draggedEndID > _draggedStartID)
@@ -537,8 +471,6 @@ namespace MoreMountains.Feedbacks {
         }
       }
 
-      // Clean up
-
       bool wasRemoved = false;
       for (int i = _mmfeedbacks.arraySize - 1; i >= 0; i--) {
         if (_mmfeedbacks.GetArrayElementAtIndex(i).objectReferenceValue == null) {
@@ -556,25 +488,16 @@ namespace MoreMountains.Feedbacks {
         }
       }
 
-      // Apply changes
-
       serializedObject.ApplyModifiedProperties();
 
-      // Draw debug
-
       MMFeedbackStyling.DrawSection("All Feedbacks Debug");
-
-      // Testing buttons
 
       EditorGUI.BeginDisabledGroup(!Application.isPlaying);
       EditorGUILayout.BeginHorizontal();
       {
-        // initialize button
         if (GUILayout.Button("Initialize", EditorStyles.miniButtonLeft)) {
           (target as MMFeedbacks).Initialization();
         }
-
-        // play button
         _originalBackgroundColor = GUI.backgroundColor;
         GUI.backgroundColor = _playButtonColor;
         if (GUILayout.Button("Play", EditorStyles.miniButtonMid)) {
@@ -582,32 +505,22 @@ namespace MoreMountains.Feedbacks {
         }
 
         GUI.backgroundColor = _originalBackgroundColor;
-
-        // pause button
         if ((target as MMFeedbacks).ContainsLoop) {
           if (GUILayout.Button("Pause", EditorStyles.miniButtonMid)) {
             (target as MMFeedbacks).PauseFeedbacks();
           }
         }
-
-        // stop button
         if (GUILayout.Button("Stop", EditorStyles.miniButtonMid)) {
           (target as MMFeedbacks).StopFeedbacks();
         }
-
-        // reset button
         if (GUILayout.Button("Reset", EditorStyles.miniButtonMid)) {
           (target as MMFeedbacks).ResetFeedbacks();
         }
 
         EditorGUI.EndDisabledGroup();
-
-        // reverse button
         if (GUILayout.Button("Revert", EditorStyles.miniButtonMid)) {
           (target as MMFeedbacks).Revert();
         }
-
-        // debug button
         EditorGUI.BeginChangeCheck();
         {
           _debugView = GUILayout.Toggle(_debugView, "Debug View", EditorStyles.miniButtonRight);
@@ -622,10 +535,7 @@ namespace MoreMountains.Feedbacks {
       EditorGUILayout.EndHorizontal();
 
       float pingPong = Mathf.PingPong(Time.unscaledTime, 0.25f);
-
-      // if in pause, we display additional controls
       if (_targetMMFeedbacks.InScriptDrivenPause) {
-        // draws a warning box
         _scriptDrivenBoxColor = Color.Lerp(_scriptDrivenBoxColorFrom, _scriptDrivenBoxColorTo, pingPong);
         GUI.skin.box.normal.background = Texture2D.whiteTexture;
         GUI.backgroundColor = _scriptDrivenBoxColor;
@@ -633,31 +543,19 @@ namespace MoreMountains.Feedbacks {
         GUILayout.Box("Script driven pause in progress, call Resume() to exit pause", GUILayout.ExpandWidth(true));
         GUI.backgroundColor = _originalBackgroundColor;
         GUI.skin.box.normal.background = _scriptDrivenBoxBackgroundTexture;
-
-        // draws resume button
         if (GUILayout.Button("Resume")) {
           _targetMMFeedbacks.ResumeFeedbacks();
         }
       }
-
-      // Debug draw
       if (_debugView) {
         EditorGUI.BeginDisabledGroup(true);
         EditorGUILayout.PropertyField(_mmfeedbacks, true);
         EditorGUI.EndDisabledGroup();
       }
     }
-
-    /// <summary>
-    /// We need to repaint constantly if dragging a feedback around
-    /// </summary>
     public override bool RequiresConstantRepaint() {
       return true;
     }
-
-    /// <summary>
-    /// Add a feedback to the list
-    /// </summary>
     protected virtual MMFeedback AddFeedback(System.Type type) {
       GameObject gameObject = (target as MMFeedbacks).gameObject;
 
@@ -672,14 +570,6 @@ namespace MoreMountains.Feedbacks {
 
       return newFeedback;
     }
-
-    //
-    // Editors management
-    //
-
-    /// <summary>
-    /// Create the editor for a feedback
-    /// </summary>
     protected virtual void AddEditor(MMFeedback feedback) {
       if (feedback == null)
         return;
@@ -691,10 +581,6 @@ namespace MoreMountains.Feedbacks {
         _editors.Add(feedback, editor as Editor);
       }
     }
-
-    /// <summary>
-    /// Destroy the editor for a feedback
-    /// </summary>
     protected virtual void RemoveEditor(MMFeedback feedback) {
       if (feedback == null)
         return;
@@ -704,51 +590,26 @@ namespace MoreMountains.Feedbacks {
         _editors.Remove(feedback);
       }
     }
-
-    //
-    // Feedback generic menus
-    //
-
-    /// <summary>
-    /// Play the selected feedback
-    /// </summary>
     protected virtual void InitializeFeedback(int id) {
       SerializedProperty property = _mmfeedbacks.GetArrayElementAtIndex(id);
       MMFeedback feedback = property.objectReferenceValue as MMFeedback;
       feedback.Initialization(feedback.gameObject);
     }
-
-    /// <summary>
-    /// Play the selected feedback
-    /// </summary>
     protected virtual void PlayFeedback(int id) {
       SerializedProperty property = _mmfeedbacks.GetArrayElementAtIndex(id);
       MMFeedback feedback = property.objectReferenceValue as MMFeedback;
       feedback.Play(feedback.transform.position, _targetMMFeedbacks.FeedbacksIntensity);
     }
-
-    /// <summary>
-    /// Play the selected feedback
-    /// </summary>
     protected virtual void StopFeedback(int id) {
       SerializedProperty property = _mmfeedbacks.GetArrayElementAtIndex(id);
       MMFeedback feedback = property.objectReferenceValue as MMFeedback;
       feedback.Stop(feedback.transform.position);
     }
-
-    /// <summary>
-    /// Resets the selected feedback
-    /// </summary>
-    /// <param name="id"></param>
     protected virtual void ResetFeedback(int id) {
       SerializedProperty property = _mmfeedbacks.GetArrayElementAtIndex(id);
       MMFeedback feedback = property.objectReferenceValue as MMFeedback;
       feedback.ResetFeedback();
     }
-
-    /// <summary>
-    /// Remove the selected feedback
-    /// </summary>
     protected virtual void RemoveFeedback(int id) {
       SerializedProperty property = _mmfeedbacks.GetArrayElementAtIndex(id);
       MMFeedback feedback = property.objectReferenceValue as MMFeedback;
@@ -758,27 +619,15 @@ namespace MoreMountains.Feedbacks {
       _editors.Remove(feedback);
       Undo.DestroyObjectImmediate(feedback);
     }
-
-    /// <summary>
-    /// Copy the selected feedback
-    /// </summary>
     protected virtual void CopyFeedback(int id) {
       SerializedProperty property = _mmfeedbacks.GetArrayElementAtIndex(id);
       MMFeedback feedback = property.objectReferenceValue as MMFeedback;
 
       FeedbackCopy.Copy(new SerializedObject(feedback));
     }
-
-    /// <summary>
-    /// Asks for a full copy of the source
-    /// </summary>
     protected virtual void CopyAll() {
       FeedbackCopy.CopyAll(target as MMFeedbacks);
     }
-
-    /// <summary>
-    /// Paste the previously copied feedback values into the selected feedback
-    /// </summary>
     protected virtual void PasteFeedback(int id) {
       SerializedProperty property = _mmfeedbacks.GetArrayElementAtIndex(id);
       MMFeedback feedback = property.objectReferenceValue as MMFeedback;
@@ -788,10 +637,6 @@ namespace MoreMountains.Feedbacks {
       FeedbackCopy.Paste(serialized);
       serialized.ApplyModifiedProperties();
     }
-
-    /// <summary>
-    /// Creates a new feedback and applies the previoulsy copied feedback values
-    /// </summary>
     protected virtual void PasteAsNew() {
       MMFeedback newFeedback = AddFeedback(FeedbackCopy.Type);
       SerializedObject serialized = new SerializedObject(newFeedback);
@@ -800,10 +645,6 @@ namespace MoreMountains.Feedbacks {
       FeedbackCopy.Paste(serialized);
       serialized.ApplyModifiedProperties();
     }
-
-    /// <summary>
-    /// Asks for a paste of all feedbacks in the source
-    /// </summary>
     protected virtual void PasteAllAsNew() {
       serializedObject.Update();
       Undo.RecordObject(target, "Paste all MMFeedbacks");

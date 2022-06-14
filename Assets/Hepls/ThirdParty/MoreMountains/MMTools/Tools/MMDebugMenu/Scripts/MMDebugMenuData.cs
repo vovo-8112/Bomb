@@ -6,9 +6,6 @@ using UnityEngine.Events;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// A class used to store and display a reorderable list of menu items
-    /// </summary>
     [Serializable]
     public class MMDebugMenuItemList : MMReorderableArray<MMDebugMenuItem>
     {
@@ -23,32 +20,21 @@ namespace MoreMountains.Tools
         [MMReorderableAttribute]
         public MMDebugMenuItemList MenuItems;
     }
-
-    /// <summary>
-    /// A class used to store a menu item
-    /// </summary>
     [Serializable]
     public class MMDebugMenuItem
     {
-        // EDITOR NAME
         public string Name;
         public bool Active = true;
         public enum MMDebugMenuItemTypes { Title, Spacer, Button, Checkbox, Slider, Text, Value, Choices }
 
         public MMDebugMenuItemTypes Type = MMDebugMenuItemTypes.Title;
-
-        // TITLE
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Title)]
         public string TitleText = "Title text";
-
-        // TEXT
         public enum MMDebugMenuItemTextTypes { Tiny, Small, Long }
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Text)]
         public MMDebugMenuItemTextTypes TextType = MMDebugMenuItemTextTypes.Tiny;
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Text)]
         public string TextContents = "Lorem ipsum dolor sit amet";
-
-        // CHOICES 
         public enum MMDebugMenuItemChoicesTypes { TwoChoices, ThreeChoices }
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Choices)]
         public MMDebugMenuItemChoicesTypes ChoicesType = MMDebugMenuItemChoicesTypes.TwoChoices;
@@ -66,16 +52,12 @@ namespace MoreMountains.Tools
         public string ChoiceThreeEventName = "ChoiceThreeEvent";
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Choices)]
         public int SelectedChoice = 0;
-
-        // VALUE
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Value)]
         public string ValueLabel = "Value Label";
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Value)]
         public string ValueInitialValue = "255";
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Value)]
         public int ValueMMRadioReceiverChannel = 0;
-
-        // BUTTON
         public enum MMDebugMenuItemButtonTypes { Border, Full }
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Button)]
         public string ButtonText = "Button text";
@@ -83,21 +65,15 @@ namespace MoreMountains.Tools
         public MMDebugMenuItemButtonTypes ButtonType = MMDebugMenuItemButtonTypes.Border;
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Button)]
         public string ButtonEventName = "Button";
-
-        // SPACER
         public enum MMDebugMenuItemSpacerTypes { Small, Big }
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Spacer)]
         public MMDebugMenuItemSpacerTypes SpacerType = MMDebugMenuItemSpacerTypes.Small;
-
-        // CHECKBOX
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Checkbox)]
         public string CheckboxText;
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Checkbox)]
         public bool CheckboxInitialState = false;
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Checkbox)]
         public string CheckboxEventName = "CheckboxEventName";
-
-        // SLIDER
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Slider)]
         public MMDebugMenuItemSlider.Modes SliderMode = MMDebugMenuItemSlider.Modes.Float;
         [MMEnumCondition("Type", (int)MMDebugMenuItemTypes.Slider)]
@@ -118,10 +94,6 @@ namespace MoreMountains.Tools
         [MMHidden]
         public MMDebugMenuItemCheckbox TargetCheckbox;
     }
-
-    /// <summary>
-    /// A data class used to store the contents of a debug menu
-    /// </summary>
     [CreateAssetMenu(fileName = "MMDebugMenuData", menuName = "MoreMountains/MMDebugMenu/MMDebugMenuData")]
     public class MMDebugMenuData : ScriptableObject
     {

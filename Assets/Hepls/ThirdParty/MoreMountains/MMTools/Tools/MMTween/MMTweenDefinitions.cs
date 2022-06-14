@@ -6,7 +6,6 @@ namespace MoreMountains.Tools
 {
     public class MMTweenDefinitions
     {
-        // Linear       ---------------------------------------------------------------------------------------------------------------------------
 
         public static float Linear_Tween(float t)
         {
@@ -18,14 +17,10 @@ namespace MoreMountains.Tools
             return 1 - t;
         }
 
-        // Almost Identity 
-
         public static float AlmostIdentity(float t)
         {
             return t * t * (2.0f - t);
         }
-
-        // Quadratic    ---------------------------------------------------------------------------------------------------------------------------
 
         public static float EaseIn_Quadratic(float t)
         {
@@ -49,8 +44,6 @@ namespace MoreMountains.Tools
             }
         }
 
-        // Cubic        ---------------------------------------------------------------------------------------------------------------------------
-
         public static float EaseIn_Cubic(float t)
         {
             return t * t * t;
@@ -72,8 +65,6 @@ namespace MoreMountains.Tools
                 return 1 - EaseIn_Cubic((1f - t) * 2f) / 2;
             }
         }
-
-        // Quartic      ---------------------------------------------------------------------------------------------------------------------------
 
         public static float EaseIn_Quartic(float t)
         {
@@ -97,8 +88,6 @@ namespace MoreMountains.Tools
             }
         }
 
-        // Quintic      ---------------------------------------------------------------------------------------------------------------------------
-
         public static float EaseIn_Quintic(float t)
         {
             return Mathf.Pow(t, 5f);
@@ -120,8 +109,6 @@ namespace MoreMountains.Tools
                 return 1 - EaseIn_Quintic((1f - t) * 2f) / 2;
             }
         }
-
-        // Bounce       ---------------------------------------------------------------------------------------------------------------------------
 
         public static float EaseIn_Bounce(float t)
         {
@@ -146,8 +133,6 @@ namespace MoreMountains.Tools
             }
         }
 
-        // Sinusoidal   ---------------------------------------------------------------------------------------------------------------------------
-
         public static float EaseIn_Sinusoidal(float t)
         {
             return 1 + Mathf.Sin(Mathf.PI / 2f * t - Mathf.PI / 2f);
@@ -169,8 +154,6 @@ namespace MoreMountains.Tools
                 return 1 - EaseIn_Sinusoidal((1f - t) * 2f) / 2;
             }
         }
-
-        // Overhead     ---------------------------------------------------------------------------------------------------------------------------
 
         public static float EaseIn_Overhead(float t)
         {
@@ -195,8 +178,6 @@ namespace MoreMountains.Tools
             }
         }
 
-        // Exponential  ---------------------------------------------------------------------------------------------------------------------------
-
         public static float EaseIn_Exponential(float t)
         {
             return t == 0f ? 0f : Mathf.Pow(1024f, t - 1f);
@@ -218,8 +199,6 @@ namespace MoreMountains.Tools
                 return 1 - EaseIn_Exponential((1f - t) * 2f) / 2;
             }
         }
-
-        // Elastic      ---------------------------------------------------------------------------------------------------------------------------
 
         public static float EaseIn_Elastic(float t)
         {
@@ -244,8 +223,6 @@ namespace MoreMountains.Tools
                 return 1 - EaseIn_Elastic((1f - t) * 2f) / 2;
             }
         }
-
-        // Circular     ---------------------------------------------------------------------------------------------------------------------------
 
         public static float EaseIn_Circular(float t)
         {

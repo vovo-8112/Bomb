@@ -5,29 +5,19 @@ using UnityEngine;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This decision will return true if an object on its TargetLayer layermask is within its specified radius, false otherwise. It will also set the Brain's Target to that object.
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/AI/Decisions/AIDecisionDetectTargetRadius3D")]
-    //[RequireComponent(typeof(Character))]
     public class AIDecisionDetectTargetRadius3D : AIDecision
     {
-        /// the radius to search our target in
         [Tooltip("the radius to search our target in")]
         public float Radius = 3f;
-        /// the offset to apply (from the collider's center)
         [Tooltip("the offset to apply (from the collider's center)")]
         public Vector3 DetectionOriginOffset = new Vector3(0, 0, 0);
-        /// the layer(s) to search our target on
         [Tooltip("the layer(s) to search our target on")]
         public LayerMask TargetLayerMask;
-        /// the layer(s) to block the sight
         [Tooltip("the layer(s) to block the sight")]
         public LayerMask ObstacleMask = LayerManager.ObstaclesLayerMask;
-        /// the frequency (in seconds) at which to check for obstacles
         [Tooltip("the frequency (in seconds) at which to check for obstacles")]
         public float TargetCheckFrequency = 1f;
-        /// if this is true, this AI will be able to consider itself (or its children) a target
         [Tooltip("if this is true, this AI will be able to consider itself (or its children) a target")] 
         public bool CanTargetSelf = false;
 
@@ -41,10 +31,6 @@ namespace MoreMountains.TopDownEngine
         protected Collider[] _hits;
         protected Collider _hit;
         protected bool _lastReturnValue = false;
-
-        /// <summary>
-        /// On init we grab our Character component
-        /// </summary>
         public override void Initialization()
         {
             _character = this.gameObject.GetComponentInParent<Character>();
@@ -54,20 +40,10 @@ namespace MoreMountains.TopDownEngine
             _lastReturnValue = false;
             _hits = new Collider[10];
         }
-
-        /// <summary>
-        /// On Decide we check for our target
-        /// </summary>
-        /// <returns></returns>
         public override bool Decide()
         {
             return DetectTarget();
         }
-
-        /// <summary>
-        /// Returns true if a target is found within the circle
-        /// </summary>
-        /// <returns></returns>
         protected virtual bool DetectTarget()
         {
             if (Time.time - _lastTargetCheckTimestamp < TargetCheckFrequency)
@@ -103,7 +79,6 @@ namespace MoreMountains.TopDownEngine
             
             if (numberOfCollidersFound > 0)
             {
-                // we cast a ray to make sure there's no obstacle
                 _raycastDirection = _hit.transform.position - _raycastOrigin;
                 RaycastHit hit = MMDebug.Raycast3D(_raycastOrigin, _raycastDirection, Vector3.Distance(_hit.transform.position, _raycastOrigin), ObstacleMask.value, Color.yellow, true);
                 if (hit.collider == null)
@@ -123,10 +98,6 @@ namespace MoreMountains.TopDownEngine
 
             return _lastReturnValue;
         }
-
-        /// <summary>
-        /// Draws gizmos for the detection circle
-        /// </summary>
         protected virtual void OnDrawGizmosSelected()
         {
             _raycastOrigin = transform.position + DetectionOriginOffset / 2;

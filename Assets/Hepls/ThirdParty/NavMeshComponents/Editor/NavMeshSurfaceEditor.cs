@@ -103,7 +103,6 @@ namespace UnityEditor.AI
 
             if (bs.agentTypeID != -1)
             {
-                // Draw image
                 const float diagramHeight = 80.0f;
                 Rect agentDiagramRect = EditorGUILayout.GetControlRect(false, diagramHeight);
                 NavMeshEditorHelpers.DrawAgentDiagram(agentDiagramRect, bs.agentRadius, bs.agentHeight, bs.agentClimb, bs.agentSlope);
@@ -141,8 +140,6 @@ namespace UnityEditor.AI
                 EditorGUI.indentLevel++;
 
                 NavMeshComponentsGUIUtility.AreaPopup("Default Area", m_DefaultArea);
-
-                // Override voxel size.
                 EditorGUILayout.PropertyField(m_OverrideVoxelSize);
 
                 using (new EditorGUI.DisabledScope(!m_OverrideVoxelSize.boolValue || m_OverrideVoxelSize.hasMultipleDifferentValues))
@@ -163,8 +160,6 @@ namespace UnityEditor.AI
                     }
                     EditorGUI.indentLevel--;
                 }
-
-                // Override tile size
                 EditorGUILayout.PropertyField(m_OverrideTileSize);
 
                 using (new EditorGUI.DisabledScope(!m_OverrideTileSize.boolValue || m_OverrideTileSize.hasMultipleDifferentValues))
@@ -186,9 +181,6 @@ namespace UnityEditor.AI
                     }
                     EditorGUI.indentLevel--;
                 }
-
-
-                // Height mesh
                 using (new EditorGUI.DisabledScope(true))
                 {
                     EditorGUILayout.PropertyField(m_BuildHeightMesh);
@@ -207,8 +199,6 @@ namespace UnityEditor.AI
             foreach (NavMeshSurface navSurface in targets)
             {
                 var settings = navSurface.GetBuildSettings();
-                // Calculating bounds is potentially expensive when unbounded - so here we just use the center/size.
-                // It means the validation is not checking vertical voxel limit correctly when the surface is set to something else than "in volume".
                 var bounds = new Bounds(Vector3.zero, Vector3.zero);
                 if (navSurface.collectObjects == CollectObjects.Volume)
                 {
@@ -267,8 +257,6 @@ namespace UnityEditor.AI
 
                 GUILayout.EndHorizontal();
             }
-
-            // Show progress for the selected targets
             var bakeOperations = NavMeshAssetManager.instance.GetBakeOperations();
             for (int i = bakeOperations.Count - 1; i >= 0; --i)
             {
@@ -326,8 +314,6 @@ namespace UnityEditor.AI
 
             var oldColor = Gizmos.color;
             var oldMatrix = Gizmos.matrix;
-
-            // Use the unscaled matrix for the NavMeshSurface
             var localToWorld = Matrix4x4.TRS(navSurface.transform.position, navSurface.transform.rotation, Vector3.one);
             Gizmos.matrix = localToWorld;
 

@@ -8,25 +8,18 @@ namespace MoreMountains.TopDownEngine
 {
     public class GrasslandHUD : MonoBehaviour, MMEventListener<TopDownEngineEvent>
     {
-        /// The playerID associated to this HUD
         [Tooltip("The playerID associated to this HUD")]
         public string PlayerID = "Player1";
-        /// the progress bar to use to show the healthbar
         [Tooltip("the progress bar to use to show the healthbar")]
         public MMProgressBar HealthBar;
-        /// the Text comp to use to display the player name
         [Tooltip("the Text comp to use to display the player name")]
         public Text PlayerName;
-        /// the radial progress bar to put around the avatar
         [Tooltip("the radial progress bar to put around the avatar")]
         public MMRadialProgressBar AvatarBar;
-        /// the counter used to display coin amounts
         [Tooltip("the counter used to display coin amounts")]
         public Text CoinCounter;
-        /// the mask to use when the target player dies
         [Tooltip("the mask to use when the target player dies")]
         public CanvasGroup DeadMask;
-        /// the screen to display if the target player wins
         [Tooltip("the screen to display if the target player wins")]
         public CanvasGroup WinnerScreen;
 
@@ -69,18 +62,10 @@ namespace MoreMountains.TopDownEngine
             }
             
         }
-
-        /// <summary>
-        /// OnDisable, we start listening to events.
-        /// </summary>
         protected virtual void OnEnable()
         {
             this.MMEventStartListening<TopDownEngineEvent>();
         }
-
-        /// <summary>
-        /// OnDisable, we stop listening to events.
-        /// </summary>
         protected virtual void OnDisable()
         {
             this.MMEventStopListening<TopDownEngineEvent>();

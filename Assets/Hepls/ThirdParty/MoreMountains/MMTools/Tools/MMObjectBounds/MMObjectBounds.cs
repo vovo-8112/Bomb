@@ -15,20 +15,10 @@ namespace MoreMountains.Tools
 
 
 		public Vector3 Size { get; set; }
-
-		/// <summary>
-		/// When this component is added we define its bounds.
-		/// </summary>
 		protected virtual void Reset() 
 		{
 			DefineBoundsChoice();
    		}
-
-		/// <summary>
-		/// Tries to determine automatically what the bounds should be based on.
-		/// In this order, it'll keep the last found of these : Collider2D, Collider or Renderer.
-		/// If none of these is found, it'll be set as Undefined.
-		/// </summary>
 		protected virtual void DefineBoundsChoice()
    		{
    			BoundsBasedOn = WaysToDetermineBounds.Undefined;
@@ -45,10 +35,6 @@ namespace MoreMountains.Tools
 				BoundsBasedOn = WaysToDetermineBounds.Collider2D;
 			}
    		}
-
-   		/// <summary>
-   		/// Returns the bounds of the object, based on what has been defined
-   		/// </summary>
    		public virtual Bounds GetBounds()
 		{
 			if (BoundsBasedOn==WaysToDetermineBounds.Renderer)

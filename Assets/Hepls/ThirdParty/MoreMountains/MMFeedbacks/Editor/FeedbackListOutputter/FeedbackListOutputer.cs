@@ -9,16 +9,9 @@ using System.Linq;
 using System.Text;
 
 namespace MoreMountains.Feedbacks {
-  /// <summary>
-  /// This class is used to automatically install optional dependencies used in MMFeedbacks
-  /// </summary>
   public static class FeedbackListOutputer {
-    /// <summary>
-    /// Outputs a list of all MMFeedbacks to the console (there's only one target user for this and it's me hello!)
-    /// </summary>
     [MenuItem("Tools/More Mountains/MMFeedbacks/Output MMFeedbacks list", false, 702)]
     public static void OutputFeedbacksList() {
-      // Retrieve available feedbacks
       List<System.Type> types = (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
         from assemblyType in domainAssembly.GetTypes()
         where assemblyType.IsSubclassOf(typeof(MMFeedback))

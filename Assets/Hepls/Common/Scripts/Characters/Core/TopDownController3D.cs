@@ -10,98 +10,62 @@ namespace MoreMountains.TopDownEngine
     [RequireComponent(typeof(Collider))]
     [RequireComponent(typeof(CharacterController))]
     [AddComponentMenu("TopDown Engine/Character/Core/TopDown Controller 3D")]
-
-    /// <summary>
-    /// A controller, initially adapted from Unity's CharacterMotor.js, to add on top of Unity's native CharacterController, that will handle 
-    /// </summary>
     public class TopDownController3D : TopDownController
     {
-        /// the current input sent to this character
         [MMReadOnly]
         [Tooltip("the current input sent to this character")]
         public Vector3 InputMoveDirection = Vector3.zero;
-
-        /// the different possible update modes
         public enum UpdateModes { Update, FixedUpdate }
-        /// the possible ways to transfer velocity on jump
         public enum VelocityTransferOnJump { NoTransfer, InitialVelocity, FloorVelocity, Relative }
 
         [Header("Settings")]
-        /// whether the movement computation should occur at Update or FixedUpdate. FixedUpdate is the recommended choice.
         [Tooltip("whether the movement computation should occur at Update or FixedUpdate. FixedUpdate is the recommended choice.")]
         public UpdateModes UpdateMode = UpdateModes.FixedUpdate;
-        /// how the velocity should be affected when jumping from a moving ground
         [Tooltip("how the velocity should be affected when jumping from a moving ground")]
         public VelocityTransferOnJump VelocityTransferMethod = VelocityTransferOnJump.FloorVelocity;
         
         [Header("Raycasts")]
-
-        /// the layer to consider as obstacles (will prevent movement)
         [Tooltip("the layer to consider as obstacles (will prevent movement)")]
         public LayerMask ObstaclesLayerMask = LayerManager.ObstaclesLayerMask;
-        /// the length of the raycasts to cast downwards
         [Tooltip("the length of the raycasts to cast downwards")]
         public float GroundedRaycastLength = 5f;
-        /// the distance to the ground beyond which the character isn't considered grounded anymore
         [Tooltip("the distance to the ground beyond which the character isn't considered grounded anymore")]
         public float MinimumGroundedDistance = 0.2f;
 
         [Header("Physics interaction")]
-
-        /// the speed at which external forces get lerped to zero
         [Tooltip("the speed at which external forces get lerped to zero")]
         public float ImpactFalloff = 5f;
-        /// the force to apply when colliding with rigidbodies
         [Tooltip("the force to apply when colliding with rigidbodies")]
         public float PushPower = 2f;
-        /// a threshold against which to check when going over steps. Adjust that value if your character has issues going over small steps
         [Tooltip("a threshold against which to check when going over steps. Adjust that value if your character has issues going over small steps")] 
         public float GroundNormalHeightThreshold = 0.1f;
         
         [Header("Movement")]
-
-        /// the maximum vertical velocity the character can have while falling
         [Tooltip("the maximum vertical velocity the character can have while falling")]
         public float MaximumFallSpeed = 20.0f;
-        /// the factor by which to multiply the speed while walking on a slope. x is the angle, y is the factor
         [Tooltip("the factor by which to multiply the speed while walking on a slope. x is the angle, y is the factor")]
         public AnimationCurve SlopeSpeedMultiplier = new AnimationCurve(new Keyframe(-90, 1), new Keyframe(0, 1), new Keyframe(90, 0));
 
         [Header("Steep Surfaces")]
-        /// the current surface normal vector
         [Tooltip("the current surface normal vector")]
         [MMReadOnly]
         public Vector3 GroundNormal = Vector3.zero;
-        /// whether or not the character should slide while standing on steep surfaces
         [Tooltip("whether or not the character should slide while standing on steep surfaces")]
         public bool SlideOnSteepSurfaces = true;
-        /// the speed at which the character should slide
         [Tooltip("the speed at which the character should slide")]
         public float SlidingSpeed = 15f;
-        /// the control the player has on the speed while sliding down
         [Tooltip("the control the player has on the speed while sliding down")]
         public float SlidingSpeedControl = 0.4f;
-        /// the control the player has on the direction while sliding down
         [Tooltip("the control the player has on the direction while sliding down")]
         public float SlidingDirectionControl = 1f;
-
-        /// returns the center coordinate of the collider
         public override Vector3 ColliderCenter { get { return this.transform.position + _characterController.center; } }
-        /// returns the bottom coordinate of the collider
         public override Vector3 ColliderBottom { get { return this.transform.position + _characterController.center + Vector3.down * _characterController.bounds.extents.y; } }
-        /// returns the top coordinate of the collider
         public override Vector3 ColliderTop { get { return this.transform.position + _characterController.center + Vector3.up * _characterController.bounds.extents.y; } }
-        /// whether or not the character is sliding down a steep slope
         public bool IsSliding() { return (Grounded && SlideOnSteepSurfaces && TooSteep()); }
-        /// whether or not the character is colliding above
         public bool CollidingAbove() { return (_collisionFlags & CollisionFlags.CollidedAbove) != 0; }
-        /// whether or not the current surface is too steep or not
         public bool TooSteep() { return (GroundNormal.y <= Mathf.Cos(_characterController.slopeLimit * Mathf.Deg2Rad)); }
-        /// whether or not the character just entered a slope/ground not too steep this frame
         public bool ExitedTooSteepSlopeThisFrame { get; set; }
-        ///  whether or not the character is on a moving platform
         public override bool OnAMovingPlatform { get { return ShouldMoveWithPlatformThisFrame(); } }
-        /// the speed of the moving platform
         public override Vector3 MovingPlatformSpeed
         {
             get { return _movingPlatformVelocity;  }
@@ -118,8 +82,6 @@ namespace MoreMountains.TopDownEngine
         protected Vector3 _pushDirection;
         protected Vector3 _lastGroundNormal = Vector3.zero;
         protected WaitForFixedUpdate _waitForFixedUpdate = new WaitForFixedUpdate();
-
-        // moving platforms
         protected Transform _movingPlatformHitCollider;
         protected Transform _movingPlatformCurrentHitCollider;
         protected Vector3 _movingPlatformCurrentHitColliderLocal;
@@ -129,14 +91,10 @@ namespace MoreMountains.TopDownEngine
         protected Matrix4x4 _lastMovingPlatformMatrix;
         protected Vector3 _movingPlatformVelocity;
         protected bool _newMovingPlatform;
-
-        // char movement
         protected CollisionFlags _collisionFlags;
         protected Vector3 _frameVelocity = Vector3.zero;
         protected Vector3 _hitPoint = Vector3.zero;
         protected Vector3 _lastHitPoint = new Vector3(Mathf.Infinity, 0, 0);
-
-        // velocity
         protected Vector3 _newVelocity;
         protected Vector3 _lastHorizontalVelocity;
         protected Vector3 _newHorizontalVelocity;
@@ -145,15 +103,11 @@ namespace MoreMountains.TopDownEngine
         protected Vector3 _idealDirection;
         protected Vector3 _horizontalVelocityDelta;
         protected float _stickyOffset = 0f;
-
-        // move position
         protected RaycastHit _movePositionHit;
         protected Vector3 _capsulePoint1;
         protected Vector3 _capsulePoint2;
         protected Vector3 _movePositionDirection;
         protected float _movePositionDistance;
-
-        // collision detection
         protected RaycastHit _cardinalRaycast;
         
         protected float _smallestDistance = Single.MaxValue;
@@ -171,10 +125,6 @@ namespace MoreMountains.TopDownEngine
         protected Vector3 _raycastDownDirection = Vector3.down;
         protected RaycastHit _canGoBackHeadCheck;
         protected bool _tooSteepLastFrame;
-
-        /// <summary>
-        /// On awake we store our various components for future use
-        /// </summary>
         protected override void Awake()
         {
             base.Awake();
@@ -188,19 +138,11 @@ namespace MoreMountains.TopDownEngine
         }
 
         #region Update
-
-        /// <summary>
-        /// On late update we apply any impact we have in store, and store our velocity for use next frame
-        /// </summary>
         protected override void LateUpdate()
         {
             base.LateUpdate();
             VelocityLastFrame = Velocity;
         }
-
-        /// <summary>
-        /// On Update we process our Update computations if UpdateMode is set to Update
-        /// </summary>
         protected override void Update()
         {
             base.Update();
@@ -209,10 +151,6 @@ namespace MoreMountains.TopDownEngine
                 ProcessUpdate();
             }
         }
-
-        /// <summary>
-        /// On FixedUpdate we process our Update computations if UpdateMode is set to FixedUpdate
-        /// </summary>
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
@@ -223,10 +161,6 @@ namespace MoreMountains.TopDownEngine
                 ProcessUpdate();
             }
         }
-                
-        /// <summary>
-        /// Computes the new velocity and moves the character
-        /// </summary>
         protected virtual void ProcessUpdate()
         {
             if (_transform == null)
@@ -253,10 +187,6 @@ namespace MoreMountains.TopDownEngine
             ManualControllerColliderHit();
             HandleGroundContact();
         }
-
-        /// <summary>
-        /// Determines the new velocity based on the slope we're on and the input 
-        /// </summary>
         protected virtual void AddInput()
         {
             if (Grounded && TooSteep())
@@ -289,10 +219,6 @@ namespace MoreMountains.TopDownEngine
             _newVelocity = _idealVelocity;
             _newVelocity.y = Grounded ? Mathf.Min(_newVelocity.y, 0) : _newVelocity.y;
         }
-
-        /// <summary>
-        /// Adds the gravity to the new velocity and any AddedForce we may have
-        /// </summary>
         protected virtual void AddGravity()
         {
             if (GravityActive)
@@ -310,10 +236,6 @@ namespace MoreMountains.TopDownEngine
             _newVelocity += AddedForce;
             AddedForce = Vector3.zero;
         }
-        
-        /// <summary>
-        /// Moves and rotates the character controller to follow any moving platform we may be standing on
-        /// </summary>
         protected virtual void MoveWithPlatform()
         {
             if (ShouldMoveWithPlatformThisFrame())
@@ -334,10 +256,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Computes the motion vector to apply to the character controller 
-        /// </summary>
         protected virtual void ComputeVelocityDelta()
         {
             _motion = _newVelocity * Time.deltaTime;
@@ -350,23 +268,15 @@ namespace MoreMountains.TopDownEngine
                 _motion -= _stickyOffset * Vector3.up;
             }
         }
-
-        /// <summary>
-        /// Moves the character controller by the computed _motion 
-        /// </summary>
         protected virtual void MoveCharacterController()
         {
             GroundNormal.x = GroundNormal.y = GroundNormal.z = 0f;
 
-            _collisionFlags = _characterController.Move(_motion); // controller move
+            _collisionFlags = _characterController.Move(_motion);
 
             _lastHitPoint = _hitPoint;
             _lastGroundNormal = GroundNormal;
         }
-
-        /// <summary>
-        /// Detects any moving platform we may be standing on
-        /// </summary>
         protected virtual void DetectNewMovingPlatform()
         {
             if (_movingPlatformCurrentHitCollider != _movingPlatformHitCollider)
@@ -379,10 +289,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Determines the new Velocity value based on our position and our position last frame
-        /// </summary>
         protected virtual void ComputeNewVelocity()
         {
             _lastHorizontalVelocity.x = _newVelocity.x;
@@ -418,10 +324,6 @@ namespace MoreMountains.TopDownEngine
 
             Acceleration = (Velocity - VelocityLastFrame) / Time.deltaTime;
         }
-
-        /// <summary>
-        /// We handle ground contact, velocity transfer and moving platforms
-        /// </summary>
         protected virtual void HandleGroundContact()
         {
             Grounded = _characterController.isGrounded;
@@ -453,10 +355,6 @@ namespace MoreMountains.TopDownEngine
             
             _tooSteepLastFrame = TooSteep();
         }
-
-        /// <summary>
-        /// Determines the direction based on the current movement
-        /// </summary>
         protected override void DetermineDirection()
         {
             if (CurrentMovement.magnitude > 0f)
@@ -464,31 +362,19 @@ namespace MoreMountains.TopDownEngine
                 CurrentDirection = CurrentMovement.normalized;
             }
         }
-        
-        /// <summary>
-        /// Handles friction with ground surfaces, coming soon
-        /// </summary>
         protected override void HandleFriction()
         {
-            //TODO - coming soon
         }
 
         #endregion
 
         #region Rigidbody push mechanics
-
-        /// <summary>
-        /// This method compensates for the regular OnControllerColliderHit, which unfortunately generates a lot of garbage.
-        /// To do so, it casts a ray downwards to get our ground normal, and a ray in the current movement direction to (potentially) push rigidbodies
-        /// </summary>
         
         protected virtual void ManualControllerColliderHit()
         {
             _smallestDistance = Single.MaxValue;
             _longestDistance = Single.MinValue;
             _smallestRaycast = _emptyRaycast;
-            
-            // we cast 4 rays downwards to get ground normal
             float offset = _characterController.radius;
             
             _downRaycastsOffset.x = 0f;
@@ -511,8 +397,6 @@ namespace MoreMountains.TopDownEngine
             _downRaycastsOffset.y = offset;
             _downRaycastsOffset.z = offset;
             CastRayDownwards();
-            
-            // we handle our shortest ray
             if (_smallestRaycast.collider != null)
             {
                 float adjustedDistance = AdjustDistance(_smallestRaycast.distance);
@@ -535,8 +419,6 @@ namespace MoreMountains.TopDownEngine
                     _frameVelocity.x = _frameVelocity.y = _frameVelocity.z = 0f;
                 }    
             }
-            
-            // we cast a ray towards our move direction to handle pushing objects
             Physics.Raycast(this._transform.position + _characterController.center, CurrentMovement.normalized, out _raycastDownHit, 
                 _characterController.radius + _characterController.skinWidth, ObstaclesLayerMask);
             
@@ -545,10 +427,6 @@ namespace MoreMountains.TopDownEngine
                 HandlePush(_raycastDownHit, _raycastDownHit.point);
             }
         }
-        
-        /// <summary>
-        /// Casts a ray downwards and adjusts distances if needed
-        /// </summary>
         protected virtual void CastRayDownwards()
         {
             if (_smallestDistance <= MinimumGroundedDistance)
@@ -567,12 +445,6 @@ namespace MoreMountains.TopDownEngine
                 if (adjustedDistance > _longestDistance) { _longestDistance = adjustedDistance; }
             }
         }
-
-        /// <summary>
-        /// Returns the real distance between the extremity of the character and the ground
-        /// </summary>
-        /// <param name="distance"></param>
-        /// <returns></returns>
         protected float AdjustDistance(float distance)
         {
             float adjustedDistance = distance - _characterController.height / 2f -
@@ -581,14 +453,8 @@ namespace MoreMountains.TopDownEngine
         }
 
         protected Vector3 _onTriggerEnterPushbackDirection;
-        
-        /// <summary>
-        /// When triggering with something else, we check if it's a moving platform and we push ourselves if needed
-        /// </summary>
-        /// <param name="other"></param>
         protected virtual void OnTriggerEnter(Collider other)
         {
-            // on trigger enter, if we're colliding with a moving platform, we push ourselves in the opposite direction
             if (other.gameObject.MMGetComponentNoAlloc<MovingPlatform3D>() != null)
             {
                 if (this.transform.position.y < other.transform.position.y)
@@ -598,12 +464,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Adds a force to the colliding object at the hit position, to interact with the physics world
-        /// </summary>
-        /// <param name="hit"></param>
-        /// <param name="hitPosition"></param>
         protected virtual void HandlePush(RaycastHit hit, Vector3 hitPosition)
         {
             _pushedRigidbody = hit.collider.attachedRigidbody;
@@ -623,10 +483,6 @@ namespace MoreMountains.TopDownEngine
         #endregion
 
         #region Moving Platforms
-        
-        /// <summary>
-        /// Gets the current moving platform's velocity
-        /// </summary>
         protected virtual void GetMovingPlatformVelocity()
         {
             if (_movingPlatformCurrentHitCollider != null)
@@ -646,11 +502,6 @@ namespace MoreMountains.TopDownEngine
                 _movingPlatformVelocity = Vector3.zero;
             }
         }
-
-        /// <summary>
-        /// Computes the relative velocity
-        /// </summary>
-        /// <returns></returns>
         protected virtual IEnumerator SubstractNewPlatformVelocity()
         {
             if ((VelocityTransferMethod == VelocityTransferOnJump.InitialVelocity ||
@@ -668,11 +519,6 @@ namespace MoreMountains.TopDownEngine
                 Velocity -= _movingPlatformVelocity;
             }
         }
-
-        /// <summary>
-        /// Whether or not our character should move with the moving platform this frame
-        /// </summary>
-        /// <returns></returns>
         protected virtual bool ShouldMoveWithPlatformThisFrame()
         {
             return (
@@ -684,21 +530,13 @@ namespace MoreMountains.TopDownEngine
         #endregion
 
         #region Collider Resizing
-        
-        /// <summary>
-        /// Determines whether this instance can go back to original size.
-        /// </summary>
-        /// <returns><c>true</c> if this instance can go back to original size; otherwise, <c>false</c>.</returns>
         public override bool CanGoBackToOriginalSize()
         {
-            // if we're already at original size, we return true
             if (_collider.bounds.size.y == _originalColliderHeight)
             {
                 return true;
             }
             float headCheckDistance = _originalColliderHeight * transform.localScale.y * CrouchedRaycastLengthMultiplier;
-
-            // we cast two rays above our character to check for obstacles. If we didn't hit anything, we can go back to original size, otherwise we can't
             _originalSizeRaycastOrigin = ColliderTop + transform.up * _smallValue;
 
             _canGoBackHeadCheck = MMDebug.Raycast3D(_originalSizeRaycastOrigin, transform.up, headCheckDistance, ObstaclesLayerMask, Color.cyan, true);
@@ -711,11 +549,6 @@ namespace MoreMountains.TopDownEngine
                 return true;
             }
         }
-
-        /// <summary>
-        /// Resizes the collider to the new size set in parameters
-        /// </summary>
-        /// <param name="newSize">New size.</param>
         public override void ResizeColliderHeight(float newHeight)
         {
             float newYOffset = _originalColliderCenter.y - (_originalColliderHeight - newHeight) / 2;
@@ -723,10 +556,6 @@ namespace MoreMountains.TopDownEngine
             _characterController.center = ((_originalColliderHeight - newHeight) / 2) * Vector3.up;
             this.transform.Translate((newYOffset / 2f) * Vector3.up);
         }
-
-        /// <summary>
-        /// Returns the collider to its initial size
-        /// </summary>
         public override void ResetColliderSize()
         {
             _characterController.height = _originalColliderHeight;
@@ -736,14 +565,8 @@ namespace MoreMountains.TopDownEngine
         #endregion
 
         #region Grounded Tests
-        
-        /// <summary>
-        /// Whether or not the character is grounded
-        /// </summary>
-        /// <returns></returns>
         public virtual bool IsGroundedTest()
         {
-            //return (_groundNormal.y > 0.01);
             
             bool grounded = false;
 
@@ -754,10 +577,6 @@ namespace MoreMountains.TopDownEngine
 
             return grounded;
         }
-
-        /// <summary>
-        /// Grounded check
-        /// </summary>
         protected override void CheckIfGrounded()
         {
             JustGotGrounded = (!_groundedLastFrame && Grounded);
@@ -767,28 +586,14 @@ namespace MoreMountains.TopDownEngine
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Enables the collider
-        /// </summary>
         public override void CollisionsOn()
         {
             _collider.enabled = true;
         }
-
-        /// <summary>
-        /// Disables collider
-        /// </summary>
         public override void CollisionsOff()
         {
             _collider.enabled = false;
         }
-
-        /// <summary>
-        /// Performs a cardinal collision check and stores collision objects informations
-        /// </summary>
-        /// <param name="distance"></param>
-        /// <param name="offset"></param>
         public override void DetectObstacles(float distance, Vector3 offset)
         {
             if (!PerformCardinalObstacleRaycastDetection)
@@ -797,23 +602,15 @@ namespace MoreMountains.TopDownEngine
             }
             
             CollidingWithCardinalObstacle = false;
-            // right
             _cardinalRaycast = MMDebug.Raycast3D(this.transform.position + offset, Vector3.right, distance, ObstaclesLayerMask, Color.yellow, true);
             if (_cardinalRaycast.collider != null) { DetectedObstacleRight = _cardinalRaycast.collider.gameObject; CollidingWithCardinalObstacle = true; } else { DetectedObstacleRight = null; }
-            // left
             _cardinalRaycast = MMDebug.Raycast3D(this.transform.position + offset, Vector3.left, distance, ObstaclesLayerMask, Color.yellow, true);
             if (_cardinalRaycast.collider != null) { DetectedObstacleLeft = _cardinalRaycast.collider.gameObject; CollidingWithCardinalObstacle = true; } else { DetectedObstacleLeft = null; }
-            // up
             _cardinalRaycast = MMDebug.Raycast3D(this.transform.position + offset, Vector3.forward, distance, ObstaclesLayerMask, Color.yellow, true);
             if (_cardinalRaycast.collider != null) { DetectedObstacleUp = _cardinalRaycast.collider.gameObject; CollidingWithCardinalObstacle = true; } else { DetectedObstacleUp = null; }
-            // down
             _cardinalRaycast = MMDebug.Raycast3D(this.transform.position + offset, Vector3.back, distance, ObstaclesLayerMask, Color.yellow, true);
             if (_cardinalRaycast.collider != null) { DetectedObstacleDown = _cardinalRaycast.collider.gameObject; CollidingWithCardinalObstacle = true; } else { DetectedObstacleDown = null; }
         }
-
-        /// <summary>
-        /// Applies the stored impact to the character
-        /// </summary>
         protected virtual void ApplyImpact()
         {
             if (_impact.magnitude > 0.2f)
@@ -822,32 +619,16 @@ namespace MoreMountains.TopDownEngine
             }
             _impact = Vector3.Lerp(_impact, Vector3.zero, ImpactFalloff * Time.deltaTime);
         }
-
-        /// <summary>
-        /// Adds a force of the specified direction and magnitude to the character
-        /// </summary>
-        /// <param name="movement"></param>
         public override void AddForce(Vector3 movement)
         {
             AddedForce += movement;
         }
-
-        /// <summary>
-        /// Applies an impact to the character of the specified direction and force
-        /// </summary>
-        /// <param name="direction"></param>
-        /// <param name="force"></param>
         public override void Impact(Vector3 direction, float force)
         {
             direction = direction.normalized;
             if (direction.y < 0) { direction.y = -direction.y; }
             _impact += direction.normalized * force;
         }
-
-        /// <summary>
-        /// Sets the character's current input direction and magnitude
-        /// </summary>
-        /// <param name="movement"></param>
         public override void SetMovement(Vector3 movement)
         {
             CurrentMovement = movement;
@@ -864,20 +645,10 @@ namespace MoreMountains.TopDownEngine
             }
             InputMoveDirection = transform.rotation * directionVector;
         }
-
-        /// <summary>
-        /// Turns this character's rigidbody kinematic or not
-        /// </summary>
-        /// <param name="state"></param>
         public override void SetKinematic(bool state)
         {
             _rigidBody.isKinematic = state;
         }
-
-        /// <summary>
-        /// Moves this character to the specified position while trying to avoid obstacles
-        /// </summary>
-        /// <param name="newPosition"></param>
         public override void MovePosition(Vector3 newPosition)
         {
             

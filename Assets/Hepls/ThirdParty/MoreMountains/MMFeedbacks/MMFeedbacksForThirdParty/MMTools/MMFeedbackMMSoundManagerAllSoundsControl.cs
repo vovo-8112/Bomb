@@ -8,29 +8,18 @@ using UnityEngine.Audio;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// A feedback used to control all sounds playing on the MMSoundManager at once. It'll let you pause, play, stop and free (stop and returns the audiosource to the pool) sounds.  You will need a MMSoundManager in your scene for this to work.
-    /// </summary>
     [AddComponentMenu("")]
     [FeedbackPath("Audio/MMSoundManager All Sounds Control")]
     [FeedbackHelp("A feedback used to control all sounds playing on the MMSoundManager at once. It'll let you pause, play, stop and free (stop and returns the audiosource to the pool) sounds. You will need a MMSoundManager in your scene for this to work.")]
     public class MMFeedbackMMSoundManagerAllSoundsControl : MMFeedback
     {
-        /// sets the inspector color for this feedback
         #if UNITY_EDITOR
             public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.SoundsColor; } }
         #endif
         
         [Header("MMSoundManager All Sounds Control")]
-        /// The selected control mode. 
         [Tooltip("The selected control mode")]
         public MMSoundManagerAllSoundsControlEventTypes ControlMode = MMSoundManagerAllSoundsControlEventTypes.Pause;
-
-        /// <summary>
-        /// On Play, we call the specified event, to be caught by the MMSoundManager
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             if (Active)

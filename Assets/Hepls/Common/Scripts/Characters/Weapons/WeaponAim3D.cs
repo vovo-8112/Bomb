@@ -6,28 +6,20 @@ using UnityEngine.UI;
 namespace MoreMountains.TopDownEngine
 {	
 	[RequireComponent(typeof(Weapon))]
-	/// <summary>
-	/// Add this component to a Weapon and you'll be able to aim it (meaning you'll rotate it)
-	/// Supported control modes are mouse, primary movement (you aim wherever you direct your character) and secondary movement (using a secondary axis, separate from the movement).
-	/// </summary>
 	[AddComponentMenu("TopDown Engine/Weapons/Weapon Aim 3D")]
 	public class WeaponAim3D : WeaponAim
 	{
-		[Header("3D")] 
-		/// if this is true, aim will be unrestricted to angles, and will aim freely in all 3 axis, useful when dealing with AI and elevation
+		[Header("3D")]
 		[Tooltip("if this is true, aim will be unrestricted to angles, and will aim freely in all 3 axis, useful when dealing with AI and elevation")]
 		public bool Unrestricted3DAim = false;
 	    
         [Header("Reticle and slopes")]
-        /// whether or not the reticle should move vertically to stay above slopes
         [MMEnumCondition("ReticleType", (int)ReticleTypes.Scene, (int)ReticleTypes.UI)]
         [Tooltip("whether or not the reticle should move vertically to stay above slopes")]
         public bool ReticleMovesWithSlopes = false;
-        /// the layers the reticle should consider as obstacles to move on
         [MMEnumCondition("ReticleType", (int)ReticleTypes.Scene, (int)ReticleTypes.UI)]
         [Tooltip("the layers the reticle should consider as obstacles")]
         public LayerMask ReticleObstacleMask = LayerManager.ObstaclesLayerMask;
-        /// the maximum slope elevation for the reticle
         [MMEnumCondition("ReticleType", (int)ReticleTypes.Scene, (int)ReticleTypes.UI)]
         [Tooltip("the maximum slope elevation for the reticle")]
         public float MaximumSlopeElevation = 50f;
@@ -47,10 +39,6 @@ namespace MoreMountains.TopDownEngine
         {
             ReticleObstacleMask = LayerMask.NameToLayer("Ground");
         }
-
-        /// <summary>
-		/// Computes the current aim direction
-		/// </summary>
 		protected override void GetCurrentAim()
 		{
 			if (_weapon.Owner == null)
@@ -230,10 +218,6 @@ namespace MoreMountains.TopDownEngine
             _currentAim = _direction - _weapon.Owner.transform.position;
             _weaponAimCurrentAim = _direction - this.transform.position;
         }
-
-		/// <summary>
-		/// Every frame, we compute the aim direction and rotate the weapon accordingly
-		/// </summary>
 		protected override void Update()
         {
 	        HideMousePointer();
@@ -245,10 +229,6 @@ namespace MoreMountains.TopDownEngine
             GetCurrentAim ();
 			DetermineWeaponRotation ();
         }
-
-        /// <summary>
-        /// At fixed update we move the target and reticle
-        /// </summary>
         protected virtual void FixedUpdate()
         {
             if (GameManager.Instance.Paused)
@@ -264,10 +244,6 @@ namespace MoreMountains.TopDownEngine
 		{
 			_playerPlane.SetNormalAndPosition (Vector3.up, this.transform.position);
 		}
-
-		/// <summary>
-		/// Determines the weapon rotation based on the current aim direction
-		/// </summary>
 		protected override void DetermineWeaponRotation()
 		{
             if (ReticleMovesWithSlopes)
@@ -314,11 +290,7 @@ namespace MoreMountains.TopDownEngine
 					{
 						CurrentAngle = MMMaths.RoundToClosest (CurrentAngle, _possibleAngleValues);
 					}
-
-					// we add our additional angle
 					CurrentAngle += _additionalAngle;
-
-					// we clamp the angle to the min/max values set in the inspector
 
 					CurrentAngle = Mathf.Clamp (CurrentAngle, MinimumAngle, MaximumAngle);	
 					CurrentAngle = -CurrentAngle + 90f;
@@ -342,12 +314,7 @@ namespace MoreMountains.TopDownEngine
             _aimAtDirection = target - transform.position;
             _aimAtQuaternion = Quaternion.LookRotation(_aimAtDirection, Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, _aimAtQuaternion, WeaponRotationSpeed * Time.deltaTime);
-            //transform.LookAt(target, Vector3.up);
         }
-
-        /// <summary>
-        /// Initializes the reticle based on the settings defined in the inspector
-        /// </summary>
         protected override void InitializeReticle()
         {
             if (_weapon.Owner == null) { return; }
@@ -379,10 +346,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-        /// <summary>
-        /// Every frame, moves the reticle if it's been told to follow the pointer
-        /// </summary>
         protected override void MoveReticle()
 		{		
 			if (ReticleType == ReticleTypes.None) { return; }
@@ -391,7 +354,6 @@ namespace MoreMountains.TopDownEngine
 
 			if (ReticleType == ReticleTypes.Scene)
 			{
-				// if we're not supposed to rotate the reticle, we force its rotation, otherwise we apply the current look rotation
 				if (!RotateReticle)
 				{
 					_reticle.transform.rotation = Quaternion.identity;
@@ -403,8 +365,6 @@ namespace MoreMountains.TopDownEngine
 						_reticle.transform.rotation = _lookRotation;
                     }
                 }
-
-				// if we're in follow mouse mode and the current control scheme is mouse, we move the reticle to the mouse's position
 				if (ReticleAtMousePosition && AimControl == AimControls.Mouse)
 				{
 					_reticle.transform.position = MMMaths.Lerp(_reticle.transform.position, _reticlePosition, 0.3f, Time.deltaTime);
@@ -414,7 +374,6 @@ namespace MoreMountains.TopDownEngine
             
             if (ReticleMovesWithSlopes)
             {
-                // we cast a ray from above
                 RaycastHit groundCheck = MMDebug.Raycast3D(_reticlePosition + Vector3.up * MaximumSlopeElevation / 2f, Vector3.down, MaximumSlopeElevation, ReticleObstacleMask, Color.cyan, true);
                 if (groundCheck.collider != null)
                 {

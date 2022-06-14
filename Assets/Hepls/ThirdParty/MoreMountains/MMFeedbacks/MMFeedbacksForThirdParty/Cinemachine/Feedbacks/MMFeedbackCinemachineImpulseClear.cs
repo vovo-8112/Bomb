@@ -11,7 +11,6 @@ namespace MoreMountains.FeedbacksForThirdParty
     [FeedbackHelp("This feedback lets you trigger a Cinemachine Impulse clear, stopping instantly any impulse that may be playing.")]
     public class MMFeedbackCinemachineImpulseClear : MMFeedback
     {
-        /// sets the inspector color for this feedback
         #if UNITY_EDITOR
         public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.CameraColor; } }
         #endif

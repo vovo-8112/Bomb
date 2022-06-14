@@ -6,9 +6,6 @@ using UnityEngine.UI;
 namespace MoreMountains.Tools
 {	
 	[CustomEditor(typeof(MMHealthBar),true)]
-	/// <summary>
-	/// Custom editor for health bars (mostly a switch for prefab based / drawn bars
-	/// </summary>
 	public class HealthBarEditor : Editor 
 	{
 		public MMHealthBar HealthBarTarget 

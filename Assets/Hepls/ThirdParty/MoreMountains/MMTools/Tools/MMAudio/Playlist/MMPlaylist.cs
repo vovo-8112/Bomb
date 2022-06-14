@@ -4,9 +4,6 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// This class stores all the info related to items in a playlist
-    /// </summary>
 
     public struct MMPlaylistPlayEvent
     {
@@ -113,32 +110,22 @@ namespace MoreMountains.Tools
     [System.Serializable]
     public class MMPlaylistSong
     {
-        /// the audiosource that contains the audio clip we want to play
         public AudioSource TargetAudioSource;
-        /// the min (when it's off) and max (when it's playing) volume for this source
         [MMVector("Min", "Max")]
         public Vector2 Volume = new Vector2(0f, 1f);
-        /// a random delay in seconds to apply, between its RMin and RMax
         [MMVector("RMin", "RMax")]
         public Vector2 InitialDelay = Vector2.zero;
-        /// a random crossfade duration (in seconds) to apply when transitioning to this song, between its RMin and RMax
         [MMVector("RMin", "RMax")]
         public Vector2 CrossFadeDuration = new Vector2(2f, 2f);
-        /// a random pitch to apply to this song, between its RMin and RMax
         [MMVector("RMin", "RMax")]
         public Vector2 Pitch = Vector2.one;
-        /// the stereo pan for this song
         [Range(-1f, 1f)]
         public float StereoPan = 0f;
-        /// the spatial blend for this song (0 is 2D, 1 is 3D)
         [Range(0f, 1f)]
         public float SpatialBlend = 0f;
-        /// whether this song should loop or not
         public bool Loop = false;
-        /// whether this song is playing right now or not
         [MMReadOnly]
         public bool Playing = false;
-        /// whether this song is fading right now or not
         [MMReadOnly]
         public bool Fading = false;
 
@@ -153,14 +140,9 @@ namespace MoreMountains.Tools
             this.Loop = false;
         }
     }
-
-    /// <summary>
-    /// Use this class to play audiosources (usually background music but feel free to use that for anything) in sequence, with optional crossfade between tracks
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/Audio/MMPlaylist")]
     public class MMPlaylist : MonoBehaviour
     {
-        /// the possible states this playlist can be in
         public enum PlaylistStates
         {
             Idle,
@@ -169,56 +151,37 @@ namespace MoreMountains.Tools
         }
 
         [Header("Playlist Songs")]
-        /// the songs that this playlist will play
         public List<MMPlaylistSong> Songs;
 
         [Header("Settings")]
-        /// whether this should play in random order or not
         public bool RandomOrder = false;
-        /// whether this playlist should play and loop as a whole forever or not
         public bool Endless = true;
-        /// whether this playlist should auto play on start or not
         public bool PlayOnStart = true;
 
         [Header("Status")]
-        /// the current state of this playlist
         [MMReadOnly]
         public MMStateMachine<MMPlaylist.PlaylistStates> PlaylistState;
-        /// the index we're currently playing
         [MMReadOnly]
         public int CurrentlyPlayingIndex = -1;
-        /// the name of the track that is currently playing
         [MMReadOnly]
         public string CurrentTrackName;
 
         [Header("Test")]
-        /// a play test button
         [MMInspectorButton("Play")]
         public bool PlayButton;
-        /// a pause test button
         [MMInspectorButton("Pause")]
         public bool PauseButton;
-        /// a stop test button
         [MMInspectorButton("Stop")]
         public bool StopButton;
-        /// a next track test button
         [MMInspectorButton("PlayNextTrack")]
         public bool NextButton;
 
         protected int _songsPlayedSoFar = 0;
         protected int _songsPlayedThisCycle = 0;
-        
-        /// <summary>
-        /// On Start we initialize our playlist
-        /// </summary>
         protected virtual void Start()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// On init we initialize our state machine and start playing if needed
-        /// </summary>
         protected virtual void Initialization()
         {
             _songsPlayedSoFar = 0;
@@ -233,10 +196,6 @@ namespace MoreMountains.Tools
                 PlayFirstSong();
             }
         }
-
-        /// <summary>
-        /// Picks and plays the first song
-        /// </summary>
         protected virtual void PlayFirstSong()
         {
             _songsPlayedThisCycle = 0;
@@ -244,27 +203,16 @@ namespace MoreMountains.Tools
             int newIndex = PickNextIndex();
             StartCoroutine(PlayTrack(newIndex));
         }
-
-        /// <summary>
-        /// Plays a new track in the playlist, and stops / fades the previous one
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
         protected virtual IEnumerator PlayTrack(int index)
         {
-            // if we don't have a song, we stop
             if (Songs.Count == 0)
             {
                 yield break;
             }
-
-            // if we've played all our songs, we stop
             if (!Endless && (_songsPlayedThisCycle > Songs.Count))
             {
                 yield break;
             }
-            
-            // we stop our current track                        
             if (PlaylistState.CurrentState == PlaylistStates.Playing)
             {
                 StartCoroutine(Fade(CurrentlyPlayingIndex,
@@ -273,8 +221,6 @@ namespace MoreMountains.Tools
                      Songs[CurrentlyPlayingIndex].Volume.x,
                      true));
             }
-
-            // we stop all other coroutines
             if (CurrentlyPlayingIndex >= 0)
             {
                 foreach (MMPlaylistSong song in Songs)
@@ -284,9 +230,7 @@ namespace MoreMountains.Tools
                         song.Fading = false;
                     }
                 }
-            }            
-            
-            // initial delay
+            }
             yield return MMCoroutine.WaitFor(Random.Range(Songs[index].InitialDelay.x, Songs[index].InitialDelay.y));
 
             if (Songs[index].TargetAudioSource == null)
@@ -299,18 +243,12 @@ namespace MoreMountains.Tools
             Songs[index].TargetAudioSource.panStereo = Songs[index].StereoPan;
             Songs[index].TargetAudioSource.spatialBlend = Songs[index].SpatialBlend;
             Songs[index].TargetAudioSource.loop = Songs[index].Loop;
-
-            // fades the new track's volume
             StartCoroutine(Fade(index,
                      Random.Range(Songs[index].CrossFadeDuration.x, Songs[index].CrossFadeDuration.y),
                      Songs[index].Volume.x,
                      Songs[index].Volume.y,
                      false));
-
-            // starts the new track
             Songs[index].TargetAudioSource.Play();
-
-            // updates our state
             CurrentTrackName = Songs[index].TargetAudioSource.clip.name;
             PlaylistState.ChangeState(PlaylistStates.Playing);
             Songs[index].Playing = true;
@@ -318,16 +256,6 @@ namespace MoreMountains.Tools
             _songsPlayedSoFar++;
             _songsPlayedThisCycle++;
         }
-
-        /// <summary>
-        /// Fades an audiosource in or out, optionnally stopping it at the end
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="duration"></param>
-        /// <param name="initialVolume"></param>
-        /// <param name="endVolume"></param>
-        /// <param name="stopAtTheEnd"></param>
-        /// <returns></returns>
         protected virtual IEnumerator Fade(int index, float duration, float initialVolume, float endVolume, bool stopAtTheEnd)
         {
             float startTimestamp = Time.time;
@@ -350,11 +278,6 @@ namespace MoreMountains.Tools
                 Songs[index].Fading = false;
             }
         }
-
-        /// <summary>
-        /// Picks the next song to play
-        /// </summary>
-        /// <returns></returns>
         protected virtual int PickNextIndex()
         {
             if (Songs.Count == 0)
@@ -377,10 +300,6 @@ namespace MoreMountains.Tools
 
             return newIndex;
         }
-
-        /// <summary>
-        /// Plays either the first song or resumes playing a paused one
-        /// </summary>
         public virtual void Play()
         {
             switch (PlaylistState.CurrentState)
@@ -395,23 +314,14 @@ namespace MoreMountains.Tools
                     break;
 
                 case PlaylistStates.Playing:
-                    // do nothing
                     break;
             }
         }
-
-        /// <summary>
-        /// Pauses the current track
-        /// </summary>
         public virtual void Pause()
         {
             Songs[CurrentlyPlayingIndex].TargetAudioSource.Pause();
             PlaylistState.ChangeState(PlaylistStates.Paused);
         }
-
-        /// <summary>
-        /// Stops the playlist
-        /// </summary>
         public virtual void Stop()
         {
             Songs[CurrentlyPlayingIndex].TargetAudioSource.Stop();
@@ -420,10 +330,6 @@ namespace MoreMountains.Tools
             CurrentlyPlayingIndex = -1;
             PlaylistState.ChangeState(PlaylistStates.Idle);
         }
-
-        /// <summary>
-        /// Plays the next track in the playlist
-        /// </summary>
         public virtual void PlayNextTrack()
         {
             int newIndex = PickNextIndex();
@@ -454,10 +360,6 @@ namespace MoreMountains.Tools
         {
             StartCoroutine(PlayTrack(index));
         }
-
-        /// <summary>
-		/// On enable, starts listening for playlist events
-		/// </summary>
 		protected virtual void OnEnable()
         {
             MMPlaylistPauseEvent.Register(OnPauseEvent);
@@ -466,10 +368,6 @@ namespace MoreMountains.Tools
             MMPlaylistStopEvent.Register(OnStopEvent);
             MMPlaylistPlayIndexEvent.Register(OnPlayIndexEvent);
         }
-
-        /// <summary>
-        /// On disable, stops listening for playlist events
-        /// </summary>
         protected virtual void OnDisable()
         {
             MMPlaylistPauseEvent.Unregister(OnPauseEvent);
@@ -481,10 +379,6 @@ namespace MoreMountains.Tools
         
         protected bool _firstDeserialization = true;
         protected int _listCount = 0;
-
-        /// <summary>
-        /// On Validate, we check if our array has changed and if yes we initialize our new elements
-        /// </summary>
         protected virtual void OnValidate()
         {
             if (_firstDeserialization)

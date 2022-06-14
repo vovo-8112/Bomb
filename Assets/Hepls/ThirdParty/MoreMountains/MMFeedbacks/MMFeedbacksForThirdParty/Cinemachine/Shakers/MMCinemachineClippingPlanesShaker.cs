@@ -6,36 +6,26 @@ using MoreMountains.Feedbacks;
 
 namespace MoreMountains.FeedbacksForThirdParty
 {
-    /// <summary>
-    /// Add this to a Cinemachine virtual camera and it'll let you control its near and far clipping planes
-    /// </summary>
     [AddComponentMenu("More Mountains/Feedbacks/Shakers/Cinemachine/MMCinemachineClippingPlanesShaker")]
     [RequireComponent(typeof(CinemachineVirtualCamera))]
     public class MMCinemachineClippingPlanesShaker : MMShaker
     {
         [Header("Clipping Planes")]
-        /// whether or not to add to the initial value
         public bool RelativeClippingPlanes = false;
 
         [Header("Near Plane")]
-        /// the curve used to animate the intensity value on
         [Tooltip("the curve used to animate the intensity value on")]
         public AnimationCurve ShakeNear = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-        /// the value to remap the curve's 0 to        
         [Tooltip("the value to remap the curve's 0 to")]
         public float RemapNearZero = 0.3f;
-        /// the value to remap the curve's 1 to        
         [Tooltip("the value to remap the curve's 1 to")]
         public float RemapNearOne = 100f;
 
         [Header("Far Plane")]
-        /// the curve used to animate the intensity value on
         [Tooltip("the curve used to animate the intensity value on")]
         public AnimationCurve ShakeFar = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-        /// the value to remap the curve's 0 to        
         [Tooltip("the value to remap the curve's 0 to")]
         public float RemapFarZero = 1000f;
-        /// the value to remap the curve's 1 to        
         [Tooltip("the value to remap the curve's 1 to")]
         public float RemapFarOne = 1000f;
 
@@ -50,27 +40,15 @@ namespace MoreMountains.FeedbacksForThirdParty
         protected AnimationCurve _originalShakeFar;
         protected float _originalRemapFarZero;
         protected float _originalRemapFarOne;
-
-        /// <summary>
-        /// On init we initialize our values
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
             _targetCamera = this.gameObject.GetComponent<CinemachineVirtualCamera>();
         }
-
-        /// <summary>
-        /// When that shaker gets added, we initialize its shake duration
-        /// </summary>
         protected virtual void Reset()
         {
             ShakeDuration = 0.5f;
         }
-
-        /// <summary>
-        /// Shakes values over time
-        /// </summary>
         protected override void Shake()
         {
             float newNear = ShakeFloat(ShakeNear, RemapNearZero, RemapNearOne, RelativeClippingPlanes, _initialNear);
@@ -78,25 +56,11 @@ namespace MoreMountains.FeedbacksForThirdParty
             float newFar = ShakeFloat(ShakeFar, RemapFarZero, RemapFarOne, RelativeClippingPlanes, _initialFar);
             _targetCamera.m_Lens.FarClipPlane = newFar;
         }
-
-        /// <summary>
-        /// Collects initial values on the target
-        /// </summary>
         protected override void GrabInitialValues()
         {
             _initialNear = _targetCamera.m_Lens.NearClipPlane;
             _initialFar = _targetCamera.m_Lens.FarClipPlane;
         }
-
-        /// <summary>
-        /// When we get the appropriate event, we trigger a shake
-        /// </summary>
-        /// <param name="distortionCurve"></param>
-        /// <param name="duration"></param>
-        /// <param name="amplitude"></param>
-        /// <param name="relativeDistortion"></param>
-        /// <param name="feedbacksIntensity"></param>
-        /// <param name="channel"></param>
         public virtual void OnMMCameraClippingPlanesShakeEvent(AnimationCurve animNearCurve, float duration, float remapNearMin, float remapNearMax, AnimationCurve animFarCurve, float remapFarMin, float remapFarMax, bool relativeValues = false,
             float feedbacksIntensity = 1.0f, int channel = 0, bool resetShakerValuesAfterShake = true, bool resetTargetValuesAfterShake = true, bool forwardDirection = true, TimescaleModes timescaleMode = TimescaleModes.Scaled, bool stop = false)
         {
@@ -144,20 +108,12 @@ namespace MoreMountains.FeedbacksForThirdParty
 
             Play();
         }
-
-        /// <summary>
-        /// Resets the target's values
-        /// </summary>
         protected override void ResetTargetValues()
         {
             base.ResetTargetValues();
             _targetCamera.m_Lens.NearClipPlane = _initialNear;
             _targetCamera.m_Lens.FarClipPlane = _initialFar;
         }
-
-        /// <summary>
-        /// Resets the shaker's values
-        /// </summary>
         protected override void ResetShakerValues()
         {
             base.ResetShakerValues();
@@ -170,19 +126,11 @@ namespace MoreMountains.FeedbacksForThirdParty
             RemapFarOne = _originalRemapFarOne;
             RelativeClippingPlanes = _originalRelativeClippingPlanes;
         }
-
-        /// <summary>
-        /// Starts listening for events
-        /// </summary>
         public override void StartListening()
         {
             base.StartListening();
             MMCameraClippingPlanesShakeEvent.Register(OnMMCameraClippingPlanesShakeEvent);
         }
-
-        /// <summary>
-        /// Stops listening for events
-        /// </summary>
         public override void StopListening()
         {
             base.StopListening();

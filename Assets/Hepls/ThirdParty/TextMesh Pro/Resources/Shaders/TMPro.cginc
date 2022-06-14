@@ -29,8 +29,6 @@ float3 GetSurfaceNormal(float4 h, float bias)
 	h += bias+_BevelOffset;
 
 	float bevelWidth = max(.01, _OutlineWidth+_BevelWidth);
-
-  // Track outline
 	h -= .5;
 	h /= bevelWidth;
 	h = saturate(h+.5);
@@ -48,7 +46,6 @@ float3 GetSurfaceNormal(float4 h, float bias)
 
 float3 GetSurfaceNormal(float2 uv, float bias, float3 delta)
 {
-	// Read "height field"
   float4 h = {tex2D(_MainTex, uv - delta.xz).a,
 				tex2D(_MainTex, uv + delta.xz).a,
 				tex2D(_MainTex, uv - delta.zy).a,
@@ -69,7 +66,7 @@ float4 GetGlowColor(float d, float scale)
 	float t = lerp(_GlowInner, (_GlowOuter * _ScaleRatioB), step(0.0, glow)) * 0.5 * scale;
 	glow = saturate(abs(glow/(1.0 + t)));
 	glow = 1.0-pow(glow, _GlowPower);
-	glow *= sqrt(min(1.0, t)); // Fade off glow thinner than 1 screen pixel
+	glow *= sqrt(min(1.0, t));
 	return float4(_GlowColor.rgb, saturate(_GlowColor.a * glow * 2));
 }
 

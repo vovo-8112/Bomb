@@ -5,23 +5,12 @@ using UnityEditor;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// This class, meant to be used in MMFeedbacks demos, will check for requirements, and output an
-    /// error message if necessary.
-    /// </summary>
     public class DemoPackageTester : MonoBehaviour
     {
         [MMFInformation("This component is only used to display an error in the console in case dependencies for this demo haven't been installed. You can safely remove it if you want, and typically you wouldn't want to keep that in your own game.", MMFInformationAttribute.InformationType.Warning, false)]
-        /// does the scene require post processing to be installed?
         public bool RequiresPostProcessing;
-        /// does the scene require TextMesh Pro to be installed?
         public bool RequiresTMP;
-        /// does the scene require Cinemachine to be installed?
         public bool RequiresCinemachine;
-
-        /// <summary>
-        /// On Awake we test for dependencies
-        /// </summary>
         protected virtual void Awake()
         {
             if (Application.isPlaying)
@@ -29,10 +18,6 @@ namespace MoreMountains.Feedbacks
                 TestForDependencies();    
             }
         }
-
-        /// <summary>
-        /// Checks whether or not dependencies have been correctly installed
-        /// </summary>
         protected virtual void TestForDependencies()
         {
             bool missingDependencies = false;
@@ -55,7 +40,6 @@ namespace MoreMountains.Feedbacks
 
             if (missingDependencies)
             {
-                // we do nothing but without that we get an annoying warning so here we are.
             }
 
             if (RequiresCinemachine && !cinemachineFound)

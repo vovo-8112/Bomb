@@ -6,97 +6,65 @@ using UnityEngine.Serialization;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// This feedback will animate the scale of the target object over time when played
-    /// </summary>
     [AddComponentMenu("")]
     [FeedbackPath("Transform/Scale")]
     [FeedbackHelp("This feedback will animate the target's scale on the 3 specified animation curves, for the specified duration (in seconds). You can apply a multiplier, that will multiply each animation curve value.")]
     public class MMFeedbackScale : MMFeedback
     {
-        /// the possible modes this feedback can operate on
         public enum Modes { Absolute, Additive, ToDestination }
-        /// the possible timescales for the animation of the scale
         public enum TimeScales { Scaled, Unscaled }
-        /// sets the inspector color for this feedback
         #if UNITY_EDITOR
         public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.TransformColor; } }
         #endif
 
         [Header("Scale")]
-        /// the mode this feedback should operate on
-        /// Absolute : follows the curve
-        /// Additive : adds to the current scale of the target
-        /// ToDestination : sets the scale to the destination target, whatever the current scale is
         [Tooltip("the mode this feedback should operate on" +
                  "Absolute : follows the curve" +
                  "Additive : adds to the current scale of the target" +
                  "ToDestination : sets the scale to the destination target, whatever the current scale is")]
         public Modes Mode = Modes.Absolute;
-        /// whether this feedback should play in scaled or unscaled time
         [Tooltip("whether this feedback should play in scaled or unscaled time")]
         public TimeScales TimeScale = TimeScales.Scaled;
-        /// the object to animate
         [Tooltip("the object to animate")]
         public Transform AnimateScaleTarget;
-        /// the duration of the animation
         [Tooltip("the duration of the animation")]
         public float AnimateScaleDuration = 0.2f;
-        /// the value to remap the curve's 0 value to
         [Tooltip("the value to remap the curve's 0 value to")]
         public float RemapCurveZero = 1f;
-        /// the value to remap the curve's 1 value to
         [Tooltip("the value to remap the curve's 1 value to")]
         [FormerlySerializedAs("Multiplier")]
         public float RemapCurveOne = 2f;
-        /// how much should be added to the curve
         [Tooltip("how much should be added to the curve")]
         public float Offset = 0f;
-        /// if this is true, should animate the X scale value
         [Tooltip("if this is true, should animate the X scale value")]
         public bool AnimateX = true;
-        /// the x scale animation definition
         [Tooltip("the x scale animation definition")]
         [MMFCondition("AnimateX", true)]
         public AnimationCurve AnimateScaleX = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0));
-        /// if this is true, should animate the Y scale value
         [Tooltip("if this is true, should animate the Y scale value")]
         public bool AnimateY = true;
-        /// the y scale animation definition
         [Tooltip("the y scale animation definition")]
         [MMFCondition("AnimateY", true)]
         public AnimationCurve AnimateScaleY = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0));
-        /// if this is true, should animate the z scale value
         [Tooltip("if this is true, should animate the z scale value")]
         public bool AnimateZ = true;
-        /// the z scale animation definition
         [Tooltip("the z scale animation definition")]
         [MMFCondition("AnimateZ", true)]
         public AnimationCurve AnimateScaleZ = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1.5f), new Keyframe(1, 0));
-        /// if this is true, calling that feedback will trigger it, even if it's in progress. If it's false, it'll prevent any new Play until the current one is over
         [Tooltip("if this is true, calling that feedback will trigger it, even if it's in progress. If it's false, it'll prevent any new Play until the current one is over")] 
         public bool AllowAdditivePlays = false;
-        /// if this is true, initial and destination scales will be recomputed on every play
         [Tooltip("if this is true, initial and destination scales will be recomputed on every play")]
         public bool DetermineScaleOnPlay = false;
 
         [Header("To Destination")]
-        /// the scale to reach when in ToDestination mode
         [Tooltip("the scale to reach when in ToDestination mode")]
         [MMFEnumCondition("Mode", (int)Modes.ToDestination)]
         public Vector3 DestinationScale = new Vector3(0.5f, 0.5f, 0.5f);
-
-        /// the duration of this feedback is the duration of the scale animation
         public override float FeedbackDuration { get { return ApplyTimeMultiplier(AnimateScaleDuration); } set { AnimateScaleDuration = value; } }
 
         protected Vector3 _initialScale;
         protected Vector3 _newScale;
         protected Coroutine _coroutine;
-
-        /// <summary>
-        /// On init we store our initial scale
-        /// </summary>
-        /// <param name="owner"></param>
         protected override void CustomInitialization(GameObject owner)
         {
             base.CustomInitialization(owner);
@@ -105,20 +73,10 @@ namespace MoreMountains.Feedbacks
                 GetInitialScale();
             }
         }
-
-        /// <summary>
-        /// Stores initial scale for future use
-        /// </summary>
         protected virtual void GetInitialScale()
         {
             _initialScale = AnimateScaleTarget.localScale;
         }
-
-        /// <summary>
-        /// On Play, triggers the scale animation
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             if (Active && (AnimateScaleTarget != null))
@@ -150,11 +108,6 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        /// <summary>
-        /// An internal coroutine used to scale the target to its destination scale
-        /// </summary>
-        /// <returns></returns>
         protected virtual IEnumerator ScaleToDestination()
         {
             if (AnimateScaleTarget == null)
@@ -216,18 +169,6 @@ namespace MoreMountains.Feedbacks
             _coroutine = null;
             yield return null;
         }
-
-        /// <summary>
-        /// An internal coroutine used to animate the scale over time
-        /// </summary>
-        /// <param name="targetTransform"></param>
-        /// <param name="vector"></param>
-        /// <param name="duration"></param>
-        /// <param name="curveX"></param>
-        /// <param name="curveY"></param>
-        /// <param name="curveZ"></param>
-        /// <param name="multiplier"></param>
-        /// <returns></returns>
         protected virtual IEnumerator AnimateScale(Transform targetTransform, Vector3 vector, float duration, AnimationCurve curveX, AnimationCurve curveY, AnimationCurve curveZ, float remapCurveZero = 0f, float remapCurveOne = 1f)
         {
             if (targetTransform == null)
@@ -356,12 +297,6 @@ namespace MoreMountains.Feedbacks
             _coroutine = null;
             yield return null;
         }
-
-        /// <summary>
-        /// On stop, we interrupt movement if it was active
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         protected override void CustomStopFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             if (Active && (_coroutine != null))
@@ -370,10 +305,6 @@ namespace MoreMountains.Feedbacks
                 _coroutine = null;
             }
         }
-
-        /// <summary>
-        /// On disable we reset our coroutine
-        /// </summary>
         protected virtual void OnDisable()
         {
             _coroutine = null;

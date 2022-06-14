@@ -5,23 +5,13 @@ using MoreMountains.Tools;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// This action will make the character pathfind its way back to its last patrol point
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/AI/Actions/AIActionPathfinderToPatrol3D")]
-    //[RequireComponent(typeof(AIActionMovePatrol3D))]
-    //[RequireComponent(typeof(CharacterPathfinder3D))]
-    //[RequireComponent(typeof(CharacterMovement))]
     public class AIActionPathfinderToPatrol3D : AIAction
     {
         protected CharacterMovement _characterMovement;
         protected CharacterPathfinder3D _characterPathfinder3D;
         protected Transform _backToPatrolTransform;
         protected AIActionMovePatrol3D _aiActionMovePatrol3D;
-
-        /// <summary>
-        /// On init we grab our CharacterMovement ability
-        /// </summary>
         protected override void Initialization()
         {
             _characterMovement = this.gameObject.GetComponentInParent<Character>()?.FindAbility<CharacterMovement>();
@@ -32,18 +22,10 @@ namespace MoreMountains.TopDownEngine
             backToPatrolBeacon.name = this.gameObject.name + "BackToPatrolBeacon";
             _backToPatrolTransform = backToPatrolBeacon.transform;
         }
-
-        /// <summary>
-        /// On PerformAction we move
-        /// </summary>
         public override void PerformAction()
         {
             Move();
         }
-
-        /// <summary>
-        /// Moves the character towards the target if needed
-        /// </summary>
         protected virtual void Move()
         {
             if (_aiActionMovePatrol3D == null)
@@ -56,10 +38,6 @@ namespace MoreMountains.TopDownEngine
             _characterPathfinder3D.SetNewDestination(_backToPatrolTransform);
             _brain.Target = _backToPatrolTransform;
         }
-
-        /// <summary>
-        /// On exit state we stop our movement
-        /// </summary>
         public override void OnExitState()
         {
             base.OnExitState();

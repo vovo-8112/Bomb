@@ -5,19 +5,12 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace MoreMountains.Tools
-{	
-	/// <summary>
-	/// The possible directions a swipe can have
-	/// </summary>
+{
 	public enum MMPossibleSwipeDirections { Up, Down, Left, Right }
 
 
 	[System.Serializable]
 	public class SwipeEvent : UnityEvent<MMSwipeEvent> {}
-
-	/// <summary>
-	/// An event usually triggered when a swipe happens. It contains the swipe "base" direction, and detailed information if needed (angle, length, origin and destination
-	/// </summary>
 	public struct MMSwipeEvent
 	{
 		public MMPossibleSwipeDirections SwipeDirection;
@@ -26,15 +19,6 @@ namespace MoreMountains.Tools
 		public Vector2 SwipeOrigin;
 		public Vector2 SwipeDestination;
 		public float SwipeDuration;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MoreMountains.Tools.MMSwipeEvent"/> struct.
-		/// </summary>
-		/// <param name="direction">Direction.</param>
-		/// <param name="angle">Angle.</param>
-		/// <param name="length">Length.</param>
-		/// <param name="origin">Origin.</param>
-		/// <param name="destination">Destination.</param>
 		public MMSwipeEvent(MMPossibleSwipeDirections direction, float angle, float length, Vector2 origin, Vector2 destination, float swipeDuration)
 		{
 			SwipeDirection = direction;
@@ -57,27 +41,17 @@ namespace MoreMountains.Tools
             MMEventManager.TriggerEvent(e);
         }
     }
-
-    /// <summary>
-    /// Add a swipe manager to your scene, and it'll trigger MMSwipeEvents everytime a swipe happens. From its inspector you can determine the minimal length of a swipe. Shorter swipes will be ignored
-    /// </summary>
 	[RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("More Mountains/Tools/Controls/MMSwipeZone")]
     public class MMSwipeZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
 	{
-		/// the minimal length of a swipe
 		public float MinimalSwipeLength = 50f;
-		/// the maximum press length of a swipe
 		public float MaximumPressLength = 10f;
-
-		/// The method(s) to call when the zone is swiped
 		public SwipeEvent ZoneSwiped;
-		/// The method(s) to call while the zone is being pressed
 		public UnityEvent ZonePressed;
 
 		[Header("Mouse Mode")]
 		[MMInformation("If you set this to true, you'll need to actually press the button for it to be triggered, otherwise a simple hover will trigger it (better for touch input).", MMInformationAttribute.InformationType.Info,false)]
-		/// If you set this to true, you'll need to actually press the button for it to be triggered, otherwise a simple hover will trigger it (better for touch input).
 		public bool MouseMode = false;
 
 		protected Vector2 _firstTouchPosition;
@@ -108,19 +82,11 @@ namespace MoreMountains.Tools
 				ZonePressed.Invoke ();
 			}
 		}
-
-		/// <summary>
-		/// Triggers the bound pointer down action
-		/// </summary>
 		public virtual void OnPointerDown(PointerEventData data)
 		{
 			_firstTouchPosition = Input.mousePosition;
 			_swipeStartedAt = Time.unscaledTime;
 		}
-
-		/// <summary>
-		/// Triggers the bound pointer up action
-		/// </summary>
 		public virtual void OnPointerUp(PointerEventData data)
 		{
             if (Time.frameCount == _lastPointerUpAt)
@@ -131,8 +97,6 @@ namespace MoreMountains.Tools
 			_destination = Input.mousePosition;
 			_deltaSwipe = _destination - _firstTouchPosition;
 			_length = _deltaSwipe.magnitude;
-
-			// if the swipe has been long enough
 			if (_length > MinimalSwipeLength)
 			{
 				_angle = MMMaths.AngleBetween (_deltaSwipe, Vector2.right);
@@ -140,8 +104,6 @@ namespace MoreMountains.Tools
 				_swipeEndedAt = Time.unscaledTime;
 				Swipe ();
 			}
-
-			// if it's just a press
 			if (_deltaSwipe.magnitude < MaximumPressLength)
 			{
 				Press ();
@@ -149,10 +111,6 @@ namespace MoreMountains.Tools
 
             _lastPointerUpAt = Time.frameCount;
         }
-
-		/// <summary>
-		/// Triggers the bound pointer enter action when touch enters zone
-		/// </summary>
 		public virtual void OnPointerEnter(PointerEventData data)
 		{
 			if (!MouseMode)
@@ -160,10 +118,6 @@ namespace MoreMountains.Tools
 				OnPointerDown (data);
 			}
 		}
-
-		/// <summary>
-		/// Triggers the bound pointer exit action when touch is out of zone
-		/// </summary>
 		public virtual void OnPointerExit(PointerEventData data)
 		{
 			if (!MouseMode)
@@ -171,12 +125,6 @@ namespace MoreMountains.Tools
 				OnPointerUp(data);	
 			}
 		}
-
-		/// <summary>
-		/// Determines a MMPossibleSwipeDirection out of an angle in degrees. 
-		/// </summary>
-		/// <returns>The to swipe direction.</returns>
-		/// <param name="angle">Angle in degrees.</param>
 		protected virtual MMPossibleSwipeDirections AngleToSwipeDirection(float angle)
 		{
 			if ((angle < 45) || (angle >= 315))

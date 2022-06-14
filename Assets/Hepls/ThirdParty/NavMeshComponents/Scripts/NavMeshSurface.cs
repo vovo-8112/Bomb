@@ -67,19 +67,13 @@ namespace UnityEngine.AI
         [SerializeField]
         float m_VoxelSize;
         public float voxelSize { get { return m_VoxelSize; } set { m_VoxelSize = value; } }
-
-        // Currently not supported advanced options
         [SerializeField]
         bool m_BuildHeightMesh;
         public bool buildHeightMesh { get { return m_BuildHeightMesh; } set { m_BuildHeightMesh = value; } }
-
-        // Reference to whole scene navmesh data asset.
         [UnityEngine.Serialization.FormerlySerializedAs("m_BakedNavMeshData")]
         [SerializeField]
         NavMeshData m_NavMeshData;
         public NavMeshData navMeshData { get { return m_NavMeshData; } set { m_NavMeshData = value; } }
-
-        // Do not serialize - runtime only state.
         NavMeshDataInstance m_NavMeshDataInstance;
         Vector3 m_LastPosition = Vector3.zero;
         Quaternion m_LastRotation = Quaternion.identity;
@@ -110,8 +104,6 @@ namespace UnityEngine.AI
             var isPrefab = isInPreviewScene || EditorUtility.IsPersistent(this);
             if (isPrefab)
             {
-                //Debug.LogFormat("NavMeshData from {0}.{1} will not be added to the NavMesh world because the gameObject is a prefab.",
-                //    gameObject.name, name);
                 return;
             }
 #endif
@@ -159,9 +151,6 @@ namespace UnityEngine.AI
         public void BuildNavMesh()
         {
             var sources = CollectSources();
-
-            // Use unscaled bounds - this differs in behaviour from e.g. collider components.
-            // But is similar to reflection probe - and since navmesh data has no scaling support - it is the right choice here.
             var sourcesBounds = new Bounds(m_Center, Abs(m_Size));
             if (m_CollectObjects == CollectObjects.All || m_CollectObjects == CollectObjects.Children)
             {
@@ -184,9 +173,6 @@ namespace UnityEngine.AI
         public AsyncOperation UpdateNavMesh(NavMeshData data)
         {
             var sources = CollectSources();
-
-            // Use unscaled bounds - this differs in behaviour from e.g. collider components.
-            // But is similar to reflection probe - and since navmesh data has no scaling support - it is the right choice here.
             var sourcesBounds = new Bounds(m_Center, Abs(m_Size));
             if (m_CollectObjects == CollectObjects.All || m_CollectObjects == CollectObjects.Children)
                 sourcesBounds = CalculateWorldBounds(sources);
@@ -201,8 +187,6 @@ namespace UnityEngine.AI
             var isPrefab = isInPreviewScene || EditorUtility.IsPersistent(surface);
             if (isPrefab)
             {
-                //Debug.LogFormat("NavMeshData from {0}.{1} will not be added to the NavMesh world because the gameObject is a prefab.",
-                //    surface.gameObject.name, surface.name);
                 return;
             }
 #endif
@@ -234,7 +218,6 @@ namespace UnityEngine.AI
             if (!myStage.IsValid())
                 return;
 #endif
-            // Modifiers
             List<NavMeshModifierVolume> modifiers;
             if (m_CollectObjects == CollectObjects.Children)
             {
@@ -368,7 +351,6 @@ namespace UnityEngine.AI
 
         Bounds CalculateWorldBounds(List<NavMeshBuildSource> sources)
         {
-            // Use the unscaled matrix for the NavMeshSurface
             Matrix4x4 worldToLocal = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
             worldToLocal = worldToLocal.inverse;
 
@@ -385,7 +367,6 @@ namespace UnityEngine.AI
                     }
                     case NavMeshBuildSourceShape.Terrain:
                     {
-                        // Terrain pivot is lower/left corner - shift bounds accordingly
                         var t = src.sourceObject as TerrainData;
                         result.Encapsulate(GetWorldBounds(worldToLocal * src.transform, new Bounds(0.5f * t.size, t.size)));
                         break;
@@ -398,7 +379,6 @@ namespace UnityEngine.AI
                         break;
                 }
             }
-            // Inflate the bounds a bit to avoid clipping co-planar sources
             result.Expand(0.1f);
             return result;
         }
@@ -422,30 +402,21 @@ namespace UnityEngine.AI
 #if UNITY_EDITOR
         bool UnshareNavMeshAsset()
         {
-            // Nothing to unshare
             if (m_NavMeshData == null)
                 return false;
-
-            // Prefab parent owns the asset reference
             var isInPreviewScene = EditorSceneManager.IsPreviewSceneObject(this);
             var isPersistentObject = EditorUtility.IsPersistent(this);
             if (isInPreviewScene || isPersistentObject)
                 return false;
-
-            // An instance can share asset reference only with its prefab parent
             var prefab = UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(this) as NavMeshSurface;
             if (prefab != null && prefab.navMeshData == navMeshData)
                 return false;
-
-            // Don't allow referencing an asset that's assigned to another surface
             for (var i = 0; i < s_NavMeshSurfaces.Count; ++i)
             {
                 var surface = s_NavMeshSurfaces[i];
                 if (surface != this && surface.m_NavMeshData == m_NavMeshData)
                     return true;
             }
-
-            // Asset is not referenced by known surfaces
             return false;
         }
 
@@ -460,21 +431,17 @@ namespace UnityEngine.AI
             var settings = NavMesh.GetSettingsByID(m_AgentTypeID);
             if (settings.agentTypeID != -1)
             {
-                // When unchecking the override control, revert to automatic value.
                 const float kMinVoxelSize = 0.01f;
                 if (!m_OverrideVoxelSize)
                     m_VoxelSize = settings.agentRadius / 3.0f;
                 if (m_VoxelSize < kMinVoxelSize)
                     m_VoxelSize = kMinVoxelSize;
-
-                // When unchecking the override control, revert to default value.
                 const int kMinTileSize = 16;
                 const int kMaxTileSize = 1024;
                 const int kDefaultTileSize = 256;
 
                 if (!m_OverrideTileSize)
                     m_TileSize = kDefaultTileSize;
-                // Make sure tilesize is in sane range.
                 if (m_TileSize < kMinTileSize)
                     m_TileSize = kMinTileSize;
                 if (m_TileSize > kMaxTileSize)

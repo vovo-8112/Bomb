@@ -6,55 +6,33 @@ using Random = UnityEngine.Random;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// A base class, meant to be extended, defining a Feedback. A Feedback is an action triggered by a MMFeedbacks, usually in reaction to the player's input or actions,
-    /// to help communicate both emotion and legibility, improving game feel.
-    /// To create a new feedback, extend this class and override its Custom methods, declared at the end of this class. You can look at the many examples for reference.
-    /// </summary>
     [AddComponentMenu("")]
     [System.Serializable]
     [ExecuteAlways]
     public abstract class MMFeedback : MonoBehaviour
     {
-        /// whether or not this feedback is active
         [Tooltip("whether or not this feedback is active")]
         public bool Active = true;
-        /// the name of this feedback to display in the inspector
         [Tooltip("the name of this feedback to display in the inspector")]
         public string Label = "MMFeedback";
-        /// the chance of this feedback happening (in percent : 100 : happens all the time, 0 : never happens, 50 : happens once every two calls, etc)
         [Tooltip("the chance of this feedback happening (in percent : 100 : happens all the time, 0 : never happens, 50 : happens once every two calls, etc)")]
         [Range(0,100)]
         public float Chance = 100f;
-        /// a number of timing-related values (delay, repeat, etc)
         [Tooltip("a number of timing-related values (delay, repeat, etc)")]
         public MMFeedbackTiming Timing;
-        /// the Owner of the feedback, as defined when calling the Initialization method
         public GameObject Owner { get; set; }
         [HideInInspector]
-        /// whether or not this feedback is in debug mode
         public bool DebugActive = false;
-        /// set this to true if your feedback should pause the execution of the feedback sequence
         public virtual IEnumerator Pause { get { return null; } }
-        /// if this is true, this feedback will wait until all previous feedbacks have run
         public virtual bool HoldingPause { get { return false; } }
-        /// if this is true, this feedback will wait until all previous feedbacks have run, then run all previous feedbacks again
         public virtual bool LooperPause { get { return false; } }
-        /// if this is true, this feedback will pause and wait until Resume() is called on its parent MMFeedbacks to resume execution
         public virtual bool ScriptDrivenPause { get; set; }
-        /// if this is a positive value, the feedback will auto resume after that duration if it hasn't been resumed via script already
         public virtual float ScriptDrivenPauseAutoResume { get; set; }
-        /// if this is true, this feedback will wait until all previous feedbacks have run, then run all previous feedbacks again
         public virtual bool LooperStart { get { return false; } }
-        /// an overridable color for your feedback, that can be redefined per feedback. White is the only reserved color, and the feedback will revert to 
-        /// normal (light or dark skin) when left to White
         #if UNITY_EDITOR
         public virtual Color FeedbackColor { get { return Color.white;  } }
         #endif
-        /// returns true if this feedback is in cooldown at this time (and thus can't play), false otherwise
         public virtual bool InCooldown { get { return (Timing.CooldownDuration > 0f) && (FeedbackTime - _lastPlayTimestamp < Timing.CooldownDuration); } }
-        
-        /// the time (or unscaled time) based on the selected Timing settings
         public float FeedbackTime 
         { 
             get 
@@ -69,8 +47,6 @@ namespace MoreMountains.Feedbacks
                 }
             } 
         }
-        
-        /// the delta time (or unscaled delta time) based on the selected Timing settings
         public float FeedbackDeltaTime
         {
             get
@@ -85,12 +61,6 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        
-        /// <summary>
-        /// The total duration of this feedback :
-        /// total = initial delay + duration * (number of repeats + delay between repeats)  
-        /// </summary>
         public float TotalDuration
         {
             get
@@ -119,12 +89,8 @@ namespace MoreMountains.Feedbacks
                 return totalTime;
             }
         }
-
-        // the timestamp at which this feedback was last played
         public virtual float FeedbackStartedAt { get { return _lastPlayTimestamp; } }
-        // the perceived duration of the feedback, to be used to display its progress bar, meant to be overridden with meaningful data by each feedback
         public virtual float FeedbackDuration { get { return 0f; } set { } }
-        /// whether or not this feedback is playing right now
         public virtual bool FeedbackPlaying { get { return ((FeedbackStartedAt > 0f) && (Time.time - FeedbackStartedAt < FeedbackDuration)); } }
 
         protected float _lastPlayTimestamp = -1f;
@@ -149,11 +115,6 @@ namespace MoreMountains.Feedbacks
             _hostMMFeedbacks = this.gameObject.GetComponent<MMFeedbacks>();
             _isHostMMFeedbacksNotNull = _hostMMFeedbacks != null;
         }
-
-        /// <summary>
-        /// Initializes the feedback and its timing related variables
-        /// </summary>
-        /// <param name="owner"></param>
         public virtual void Initialization(GameObject owner)
         {
             _initialized = true;
@@ -167,12 +128,6 @@ namespace MoreMountains.Feedbacks
 
             CustomInitialization(owner);            
         }
-        
-        /// <summary>
-        /// Plays the feedback
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         public virtual void Play(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             if (!Active)
@@ -184,8 +139,6 @@ namespace MoreMountains.Feedbacks
             {
                 Debug.LogWarning("The " + this + " feedback is being played without having been initialized. Call Initialization() first.");
             }
-            
-            // we check the cooldown
             if (InCooldown)
             {
                 return;
@@ -201,13 +154,6 @@ namespace MoreMountains.Feedbacks
                 RegularPlay(position, feedbacksIntensity);
             }  
         }
-        
-        /// <summary>
-        /// An internal coroutine delaying the initial play of the feedback
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
-        /// <returns></returns>
         protected virtual IEnumerator PlayCoroutine(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             if (Timing.TimescaleMode == TimescaleModes.Scaled)
@@ -221,12 +167,6 @@ namespace MoreMountains.Feedbacks
             _lastPlayTimestamp = FeedbackTime;
             RegularPlay(position, feedbacksIntensity);
         }
-
-        /// <summary>
-        /// Triggers delaying coroutines if needed
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         protected virtual void RegularPlay(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             if (Chance == 0f)
@@ -235,7 +175,6 @@ namespace MoreMountains.Feedbacks
             }
             if (Chance != 100f)
             {
-                // determine the odds
                 float random = Random.Range(0f, 100f);
                 if (random > Chance)
                 {
@@ -271,13 +210,6 @@ namespace MoreMountains.Feedbacks
             }
             
         }
-
-        /// <summary>
-        /// Internal coroutine used for repeated play without end
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
-        /// <returns></returns>
         protected virtual IEnumerator InfinitePlay(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             while (true)
@@ -311,13 +243,6 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        /// <summary>
-        /// Internal coroutine used for repeated play
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
-        /// <returns></returns>
         protected virtual IEnumerator RepeatedPlay(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             while (_playsLeft > 0)
@@ -354,13 +279,6 @@ namespace MoreMountains.Feedbacks
             }
             _playsLeft = Timing.NumberOfRepeats + 1;
         }
-
-        /// <summary>
-        /// A coroutine used to play this feedback on a sequence
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
-        /// <returns></returns>
         protected virtual IEnumerator SequenceCoroutine(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             yield return null;
@@ -413,12 +331,6 @@ namespace MoreMountains.Feedbacks
             }
                     
         }
-
-        /// <summary>
-        /// Stops all feedbacks from playing. Will stop repeating feedbacks, and call custom stop implementations
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         public virtual void Stop(Vector3 position, float feedbacksIntensity = 1.0f)
         {
             if (_playCoroutine != null) { StopCoroutine(_playCoroutine); }
@@ -433,20 +345,11 @@ namespace MoreMountains.Feedbacks
                 CustomStopFeedback(position, feedbacksIntensity);    
             }
         }
-
-        /// <summary>
-        /// Calls this feedback's custom reset 
-        /// </summary>
         public virtual void ResetFeedback()
         {
             _playsLeft = Timing.NumberOfRepeats + 1;
             CustomReset();
         }
-
-        /// <summary>
-        /// Use this method to change this feedback's sequence at runtime
-        /// </summary>
-        /// <param name="newSequence"></param>
         public virtual void SetSequence(MMSequence newSequence)
         {
             Timing.Sequence = newSequence;
@@ -461,38 +364,18 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        /// <summary>
-        /// Use this method to specify a new delay between repeats at runtime
-        /// </summary>
-        /// <param name="delay"></param>
         public virtual void SetDelayBetweenRepeats(float delay)
         {
             Timing.DelayBetweenRepeats = delay;
         }
-
-        /// <summary>
-        /// Use this method to specify a new initial delay at runtime
-        /// </summary>
-        /// <param name="delay"></param>
         public virtual void SetInitialDelay(float delay)
         {
             Timing.InitialDelay = delay;
         }
-
-        /// <summary>
-        /// Returns a new value of the normalized time based on the current play direction of this feedback
-        /// </summary>
-        /// <param name="normalizedTime"></param>
-        /// <returns></returns>
         protected virtual float ApplyDirection(float normalizedTime)
         {
             return NormalPlayDirection ? normalizedTime : 1 - normalizedTime;
         }
-
-        /// <summary>
-        /// Returns true if this feedback should play normally, or false if it should play in rewind
-        /// </summary>
         public virtual bool NormalPlayDirection
         {
             get
@@ -511,10 +394,6 @@ namespace MoreMountains.Feedbacks
                 return true;
             }
         }
-
-        /// <summary>
-        /// Returns true if this feedback should play in the current parent MMFeedbacks direction, according to its MMFeedbacksDirectionCondition setting
-        /// </summary>
         public virtual bool ShouldPlayInThisSequenceDirection
         {
             get
@@ -531,10 +410,6 @@ namespace MoreMountains.Feedbacks
                 return true;
             }
         }
-
-        /// <summary>
-        /// Returns the t value at which to evaluate a curve at the end of this feedback's play time
-        /// </summary>
         protected virtual float FinalNormalizedTime
         {
             get
@@ -542,12 +417,6 @@ namespace MoreMountains.Feedbacks
                 return NormalPlayDirection ? 1f : 0f;
             }
         }
-
-        /// <summary>
-        /// Applies the host MMFeedbacks' time multiplier to this feedback
-        /// </summary>
-        /// <param name="duration"></param>
-        /// <returns></returns>
         protected virtual float ApplyTimeMultiplier(float duration)
         {
             if (_isHostMMFeedbacksNotNull)
@@ -557,30 +426,9 @@ namespace MoreMountains.Feedbacks
 
             return duration;
         }
-
-        /// <summary>
-        /// This method describes all custom initialization processes the feedback requires, in addition to the main Initialization method
-        /// </summary>
-        /// <param name="owner"></param>
         protected virtual void CustomInitialization(GameObject owner) { }
-
-        /// <summary>
-        /// This method describes what happens when the feedback gets played
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         protected abstract void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f);
-
-        /// <summary>
-        /// This method describes what happens when the feedback gets stopped
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="feedbacksIntensity"></param>
         protected virtual void CustomStopFeedback(Vector3 position, float feedbacksIntensity = 1.0f) { }
-
-        /// <summary>
-        /// This method describes what happens when the feedback gets reset
-        /// </summary>
         protected virtual void CustomReset() { }
     }   
 }

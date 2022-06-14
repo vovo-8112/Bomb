@@ -4,34 +4,25 @@ using UnityEngine;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// Add this to a SpriteRenderer to have it receive MMSpriteRendererShakeEvents from feedbacks or to shake it locally
-    /// </summary>
     [AddComponentMenu("More Mountains/Feedbacks/Shakers/Renderer/MMSpriteRendererShaker")]
     [RequireComponent(typeof(SpriteRenderer))]
     public class MMSpriteRendererShaker : MMShaker
     {
         [Header("SpriteRenderer")]
-        /// the SpriteRenderer to affect when playing the feedback
         [Tooltip("the SpriteRenderer to affect when playing the feedback")]
         public SpriteRenderer BoundSpriteRenderer;
-        /// whether or not that SpriteRenderer should be turned off on start
         [Tooltip("whether or not that SpriteRenderer should be turned off on start")]
         public bool StartsOff = true;
 
         [Header("Color")]
-        /// whether or not this shaker should modify color 
         [Tooltip("whether or not this shaker should modify color")]
         public bool ModifyColor = true;
-        /// the colors to apply to the SpriteRenderer over time
         [Tooltip("the colors to apply to the SpriteRenderer over time")]
         public Gradient ColorOverTime;
 
         [Header("Flip")]
-        /// whether or not to flip the sprite on X
         [Tooltip("whether or not to flip the sprite on X")]
         public bool FlipX = false;
-        /// whether or not to flip the sprite on Y
         [Tooltip("whether or not to flip the sprite on Y")]
         public bool FlipY = false;
 
@@ -41,10 +32,6 @@ namespace MoreMountains.Feedbacks
         protected Gradient _originalColorOverTime;
         protected bool _originalFlipX;
         protected bool _originalFlipY;
-
-        /// <summary>
-        /// On init we initialize our values
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -53,18 +40,10 @@ namespace MoreMountains.Feedbacks
                 BoundSpriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
             }
         }
-
-        /// <summary>
-        /// When that shaker gets added, we initialize its shake duration
-        /// </summary>
         protected virtual void Reset()
         {
             ShakeDuration = 1f;
         }
-               
-        /// <summary>
-        /// Shakes values over time
-        /// </summary>
         protected override void Shake()
         {
             if (ModifyColor)
@@ -73,20 +52,12 @@ namespace MoreMountains.Feedbacks
                 BoundSpriteRenderer.color = ColorOverTime.Evaluate(_remappedTimeSinceStart);
             }            
         }
-
-        /// <summary>
-        /// Collects initial values on the target
-        /// </summary>
         protected override void GrabInitialValues()
         {
             _initialColor = BoundSpriteRenderer.color;
             _originalFlipX = BoundSpriteRenderer.flipX;
             _originalFlipY = BoundSpriteRenderer.flipY;
         }
-
-        /// <summary>
-        /// Resets the target's values
-        /// </summary>
         protected override void ResetTargetValues()
         {
             base.ResetTargetValues();
@@ -94,10 +65,6 @@ namespace MoreMountains.Feedbacks
             BoundSpriteRenderer.flipX = _originalFlipX;
             BoundSpriteRenderer.flipY = _originalFlipY;
         }
-
-        /// <summary>
-        /// Resets the shaker's values
-        /// </summary>
         protected override void ResetShakerValues()
         {
             base.ResetShakerValues();
@@ -105,19 +72,11 @@ namespace MoreMountains.Feedbacks
             ShakeDuration = _originalShakeDuration;
             ColorOverTime = _originalColorOverTime;
         }
-
-        /// <summary>
-        /// Starts listening for events
-        /// </summary>
         public override void StartListening()
         {
             base.StartListening();
             MMSpriteRendererShakeEvent.Register(OnMMSpriteRendererShakeEvent);
         }
-
-        /// <summary>
-        /// Stops listening for events
-        /// </summary>
         public override void StopListening()
         {
             base.StopListening();
@@ -162,10 +121,6 @@ namespace MoreMountains.Feedbacks
             Play();
         }
     }
-
-    /// <summary>
-    /// An event used (usually from MMFeeedbackSpriteRenderer) to shake the values of a SpriteRenderer
-    /// </summary>
     public struct MMSpriteRendererShakeEvent
     {
         public delegate void Delegate(float shakeDuration, bool modifyColor, Gradient colorOverTime,

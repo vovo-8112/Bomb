@@ -27,15 +27,6 @@ namespace MoreMountains.Tools
 
         [Header("Axis")]
         public MMPlotterAxis Axis;
-        /*public Material AxisMaterial;
-        public bool ShouldDrawAxis = true;
-        public Color AxisColor = Color.black;
-        public Color AxisLabelColor = Color.black;
-        public float AxisWidth = 1f;
-        public float AxisCrossOffset;
-        public Font AxisFont;
-        public int AxisPixelsPerUnit;
-        public Vector2 AxisLabelOffset;*/
         
         protected Transform[] _points;
         protected float _pointScale;
@@ -165,22 +156,6 @@ namespace MoreMountains.Tools
             PlotPointMaterial = newMaterial;
         }
 
-        /*protected virtual void DrawLine(Vector3 start, Vector3 end, Color color, float width,  Transform parent)
-        {
-            GameObject myLine = new GameObject(this.name+"LineRenderer");
-            myLine.transform.localPosition = start;
-            myLine.AddComponent<LineRenderer>();
-            LineRenderer lr = myLine.GetComponent<LineRenderer>();
-            lr.material = AxisMaterial;
-            lr.startColor = color;
-            lr.endColor = color;
-            lr.startWidth = width;
-            lr.endWidth = width;
-            lr.SetPosition(0, start);
-            lr.SetPosition(1, end);
-            myLine.transform.SetParent(parent);
-        }*/
-
         protected virtual void Cleanup()
         {
             this.transform.MMDestroyAllChildren();
@@ -263,7 +238,6 @@ namespace MoreMountains.Tools
                 _lastMovementEndedAt = Time.unscaledTime;
                 _currentMovement = 1f;
             }
-            //_timeString = String.Format("t = {0}s", _currentMovement.ToString("0.000"));
             _axis.TimeLabel.text = _timeString;
         }
     }

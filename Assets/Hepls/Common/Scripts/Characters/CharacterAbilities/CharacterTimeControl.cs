@@ -6,33 +6,21 @@ using MoreMountains.Feedbacks;
 
 namespace MoreMountains.TopDownEngine
 {
-    /// <summary>
-    /// Add this ability to a character, and it'll be able to control time when pressing the TimeControl button
-    /// </summary>
     [AddComponentMenu("TopDown Engine/Character/Abilities/Character Time Control")]
     public class CharacterTimeControl : CharacterAbility
     {
-        /// the time scale to switch to when the time control button gets pressed
         [Tooltip("the time scale to switch to when the time control button gets pressed")]
         public float TimeScale = 0.5f;
-        /// the duration for which to keep the timescale changed
         [Tooltip("the duration for which to keep the timescale changed")]
         public float Duration = 1f;
-        /// whether or not the timescale should get lerped
         [Tooltip("whether or not the timescale should get lerped")]
         public bool LerpTimeScale = true;
-        /// the speed at which to lerp the timescale
         [Tooltip("the speed at which to lerp the timescale")]
         public float LerpSpeed = 5f;
-        /// the cooldown for this ability
         [Tooltip("the cooldown for this ability")]
         public MMCooldown Cooldown;
 
         protected bool _timeControlled = false;
-
-        /// <summary>
-        /// Watches for input press
-        /// </summary>
         protected override void HandleInput()
         {
             base.HandleInput();
@@ -49,19 +37,11 @@ namespace MoreMountains.TopDownEngine
                 TimeControlStop();
             }
         }
-
-        /// <summary>
-        /// On initialization, we init our cooldown
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
             Cooldown.Initialization();
         }
-
-        /// <summary>
-        /// Starts the time scale modification
-        /// </summary>
         public virtual void TimeControlStart()
         {
             if (Cooldown.Ready())
@@ -72,20 +52,12 @@ namespace MoreMountains.TopDownEngine
                 _timeControlled = true;
             }            
         }
-
-        /// <summary>
-        /// Stops the time control
-        /// </summary>
         public virtual void TimeControlStop()
         {
             StopStartFeedbacks();
             PlayAbilityStopFeedbacks();
             Cooldown.Stop();
         }
-
-        /// <summary>
-        /// On update, we unfreeze time if needed
-        /// </summary>
         public override void ProcessAbility()
         {
             base.ProcessAbility();

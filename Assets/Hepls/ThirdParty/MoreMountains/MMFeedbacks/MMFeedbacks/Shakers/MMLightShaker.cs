@@ -4,63 +4,45 @@ using UnityEngine;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// Add this to a light to have it receive MMLightShakeEvents from feedbacks or to shake it locally
-    /// </summary>
     [AddComponentMenu("More Mountains/Feedbacks/Shakers/Lights/MMLightShaker")]
     [RequireComponent(typeof(Light))]
     public class MMLightShaker : MMShaker
     {
         [Header("Light")]
-        /// the light to affect when playing the feedback
         [Tooltip("the light to affect when playing the feedback")]
         public Light BoundLight;
-        /// whether or not that light should be turned off on start
         [Tooltip("whether or not that light should be turned off on start")]
         public bool StartsOff = true;
-        /// whether or not the values should be relative or not
         [Tooltip("whether or not the values should be relative or not")]
         public bool RelativeValues = true;
 
         [Header("Color")]
-        /// whether or not this shaker should modify color 
         [Tooltip("whether or not this shaker should modify color")]
         public bool ModifyColor = true;
-        /// the colors to apply to the light over time
         [Tooltip("the colors to apply to the light over time")]
         public Gradient ColorOverTime;
 
         [Header("Intensity")]
-        /// the intensity to apply to the light over time
-        /// the curve to tween the intensity on
         [Tooltip("the intensity to apply to the light over time")]
         public AnimationCurve IntensityCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0));
-        /// the value to remap the intensity curve's 0 to
         [Tooltip("the value to remap the intensity curve's 0 to")]
         public float RemapIntensityZero = 0f;
-        /// the value to remap the intensity curve's 1 to
         [Tooltip("the value to remap the intensity curve's 1 to")]
         public float RemapIntensityOne = 1f;
 
         [Header("Range")]
-        /// the range to apply to the light over time
         [Tooltip("the range to apply to the light over time")]
         public AnimationCurve RangeCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0));
-        /// the value to remap the range curve's 0 to
         [Tooltip("the value to remap the range curve's 0 to")]
         public float RemapRangeZero = 0f;
-        /// the value to remap the range curve's 0 to
         [Tooltip("the value to remap the range curve's 0 to")]
         public float RemapRangeOne = 10f;
 
         [Header("Shadow Strength")]
-        /// the range to apply to the light over time
         [Tooltip("the range to apply to the light over time")]
         public AnimationCurve ShadowStrengthCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.3f, 1f), new Keyframe(1, 0));
-        /// the value to remap the shadow strength's curve's 0 to
         [Tooltip("the value to remap the shadow strength's curve's 0 to")]
         public float RemapShadowStrengthZero = 0f;
-        /// the value to remap the shadow strength's curve's 1 to
         [Tooltip("the value to remap the shadow strength's curve's 1 to")]
         public float RemapShadowStrengthOne = 1f;
 
@@ -82,10 +64,6 @@ namespace MoreMountains.Feedbacks
         protected AnimationCurve _originalShadowStrengthCurve;
         protected float _originalRemapShadowStrengthZero;
         protected float _originalRemapShadowStrengthOne;
-
-        /// <summary>
-        /// On init we initialize our values
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -94,18 +72,10 @@ namespace MoreMountains.Feedbacks
                 BoundLight = this.gameObject.GetComponent<Light>();
             }
         }
-
-        /// <summary>
-        /// When that shaker gets added, we initialize its shake duration
-        /// </summary>
         protected virtual void Reset()
         {
             ShakeDuration = 1f;
         }
-               
-        /// <summary>
-        /// Shakes values over time
-        /// </summary>
         protected override void Shake()
         {
             float newRange = ShakeFloat(RangeCurve, RemapRangeZero, RemapRangeOne, RelativeValues, _initialRange);
@@ -119,10 +89,6 @@ namespace MoreMountains.Feedbacks
                 BoundLight.color = ColorOverTime.Evaluate(_remappedTimeSinceStart);
             }            
         }
-
-        /// <summary>
-        /// Collects initial values on the target
-        /// </summary>
         protected override void GrabInitialValues()
         {
             _initialColor = BoundLight.color;
@@ -130,10 +96,6 @@ namespace MoreMountains.Feedbacks
             _initialIntensity = BoundLight.intensity;
             _initialShadowStrength = BoundLight.shadowStrength;
         }
-
-        /// <summary>
-        /// Resets the target's values
-        /// </summary>
         protected override void ResetTargetValues()
         {
             base.ResetTargetValues();
@@ -142,10 +104,6 @@ namespace MoreMountains.Feedbacks
             BoundLight.intensity = _initialIntensity;
             BoundLight.shadowStrength = _initialShadowStrength;
         }
-
-        /// <summary>
-        /// Resets the shaker's values
-        /// </summary>
         protected override void ResetShakerValues()
         {
             base.ResetShakerValues();
@@ -163,19 +121,11 @@ namespace MoreMountains.Feedbacks
             RemapShadowStrengthZero = _originalRemapShadowStrengthZero;
             RemapShadowStrengthOne = _originalRemapShadowStrengthOne;
         }
-
-        /// <summary>
-        /// Starts listening for events
-        /// </summary>
         public override void StartListening()
         {
             base.StartListening();
             MMLightShakeEvent.Register(OnMMLightShakeEvent);
         }
-
-        /// <summary>
-        /// Stops listening for events
-        /// </summary>
         public override void StopListening()
         {
             base.StopListening();

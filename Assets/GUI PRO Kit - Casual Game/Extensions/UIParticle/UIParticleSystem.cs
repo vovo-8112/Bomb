@@ -1,6 +1,4 @@
 ﻿/// Credit glennpow, Zarlang
-/// Sourced from - http://forum.unity3d.com/threads/free-script-particle-systems-in-ui-screen-space-overlay.406862/
-/// Updated by Zarlang with a more robust implementation, including TextureSheet annimation support
 
 namespace UnityEngine.UI.Extensions.CasualGame
 {
@@ -45,7 +43,6 @@ namespace UnityEngine.UI.Extensions.CasualGame
 
         protected bool Initialize()
         {
-            // initialize members
             if (_transform == null)
             {
                 _transform = transform;
@@ -91,7 +88,6 @@ namespace UnityEngine.UI.Extensions.CasualGame
                         currentTexture = Texture2D.whiteTexture;
                 }
                 material = currentMaterial;
-                // automatically set scaling
 #if UNITY_5_5_OR_NEWER
                 mainModule.scalingMode = ParticleSystemScalingMode.Hierarchy;
 #else
@@ -109,8 +105,6 @@ namespace UnityEngine.UI.Extensions.CasualGame
 #endif
 
             imageUV = new Vector4(0, 0, 1, 1);
-
-            // prepare texture sheet animation
             textureSheetAnimation = pSystem.textureSheetAnimation;
             textureSheetAnimationFrames = 0;
             textureSheetAnimationFrameSize = Vector2.zero;
@@ -142,7 +136,6 @@ namespace UnityEngine.UI.Extensions.CasualGame
                 }
             }
 #endif
-            // prepare vertices
             vh.Clear();
 
             if (!gameObject.activeInHierarchy)
@@ -159,14 +152,11 @@ namespace UnityEngine.UI.Extensions.CasualGame
             Vector2 temp = Vector2.zero;
             Vector2 corner1 = Vector2.zero;
             Vector2 corner2 = Vector2.zero;
-            // iterate through current particles
             int count = pSystem.GetParticles(particles);
 
             for (int i = 0; i < count; ++i)
             {
                 ParticleSystem.Particle particle = particles[i];
-
-                // get particle properties
 #if UNITY_5_5_OR_NEWER
                 Vector2 position = (mainModule.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
 #else
@@ -176,8 +166,6 @@ namespace UnityEngine.UI.Extensions.CasualGame
                 float rotation90 = rotation + Mathf.PI / 2;
                 Color32 color = particle.GetCurrentColor(pSystem);
                 float size = particle.GetCurrentSize(pSystem) * 0.5f;
-
-                // apply scale
 #if UNITY_5_5_OR_NEWER
                 if (mainModule.scalingMode == ParticleSystemScalingMode.Shape)
                     position /= canvas.scaleFactor;
@@ -185,8 +173,6 @@ namespace UnityEngine.UI.Extensions.CasualGame
                     if (pSystem.scalingMode == ParticleSystemScalingMode.Shape)
                         position /= canvas.scaleFactor;
 #endif
-
-                // apply texture sheet animation
                 Vector4 particleUV = imageUV;
                 if (textureSheetAnimation.enabled)
                 {
@@ -223,9 +209,6 @@ namespace UnityEngine.UI.Extensions.CasualGame
                             frame = Mathf.FloorToInt(frameProgress * textureSheetAnimation.numTilesX);
 
                             int row = textureSheetAnimation.rowIndex;
-                            //                    if (textureSheetAnimation.useRandomRow) { // FIXME - is this handled internally by rowIndex?
-                            //                        row = Random.Range(0, textureSheetAnimation.numTilesY, using: particle.randomSeed);
-                            //                    }
                             frame += row * textureSheetAnimation.numTilesX;
                             break;
 
@@ -266,7 +249,6 @@ namespace UnityEngine.UI.Extensions.CasualGame
 
                 if (rotation == 0)
                 {
-                    // no rotation
                     corner1.x = position.x - size;
                     corner1.y = position.y - size;
                     corner2.x = position.x + size;
@@ -289,14 +271,11 @@ namespace UnityEngine.UI.Extensions.CasualGame
                 {
                     if (use3dRotation)
                     {
-                        // get particle properties
 #if UNITY_5_5_OR_NEWER
                         Vector3 pos3d = (mainModule.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
 #else
                         Vector3 pos3d = (pSystem.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
 #endif
-
-                        // apply scale
 #if UNITY_5_5_OR_NEWER
                         if (mainModule.scalingMode == ParticleSystemScalingMode.Shape)
                             position /= canvas.scaleFactor;
@@ -322,7 +301,6 @@ namespace UnityEngine.UI.Extensions.CasualGame
                     }
                     else
                     {
-                        // apply rotation
                         Vector2 right = new Vector2(Mathf.Cos(rotation), Mathf.Sin(rotation)) * size;
                         Vector2 up = new Vector2(Mathf.Cos(rotation90), Mathf.Sin(rotation90)) * size;
 

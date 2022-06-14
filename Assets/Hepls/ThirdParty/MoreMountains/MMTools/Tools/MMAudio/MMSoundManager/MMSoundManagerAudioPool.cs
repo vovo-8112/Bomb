@@ -6,19 +6,10 @@ using UnityEngine.Audio;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// This class manages an object pool of audiosources
-    /// </summary>
     [Serializable]
     public class MMSoundManagerAudioPool 
     {
         protected List<AudioSource> _pool;
-        
-        /// <summary>
-        /// Fills the pool with ready-to-use audiosources
-        /// </summary>
-        /// <param name="poolSize"></param>
-        /// <param name="parent"></param>
         public virtual void FillAudioSourcePool(int poolSize, Transform parent)
         {
             if (_pool == null)
@@ -45,25 +36,11 @@ namespace MoreMountains.Tools
                 _pool.Add(tempSource);
             }
         }
-
-        /// <summary>
-        /// Disables an audio source after it's done playing
-        /// </summary>
-        /// <param name="duration"></param>
-        /// <param name="targetObject"></param>
-        /// <returns></returns>
         public virtual IEnumerator AutoDisableAudioSource(float duration, GameObject targetObject)
         {
             yield return MMCoroutine.WaitFor(duration);
             targetObject.SetActive(false);
         }
-
-        /// <summary>
-        /// Pulls an available audio source from the pool
-        /// </summary>
-        /// <param name="poolCanExpand"></param>
-        /// <param name="parent"></param>
-        /// <returns></returns>
         public virtual AudioSource GetAvailableAudioSource(bool poolCanExpand, Transform parent)
         {
             foreach (AudioSource source in _pool)
@@ -87,12 +64,6 @@ namespace MoreMountains.Tools
 
             return null;
         }
-
-        /// <summary>
-        /// Stops an audiosource and returns it to the pool
-        /// </summary>
-        /// <param name="sourceToStop"></param>
-        /// <returns></returns>
         public virtual bool FreeSound(AudioSource sourceToStop)
         {
             foreach (AudioSource source in _pool)

@@ -29,8 +29,6 @@ namespace MoreMountains.Tools
         public SerializedProperty PeaksPasted;
 
         public SerializedProperty Beats;
-
-        // inspector
         protected float _inspectorWidth;
         protected int _numberOfBands;
         protected Color _barColor;
@@ -48,8 +46,6 @@ namespace MoreMountains.Tools
         
         protected bool _bandValuesFoldout = false;
         protected float _peakShowDuration = 0.5f;
-
-        // box
         protected Vector2 _boxPosition;
         protected Vector2 _boxSize;
         protected const float _externalMargin = 12f;
@@ -59,30 +55,19 @@ namespace MoreMountains.Tools
         protected const int _numberOfAxisSpectrum = 4;
         protected const int _bandsValuesBoxHeight = 150;
         protected const int _rawSpectrumBoxHeight = 75;
-
-
-        // coordinates
         protected float _topY;
         protected float _boxBottomY;
         protected float _positionX;
         protected float _positionY;
-        
-        // column
         protected float _columnWidth;
         protected float _columnHeight;
         protected float _maxColumnHeight;
-
-        // spectrum
         protected float _spectrumBoxBottomY;
         protected Vector2 _spectrumBoxPosition;
         protected Vector2 _spectrumBoxSize;
         protected float _spectrumMaxColumnHeight;
-
-        // axis
         protected Vector3 _axisOrigin = Vector3.zero;
         protected Vector3 _axisDestination = Vector3.zero;
-
-        // styles
         protected GUIStyle _redLabel = new GUIStyle();
         protected Color _normalLabelColor;
 
@@ -108,11 +93,6 @@ namespace MoreMountains.Tools
             _redLabel.normal.textColor = Color.red;
             _rect = new Rect();
         }
-        
-        /// <summary>
-        /// Forces constant repaint of the inspector, making for much faster display of the bands bars.
-        /// </summary>
-        /// <returns></returns>
         public override bool RequiresConstantRepaint()
         {
             return true;
@@ -270,8 +250,6 @@ namespace MoreMountains.Tools
 
                 float boxX = _boxPosition.x + margin + counter * (beatsBoxSquareSize + margin);
                 float boxY = _boxPosition.y + margin + lineCounter * (beatsBoxSquareSize + margin);
-
-                // draw bg bar
                 _rect.x = boxX;
                 _rect.y = boxY;
                 _rect.width = beatsBoxSquareSize;
@@ -280,7 +258,6 @@ namespace MoreMountains.Tools
 
                 if (Active)
                 {
-                    // draw front bar 
                     _beatColor = (target as MMAudioAnalyzer).Beats[i].BeatColor;
                     _beatColor.a = (target as MMAudioAnalyzer).Beats[i].CurrentValue;
                     _rect.x = boxX;
@@ -289,8 +266,6 @@ namespace MoreMountains.Tools
                     _rect.height = beatsBoxSquareSize;
                     EditorGUI.DrawRect(_rect, _beatColor);
                 }
-
-                // draw number
                 float labelX = (i > 9) ? boxX + beatsBoxSquareSize / 4 - 2 : boxX + beatsBoxSquareSize / 4 + 2;
                 
                 _rect.x = labelX;
@@ -309,19 +284,13 @@ namespace MoreMountains.Tools
             GUILayout.Label("Raw Visualization", EditorStyles.boldLabel);
 
             _internalMargin = (_numberOfBands > 8) ? 6f : _externalMargin;
-
-            // box
             GUILayout.Box("", GUILayout.Width(_inspectorWidth - _externalMargin), GUILayout.Height(_bandsValuesBoxHeight));
             _boxPosition = GUILayoutUtility.GetLastRect().position;
             _boxSize = GUILayoutUtility.GetLastRect().size;
             _boxBottomY = _boxPosition.y + _boxSize.y - _externalMargin - _lineHeight;
             _columnWidth = (_boxSize.x - (_numberOfBands + 1) * _internalMargin) / _numberOfBands;
             _maxColumnHeight = _boxSize.y - 2 * _externalMargin - _lineHeight - 5;
-
-            // lines
             Handles.BeginGUI();
-
-            // horizontal axis
             Handles.color = Color.grey;
             for (int i = 0; i < _numberOfAxis; i++)
             {
@@ -331,8 +300,6 @@ namespace MoreMountains.Tools
                 _axisDestination.y = _axisOrigin.y;
                 Handles.DrawLine(_axisOrigin, _axisDestination);
             }
-
-            // peaks
             if ((BandPeaks != null) && (BandPeaks.arraySize == _numberOfBands))
             {
                 for (int i = 0; i < _numberOfBands; i++)
@@ -362,8 +329,6 @@ namespace MoreMountains.Tools
             }
 
             Handles.EndGUI();
-
-            // amplitude cursors
             _columnHeight = MMMaths.Remap(Amplitude.floatValue, 0f, 1f, 0f, _maxColumnHeight);
             _positionX = _boxPosition.x - _externalMargin/4 ;
             _positionY = _boxBottomY - _columnHeight;
@@ -383,8 +348,6 @@ namespace MoreMountains.Tools
             _rect.width = _externalMargin / 2;
             _rect.height = _externalMargin / 2;
             EditorGUI.DrawRect(_rect, _amplitudeColor);
-
-            // buffered bars
             for (int i = 0; i < _numberOfBands; i++)
             {
                 if (Active)
@@ -395,8 +358,6 @@ namespace MoreMountains.Tools
 
                     _positionX = _boxPosition.x + _internalMargin * (i + 1) + _columnWidth * i;
                     _positionY = _boxBottomY;
-
-                    // bar rectangle
                     _rect.x = _positionX;
                     _rect.y = _positionY;
                     _rect.width = _columnWidth;
@@ -404,8 +365,6 @@ namespace MoreMountains.Tools
                     EditorGUI.DrawRect(_rect, _barColor);
                 }
             }
-
-            // bars
             for (int i = 0; i < _numberOfBands; i++)
             {
                 if (Active)
@@ -422,15 +381,11 @@ namespace MoreMountains.Tools
 
                 _positionX = _boxPosition.x + _internalMargin * (i + 1) + _columnWidth * i;
                 _positionY = _boxBottomY;
-
-                // bar rectangle
                 _rect.x = _positionX;
                 _rect.y = _positionY;
                 _rect.width = _columnWidth;
                 _rect.height = -_columnHeight;
                 EditorGUI.DrawRect(_rect, _barColor);
-
-                // bar number label
                 float labelCorrection = (i > 9) ? -5f : 0f;
                 _rect.x = _positionX + _columnWidth / 2 - 5 + labelCorrection;
                 _rect.y = _boxBottomY + _lineHeight / 4;
@@ -444,19 +399,13 @@ namespace MoreMountains.Tools
         {
             GUILayout.Space(10);
             GUILayout.Label("Normalized Visualization", EditorStyles.boldLabel);
-
-            // box
             GUILayout.Box("", GUILayout.Width(_inspectorWidth - _externalMargin), GUILayout.Height(_bandsValuesBoxHeight));
             _boxPosition = GUILayoutUtility.GetLastRect().position;
             _boxSize = GUILayoutUtility.GetLastRect().size;
             _boxBottomY = _boxPosition.y + _boxSize.y - _externalMargin - _lineHeight;
             _columnWidth = (_boxSize.x - (_numberOfBands + 1) * _internalMargin) / _numberOfBands;
             _maxColumnHeight = _boxSize.y - 2 * _externalMargin - _lineHeight;
-
-            // lines
             Handles.BeginGUI();
-
-            // horizontal axis
             Handles.color = Color.grey;
             for (int i = 0; i < _numberOfAxis; i++)
             {
@@ -468,9 +417,6 @@ namespace MoreMountains.Tools
             }
 
             Handles.EndGUI();
-
-
-            // amplitude cursors
             _columnHeight = MMMaths.Remap(NormalizedAmplitude.floatValue, 0f, 1f, 0f, _maxColumnHeight);
             _positionX = _boxPosition.x - _externalMargin / 4;
             _positionY = _boxBottomY - _columnHeight;
@@ -490,8 +436,6 @@ namespace MoreMountains.Tools
             _rect.width = _externalMargin / 2;
             _rect.height = _externalMargin / 2;
             EditorGUI.DrawRect(_rect, _normalizedAmplitudeColor);
-
-            // buffered bars
             for (int i = 0; i < _numberOfBands; i++)
             {
                 if (Active)
@@ -502,8 +446,6 @@ namespace MoreMountains.Tools
 
                     _positionX = _boxPosition.x + _internalMargin * (i + 1) + _columnWidth * i;
                     _positionY = _boxBottomY;
-
-                    // bar rectangle
                     _rect.x = _positionX;
                     _rect.y = _positionY;
                     _rect.width = _columnWidth;
@@ -511,8 +453,6 @@ namespace MoreMountains.Tools
                     EditorGUI.DrawRect(_rect, _barColor);
                 }
             }
-
-            // bars
             for (int i = 0; i < _numberOfBands; i++)
             {
                 if (Active)
@@ -529,14 +469,11 @@ namespace MoreMountains.Tools
 
                 _positionX = _boxPosition.x + _internalMargin * (i + 1) + _columnWidth * i;
                 _positionY = _boxBottomY;
-
-                // bar rectangle
                 _rect.x = _positionX;
                 _rect.y = _positionY;
                 _rect.width = _columnWidth;
                 _rect.height = -_columnHeight;
                 EditorGUI.DrawRect(_rect, _barColor);
-                // bar number label
                 float labelCorrection = (i > 9) ? -5f : 0f;
 
                 _rect.x = _positionX + _columnWidth / 2 - 5 + labelCorrection;
@@ -551,16 +488,12 @@ namespace MoreMountains.Tools
         {
             GUILayout.Space(10);
             GUILayout.Label("Raw Spectrum", EditorStyles.boldLabel);
-
-            // box
             GUILayout.Box("", GUILayout.Width(_inspectorWidth - _externalMargin), GUILayout.Height(_rawSpectrumBoxHeight));
             _spectrumBoxPosition = GUILayoutUtility.GetLastRect().position;
             _spectrumBoxSize = GUILayoutUtility.GetLastRect().size;
             _spectrumBoxBottomY = _spectrumBoxPosition.y + _spectrumBoxSize.y;
             _spectrumMaxColumnHeight = _spectrumBoxSize.y - 2 * _externalMargin;
             Handles.BeginGUI();
-
-            // horizontal axis
             Handles.color = Color.grey;
             for (int i = 0; i < _numberOfAxisSpectrum; i++)
             {
@@ -573,7 +506,6 @@ namespace MoreMountains.Tools
 
             if (Active)
             {
-                // spectrum
                 for (int i = 1; i < RawSpectrum.arraySize - 1; i++)
                 {
 

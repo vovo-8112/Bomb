@@ -5,9 +5,6 @@ using UnityEngine;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Custom editor for the MMTilemapGenerator, handles generate button and reorderable layers
-    /// </summary>
     [CustomEditor(typeof(MMTilemapGenerator), true)]
     [CanEditMultipleObjects]
     public class MMTilemapGeneratorEditor : Editor

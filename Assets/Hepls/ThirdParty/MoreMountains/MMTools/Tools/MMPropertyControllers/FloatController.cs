@@ -47,137 +47,87 @@ namespace MoreMountains.Tools
             }
         }
     }
-
-    /// <summary>
-    /// A class used to control a float in any other class, over time
-    /// To use it, simply drag a monobehaviour in its target field, pick a control mode (ping pong or random), and tweak the settings
-    /// </summary>
     [AddComponentMenu("More Mountains/Tools/Property Controllers/FloatController")]
     [MMRequiresConstantRepaint]
     public class FloatController : MMMonoBehaviour
     {
-        /// the possible control modes
         public enum ControlModes { PingPong, Random, OneTime, AudioAnalyzer, ToDestination, Driven }
 
         [Header("Target")]
-        /// the mono on which the float you want to control is
         public MonoBehaviour TargetObject;
 
         [Header("Global Settings")]
-        /// the control mode (ping pong or random)
         public ControlModes ControlMode;
-        /// whether or not the updated value should be added to the initial one
         public bool AddToInitialValue = false;
-        /// whether or not to use unscaled time
         public bool UseUnscaledTime = true;
-        /// whether or not you want to revert to the InitialValue after the control ends
         public bool RevertToInitialValueAfterEnd = true;
 
         [Header("Driven")]
-        /// the value that will be applied to the controlled float in driven mode 
         public float DrivenLevel = 0f;
 
         [Header("Ping Pong")]
-        /// the curve to apply to the tween
         public MMTweenType Curve = new MMTweenType(MMTween.MMTweenCurve.EaseInCubic);
-        /// the minimum value for the ping pong
         public float MinValue = 0f;
-        /// the maximum value for the ping pong
         public float MaxValue = 5f;
-        /// the duration of one ping (or pong)
         public float Duration = 1f;
-        /// the duration (in seconds) between a ping and a pong 
         public float PingPongPauseDuration = 0f;
 
         [Header("Random")]
         [MMVector("Min", "Max")]
-        /// the noise amplitude
         public Vector2 Amplitude = new Vector2(0f,5f);
         [MMVector("Min", "Max")]
-        /// the noise frequency
         public Vector2 Frequency = new Vector2(1f, 1f);
         [MMVector("Min", "Max")]
-        /// the noise shift
         public Vector2 Shift = new Vector2(0f, 1f);
-        /// if this is true, will let you remap the noise value (without amplitude) to the bounds you've specified
         public bool RemapNoiseValues = false;
-        /// the value to which to remap the random's zero bound
         [MMCondition("RemapNoiseValues", true)]
         public float RemapNoiseZero = 0f;
-        /// the value to which to remap the random's one bound
         [MMCondition("RemapNoiseValues", true)]
         public float RemapNoiseOne = 1f;
 
         [Header("OneTime")]
-        /// the duration of the One Time shake
         public float OneTimeDuration = 1f;
-        /// the amplitude of the One Time shake (this will be multiplied by the curve's height)
         public float OneTimeAmplitude = 1f;
-        /// the low value to remap the normalized curve value to 
         public float OneTimeRemapMin = 0f;
-        /// the high value to remap the normalized curve value to 
         public float OneTimeRemapMax = 1f;
-        /// the curve to apply to the one time shake
         public AnimationCurve OneTimeCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 1), new Keyframe(1, 0));
-        /// whether or not this controller should go to sleep after a one time shake
         public bool DisableAfterOneTime;
-        /// whether or not this controller should go back to sleep after a OneTime
         public bool DisableGameObjectAfterOneTime = false;
         [MMInspectorButton("OneTime")]
-        /// a test button for the one time shake
         public bool OneTimeButton;
 
         [Header("ToDestination")]
-        /// the duration of the tween to the destination value
         public float ToDestinationDuration = 1f;
-        /// the value to tween to
         public float ToDestinationValue = 1f;
-        /// the curve to use when tweening a value to destination
         public AnimationCurve ToDestinationCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.5f, 0.6f), new Keyframe(1f, 1f));
-        /// whether or not this controller should go to sleep after a to destination shake
         public bool DisableAfterToDestination;
         [MMInspectorButton("ToDestination")]
-        /// a test button for the one time shake
         public bool ToDestinationButton;
 
         public enum AudioAnalyzerModes { Beat, NormalizedBufferedBandLevels }
         
         [Header("AudioAnalyzer")]
-        /// the audio analyzer to read the value on
         public MMAudioAnalyzer AudioAnalyzer;
-        /// whether to look at a Beat or at the normalized buffered band levels
         public AudioAnalyzerModes AudioAnalyzerMode = AudioAnalyzerModes.Beat;
-        /// the ID of the beat to listen to
         public int BeatID;
-        /// when in NormalizedBufferedBandLevels 
         public int NormalizedLevelID = 0;
-        /// a multiplier to apply to the output beat value
         public float AudioAnalyzerMultiplier = 1f;
 
         [Header("Debug")]
         [MMReadOnly]
-        /// the initial value of the controlled float
         public float InitialValue;
         [MMReadOnly]
-        /// the current value of the controlled float
         public float CurrentValue;
         [MMReadOnly]
-        /// the current value of the controlled float, normalized
         public float CurrentValueNormalized;
-
-        /// internal use only
         [HideInInspector]
         public float PingPong;
-        /// internal use only
         [HideInInspector]
         public MonoAttribute TargetAttribute;
-        /// internal use only
         [HideInInspector]
         public string[] AttributeNames;
-        /// internal use only
         [HideInInspector]
         public string PropertyName;
-        /// internal use only
         [HideInInspector]
         public int ChoiceIndex;
 
@@ -203,12 +153,6 @@ namespace MoreMountains.Tools
 
         protected MonoBehaviour _targetObjectLastFrame;
         protected MonoAttribute _targetAttributeLastFrame;
-
-        /// <summary>
-        /// Finds an attribute (property or field) on the target object
-        /// </summary>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
         public virtual bool FindAttribute(string propertyName)
         {
             FieldInfo fieldInfo = null;
@@ -250,26 +194,14 @@ namespace MoreMountains.Tools
 
             return true;
         }
-
-        /// <summary>
-        /// On start we initialize our controller
-        /// </summary>
         protected virtual void Awake()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// On enable, grabs the initial value
-        /// </summary>
         protected virtual void OnEnable()
         {
             InitialValue = GetInitialValue();
         }
-
-        /// <summary>
-        /// Grabs the target property and initializes stuff
-        /// </summary>
         public virtual void Initialization()
         {
             _attributeFound = FindAttribute(PropertyName);
@@ -292,11 +224,6 @@ namespace MoreMountains.Tools
 
             _shaking = false;
         }
-
-        /// <summary>
-        /// Grabs the initial float value
-        /// </summary>
-        /// <returns></returns>
         protected virtual float GetInitialValue()
         {
             if (TargetAttribute.MemberType == MonoAttribute.MemberTypes.Property)
@@ -309,30 +236,14 @@ namespace MoreMountains.Tools
             }
             return 0f;
         }
-
-        /// <summary>
-        /// Sets the level to the value passed in parameters
-        /// </summary>
-        /// <param name="level"></param>
         public virtual void SetDrivenLevelAbsolute(float level)
         {
             DrivenLevel = level;
         }
-
-        /// <summary>
-        /// Sets the level to the remapped value passed in parameters
-        /// </summary>
-        /// <param name="normalizedLevel"></param>
-        /// <param name="remapZero"></param>
-        /// <param name="remapOne"></param>
         public virtual void SetDrivenLevelNormalized(float normalizedLevel, float remapZero, float remapOne)
         {
             DrivenLevel = MMMaths.Remap(normalizedLevel, 0f, 1f, remapZero, remapOne);
         }
-
-        /// <summary>
-        /// Triggers a one time shake of the float controller
-        /// </summary>
         public virtual void OneTime()
         {
             if ((TargetObject == null) || (TargetAttribute == null))
@@ -347,10 +258,6 @@ namespace MoreMountains.Tools
                 _shaking = true;
             }
         }
-
-        /// <summary>
-        /// Triggers a one time shake of the controller to a specified destination value
-        /// </summary>
         public virtual void ToDestination()
         {
             if ((TargetObject == null) || (TargetAttribute == null))
@@ -366,28 +273,14 @@ namespace MoreMountains.Tools
                 _initialValue = GetInitialValue();
             }
         }
-
-        /// <summary>
-        /// Returns the relevant delta time
-        /// </summary>
-        /// <returns></returns>
         protected float GetDeltaTime()
         {
             return UseUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
         }
-
-        /// <summary>
-        /// Returns the relevant time
-        /// </summary>
-        /// <returns></returns>
         protected float GetTime()
         {
             return UseUnscaledTime ? Time.unscaledTime : Time.time;
         }
-
-        /// <summary>
-        /// On Update, we move our value based on the defined settings
-        /// </summary>
         protected virtual void Update()
         {
             _targetObjectLastFrame = TargetObject;
@@ -538,10 +431,6 @@ namespace MoreMountains.Tools
 
             TargetAttribute.SetValue(CurrentValue);
         }
-        
-        /// <summary>
-        /// When the contents of the inspector change, and if the target changed, we grab all its properties and store them
-        /// </summary>
         protected virtual void OnValidate()
         {
             FillDropDownList();
@@ -551,10 +440,6 @@ namespace MoreMountains.Tools
                 Initialization();
             }
         }
-               
-        /// <summary>
-        /// On disable we revert to the previous value if needed
-        /// </summary>
         protected virtual void OnDisable()
         {
             if (RevertToInitialValueAfterEnd)
@@ -563,19 +448,11 @@ namespace MoreMountains.Tools
                 TargetAttribute.SetValue(CurrentValue);
             }
         }
-
-        /// <summary>
-        /// Interrupts any tween in progress, and disables itself
-        /// </summary>
         public virtual void Stop()
         {
             _shaking = false;
             this.enabled = false;
         }
-
-        /// <summary>
-        /// Fills the inspector dropdown with all the possible choices
-        /// </summary>
         public virtual void FillDropDownList()
         {            
             AttributeNames = new string[0];
@@ -605,8 +482,6 @@ namespace MoreMountains.Tools
                     _attributesNamesTempList.Add(fieldInfo.Name);
                 }
             }
-
-            // we fill our dropdown list of names :
             AttributeNames = _attributesNamesTempList.ToArray();
         }
     }

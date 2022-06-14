@@ -10,10 +10,6 @@ namespace MoreMountains.TopDownEngine
 	[CustomEditor (typeof(CharacterAbility),true)]
 	[CanEditMultipleObjects]
 
-	/// <summary>
-	/// Adds custom labels to the Character inspector
-	/// </summary>
-
 	public class CharacterAbilityInspector : Editor 
 	{		
 		SerializedProperty AbilityStartSfx, AbilityInProgressSfx, AbilityStopSfx, AbilityStartFeedbacks, AbilityStopFeedbacks;
@@ -45,10 +41,6 @@ namespace MoreMountains.TopDownEngine
                 }
             }
         }
-
-		/// <summary>
-		/// When inspecting a Character, adds to the regular inspector some labels, useful for debugging
-		/// </summary>
 		public override void OnInspectorGUI()
 		{
 			CharacterAbility t = (target as CharacterAbility);

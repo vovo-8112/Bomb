@@ -7,9 +7,6 @@ using System.Collections.Generic;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// As static class that lets you look for missing scripts on any prefab in your project, or for prefabs equipped with a certain type of MonoBehaviour
-    /// </summary>
     public class MMFindPrefabsByMono : EditorWindow
     {
         protected Vector2 _scrollView;
@@ -27,19 +24,11 @@ namespace MoreMountains.Tools
         static int _verticalPadding = 20;
         static RectOffset _padding;
         static RectOffset _horizontalPaddingOnly;
-
-        /// <summary>
-        /// Menu bound method
-        /// </summary>
         [MenuItem("Tools/More Mountains/Prefab Finder", false, 504)]
         public static void MenuAction()
         {
             OpenWindow();
         }
-
-        /// <summary>
-        /// Opens and resizes the window
-        /// </summary>
         public static void OpenWindow()
         {
             InitializePaddingAndStyles();
@@ -48,10 +37,6 @@ namespace MoreMountains.Tools
             window.titleContent = new GUIContent("MM Prefabs Finder");
             window.Show();
         }
-
-        /// <summary>
-        /// Initializes padding variables and GUI styles
-        /// </summary>
         static void InitializePaddingAndStyles()
         {
             if (_padding == null)
@@ -70,10 +55,6 @@ namespace MoreMountains.Tools
                 };
             }                 
         }
-
-        /// <summary>
-        /// Draws tab buttons
-        /// </summary>
         protected virtual void DrawTabs()
         {
             GUI.skin.box.padding = _padding;
@@ -82,10 +63,6 @@ namespace MoreMountains.Tools
                 _selectedTab = GUILayout.Toolbar(_selectedTab, _tabs);
             GUILayout.EndHorizontal();
         }
-
-        /// <summary>
-        /// Detects changes in tabs selection
-        /// </summary>
         protected virtual void HandleTabsChange()
         {
             if (_lastSelectedTab != _selectedTab)
@@ -96,10 +73,6 @@ namespace MoreMountains.Tools
                 _lastSearchedMonoBehaviour = null;
             }
         }
-
-        /// <summary>
-        /// Draws the content of the selected tab
-        /// </summary>
         protected virtual void DrawSelectedTab()
         {
             switch (_selectedTab)
@@ -112,10 +85,6 @@ namespace MoreMountains.Tools
                     break;
             }
         }
-
-        /// <summary>
-        /// Draws the search by mono form
-        /// </summary>
         protected virtual void DrawSearchByMonoBehaviour()
         {
             GUILayout.BeginHorizontal("box");
@@ -150,10 +119,6 @@ namespace MoreMountains.Tools
                 }
             GUILayout.EndHorizontal();
         }
-        
-        /// <summary>
-        /// Draws the search missing form
-        /// </summary>
         protected virtual void DrawSearchMissing()
         {
             GUILayout.BeginHorizontal("box");
@@ -186,10 +151,6 @@ namespace MoreMountains.Tools
             }
             GUILayout.EndHorizontal();
         }
-
-        /// <summary>
-        /// Draws the result list
-        /// </summary>
         protected virtual void DrawResultsList()
         {
             GUILayout.BeginHorizontal(_padded); 
@@ -210,7 +171,7 @@ namespace MoreMountains.Tools
                             }                            
                             break;
                     }
-                    GUILayout.EndHorizontal(); // end padded
+                    GUILayout.EndHorizontal();
                 }
                 else
                 {
@@ -224,7 +185,7 @@ namespace MoreMountains.Tools
                             GUILayout.Label("MonoBehaviour " + _searchedMonoBehaviourName + " was found in these prefabs :", EditorStyles.boldLabel);
                             break;
                     }
-                    GUILayout.EndHorizontal(); // end padded
+                    GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
                     GUI.skin.scrollView.padding = _padding;
@@ -247,9 +208,6 @@ namespace MoreMountains.Tools
         }
         
         #if  UNITY_EDITOR
-        /// <summary>
-        /// On GUI we draw our window's contents
-        /// </summary>
         protected virtual void OnGUI()
         {
             InitializePaddingAndStyles();
@@ -259,11 +217,6 @@ namespace MoreMountains.Tools
             DrawResultsList();
         }
         #endif
-
-        /// <summary>
-        /// Gets all prefabs and sorts them alphabetically
-        /// </summary>
-        /// <returns></returns>
         public static string[] GetAllPrefabsInProject()
         {
             string[] assetPaths = AssetDatabase.GetAllAssetPaths();

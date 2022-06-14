@@ -3,21 +3,14 @@ using System.Collections.Generic;
 
 namespace MoreMountains.Tools
 {
-    /// <summary>
-    /// Add this class to a line renderer and it'll add control points that let you turn your line into a bezier curve
-    /// </summary>
     [ExecuteAlways]
     [RequireComponent(typeof(LineRenderer))]
     [AddComponentMenu("More Mountains/Tools/Sprites/MMBezierLineRenderer")]
     public class MMBezierLineRenderer : MonoBehaviour
     {
-        /// a list of handles to control your line. Usually 4, but you can have more.
         public Transform[] AdjustmentHandles;
-        /// the amount of segments of the line renderer (more segments, less visible straight lines)
         public int NumberOfSegments = 50;
-        /// the sorting layer for this line renderer
         public string SortingLayerName = "Default";
-        /// the amount of curves we're working with
         [MMReadOnly]
         public int NumberOfCurves = 0;
 
@@ -26,18 +19,10 @@ namespace MoreMountains.Tools
         protected Vector3 _point;
         protected Vector3 _p;
         protected bool _initialized = false;
-
-        /// <summary>
-        /// On Awake we initialize our line renderer 
-        /// </summary>
         protected virtual void Awake()
         {
             Initialization();
         }
-
-        /// <summary>
-        /// Grabs the sorting layer, computes the amount of curves
-        /// </summary>
         protected virtual void Initialization()
         {
             if (_initialized)
@@ -56,18 +41,10 @@ namespace MoreMountains.Tools
             }
             _initialized = true;
         }
-
-        /// <summary>
-        /// On Update we draw our curve
-        /// </summary>
         protected virtual void LateUpdate()
         {
             DrawCurve();
         }
-
-        /// <summary>
-        /// For each point, determines the bezier position and feeds it to the line renderer
-        /// </summary>
         protected virtual void DrawCurve()
         {
             for (int i = 0; i < NumberOfCurves; i++)
@@ -82,16 +59,6 @@ namespace MoreMountains.Tools
                 }
             }
         }
-
-        /// <summary>
-        /// Computes the coordinates of a point on the bezier curve controlled by p0, p1, p2 and p3
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="p0"></param>
-        /// <param name="p1"></param>
-        /// <param name="p2"></param>
-        /// <param name="p3"></param>
-        /// <returns></returns>
         protected virtual Vector3 BezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
         {
             float u = 1 - t;

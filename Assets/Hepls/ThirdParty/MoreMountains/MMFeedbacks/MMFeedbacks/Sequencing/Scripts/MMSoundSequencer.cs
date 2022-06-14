@@ -6,21 +6,13 @@ using UnityEngine.Events;
 
 namespace MoreMountains.Feedbacks
 {
-    /// <summary>
-    /// A MMSequencer with ready made slots to play sounds
-    /// </summary>
     [AddComponentMenu("More Mountains/Feedbacks/Sequencing/MMSoundSequencer")]
     public class MMSoundSequencer : MMSequencer
     {
-        /// the list of audio clips to play (one per track)
         [Tooltip("the list of audio clips to play (one per track)")]
         public List<AudioClip> Sounds;
 
         protected List<AudioSource> _audioSources;
-        
-        /// <summary>
-        /// On Initialization we create our audiosources to play later
-        /// </summary>
         protected override void Initialization()
         {
             base.Initialization();
@@ -39,10 +31,6 @@ namespace MoreMountains.Feedbacks
                 _audioSources.Add(source);
             }
         }
-
-        /// <summary>
-        /// On beat we play our audio sources
-        /// </summary>
         protected override void OnBeat()
         {
             base.OnBeat();
@@ -57,11 +45,6 @@ namespace MoreMountains.Feedbacks
                 }
             }
         }
-
-        /// <summary>
-        /// When playing our event for control, we play our audiosource
-        /// </summary>
-        /// <param name="index"></param>
         public override void PlayTrackEvent(int index)
         {
             if (!Application.isPlaying)
@@ -71,26 +54,17 @@ namespace MoreMountains.Feedbacks
             base.PlayTrackEvent(index);            
             _audioSources[index].Play();
         }
-
-        /// <summary>
-        /// When looking for changes we make sure we have enough sounds in our array
-        /// </summary>
         public override void EditorMaintenance()
         {
             base.EditorMaintenance();
             SetupSounds();
         }
-
-        /// <summary>
-        /// Ensures the array is always the right length
-        /// </summary>
         public virtual void SetupSounds()
         {
             if (Sequence == null)
             {
                 return;
             }
-            // setup events
             if (Sounds.Count < Sequence.SequenceTracks.Count)
             {
                 for (int i = 0; i < Sequence.SequenceTracks.Count; i++)
